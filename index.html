@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>THE EDUCATORS - School Management System</title>
+    <!-- Include SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Include jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -403,7 +408,6 @@
             gap: 8px 16px;
         }
         .admission-form-grid .full-width { grid-column: 1 / -1; }
-        .admission-form-grid .half-width { grid-column: span 1; }
         .admission-form-grid label {
             font-weight: 900;
             font-size: 13px;
@@ -460,7 +464,7 @@
         }
         .fee-challan-grid input[readonly] { background: #f7fafc; cursor: not-allowed; }
         
-        /* VOUCHER PRINT STYLES */
+        /* VOUCHER PRINT STYLES - 3 copies */
         .voucher-print-area {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -660,7 +664,7 @@
             border: 2px solid #2b6cb0;
             border-radius: 8px;
             padding: 20px;
-            max-width: 700px;
+            max-width: 900px;
             margin: 10px auto;
             font-family: Arial, Helvetica, sans-serif;
         }
@@ -730,24 +734,27 @@
         .payslip-wrapper .ps-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 11px;
             margin-bottom: 8px;
         }
         .payslip-wrapper .ps-table th {
             background: #2b6cb0;
             color: #fff;
-            padding: 4px 10px;
-            text-align: left;
-            font-size: 11px;
+            padding: 4px 6px;
+            text-align: center;
+            font-size: 10px;
             border: 1px solid #2b6cb0;
+            white-space: nowrap;
         }
         .payslip-wrapper .ps-table td {
-            padding: 4px 10px;
+            padding: 4px 6px;
             border: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 10px;
         }
         .payslip-wrapper .ps-table .credit-row { background: #f0fdf4; }
         .payslip-wrapper .ps-table .debit-row { background: #fef2f2; }
-        .payslip-wrapper .ps-table .total-row { background: #ebf4ff; font-weight: 900; font-size: 14px; }
+        .payslip-wrapper .ps-table .total-row { background: #ebf4ff; font-weight: 900; font-size: 12px; }
         .payslip-wrapper .ps-net {
             background: #2b6cb0;
             color: #d69e2e;
@@ -837,6 +844,44 @@
         }
         .marksheet-subject-row input { padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; }
         
+        /* Employee ID Card */
+        .emp-id-card {
+            background: #fff;
+            border: 3px solid #2b6cb0;
+            border-radius: 12px;
+            padding: 16px 20px;
+            max-width: 350px;
+            margin: 10px auto;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .emp-id-card .emp-photo {
+            width: 70px;
+            height: 80px;
+            border: 3px solid #2b6cb0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 6px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7fafc;
+        }
+        .emp-id-card .emp-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .emp-id-card .emp-details {
+            text-align: left;
+            font-size: 11px;
+            margin: 6px 0;
+        }
+        .emp-id-card .emp-details .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .emp-id-card .emp-details .label { font-weight: 900; color: #2b6cb0; }
+        .emp-id-card .emp-details .value { font-weight: 600; }
+        
         /* RESPONSIVE */
         @media (max-width: 992px) {
             .sidebar { width: 100%; min-height: auto; display: flex; flex-wrap: wrap; padding: 4px 0; border-right: none; border-bottom: 2px solid var(--accent-gold); max-height: none; }
@@ -851,7 +896,7 @@
             .modal-box { min-width: 300px; }
             .admission-form-grid { grid-template-columns: 1fr 1fr; }
             .fee-challan-grid { grid-template-columns: 1fr 1fr; }
-            .voucher-print-area { grid-template-columns: 1fr 1fr; }
+            .voucher-print-area { grid-template-columns: 1fr; }
             .expense-row { grid-template-columns: 1fr 1fr 1fr 1fr; }
         }
         @media (max-width: 576px) {
@@ -867,12 +912,12 @@
             .expense-row { grid-template-columns: 1fr 1fr; }
         }
         
-        /* PRINT STYLES - Updated to Pink Background */
+        /* PRINT STYLES */
         @media print {
             * { font-family: Arial, Helvetica, sans-serif !important; }
             .no-print { display: none !important; }
             body { 
-                background: #fce4ec !important; /* Soft Pink */
+                background: #fce4ec !important;
                 padding: 0 !important; 
                 margin: 0 !important;
                 color: #333333 !important;
@@ -951,6 +996,14 @@
             .payslip-wrapper .ps-table .total-row { background: #e3f2fd !important; }
             .payslip-wrapper .ps-net { background: #d81b60 !important; color: #ffffff !important; }
             .payslip-wrapper .ps-footer { border-top: 2px solid #d81b60 !important; color: #d81b60 !important; }
+            
+            .emp-id-card {
+                background: #ffffff !important;
+                border: 2px solid #d81b60 !important;
+                color: #333333 !important;
+            }
+            .emp-id-card .emp-details .label { color: #d81b60 !important; }
+            .emp-id-card .emp-details .value { color: #333333 !important; }
             
             table { color: #333333 !important; }
             table th { 
@@ -1070,6 +1123,7 @@
 
                 <div class="section-label">👨‍💼 Staff</div>
                 <a data-tab="employees"><span class="emoji">👨‍</span> Employees</a>
+                <a data-tab="employeeidcard"><span class="emoji">🪪</span> Employee ID Card</a>
                 <a data-tab="payslip"><span class="emoji">💳</span> Pay Slip</a>
 
                 <div class="section-label">💰 Accounts</div>
@@ -1101,10 +1155,9 @@
     <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
-    <!-- JAVASCRIPT -->
     <script>
         // ================================================================
-        // THE EDUCATORS - COMPLETE JAVASCRIPT
+        // THE EDUCATORS - COMPLETE JAVASCRIPT (FIXED VERSION)
         // ================================================================
 
         // DATA STORE
@@ -1315,6 +1368,7 @@
                 case 'idcards': renderIDCards(); break;
                 case 'admitcard': renderAdmitCard(); break;
                 case 'employees': renderEmployees(); break;
+                case 'employeeidcard': renderEmployeeIDCard(); break;
                 case 'payslip': renderPaySlip(); break;
                 case 'expenditure': renderExpenditure(); break;
                 case 'reports': renderReports(); break;
@@ -1442,6 +1496,63 @@
         }
 
         // ================================================================
+        // PDF EXPORT FUNCTIONS
+        // ================================================================
+
+        function exportToPDF(elementId, filename) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                showToast('⚠️ No content to export!', 'error');
+                return;
+            }
+            
+            const content = element.innerHTML;
+            if (!content || content.includes('Select') || content.includes('No data')) {
+                showToast('⚠️ No data to export!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>${filename}</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    ${document.querySelector('style').textContent}
+                    .voucher-print-area { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 15px !important; }
+                    .voucher-box { page-break-inside: avoid; border: 2px solid #2b6cb0 !important; background: #fff !important; }
+                    .no-print { display: none !important; }
+                    .btn, .btn-group, .form-row, .no-print { display: none !important; }
+                    .card { border: 1px solid #ddd !important; box-shadow: none !important; }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportToExcel(data, filename, sheetName = 'Sheet1') {
+            if (!data || data.length === 0) {
+                showToast('⚠️ No data to export!', 'error');
+                return;
+            }
+            
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            XLSX.writeFile(wb, filename + '.xlsx');
+            showToast('✅ Excel exported successfully!', 'success');
+        }
+
+        // ================================================================
         // DASHBOARD
         // ================================================================
 
@@ -1451,7 +1562,7 @@
             const employees = AppData.employees;
             const activeStudents = students.filter(s => s.status === 'Currently-in').length;
             const totalDeposits = AppData.feeDeposits.reduce((sum, d) => sum + (d.amount || 0), 0);
-            const totalExpenses = AppData.expenditures.reduce((sum, e) => sum + (e.total || 0), 0);
+            const totalExpenses = AppData.expenditures.reduce((sum, e) => sum + (e.grandTotal || 0), 0);
             
             let html = `
                 <div class="card">
@@ -1497,7 +1608,7 @@
         }
 
         // ================================================================
-        // STUDENTS - Same as before (kept for space)
+        // STUDENTS
         // ================================================================
 
         function renderStudents() {
@@ -1625,7 +1736,7 @@
             
             let content = `
                 <div class="admission-form-grid">
-                    <div class="full-width"><label>Admission No</label><input id="editAdmNo" value="${student.admissionNo}" readonly style="background:#f7fafc;font-weight:900;" /></div>
+                    <div class="full-width"><label>Admission No</label><input id="editAdmNo" value="${student.admissionNo}" style="font-weight:900;" /></div>
                     <div><label>Roll No</label><input id="editRollNo" value="${student.rollNo || ''}" /></div>
                     <div><label>Admission Date</label><input id="editAdmDate" type="date" value="${student.admissionDate || getTodayDateInput()}" /></div>
                     <div><label>Student Name *</label><input id="editName" value="${student.name}" /></div>
@@ -1666,6 +1777,7 @@
                 return;
             }
             
+            student.admissionNo = document.getElementById('editAdmNo').value.trim();
             student.rollNo = document.getElementById('editRollNo').value.trim();
             student.admissionDate = document.getElementById('editAdmDate').value;
             student.name = name;
@@ -1708,7 +1820,7 @@
                     <div class="admission-form-grid">
                         <div class="full-width" style="background:var(--bg-primary);padding:8px 12px;border-radius:4px;font-weight:900;color:var(--accent-blue);">📋 Personal Information</div>
                         
-                        <div><label>Admission No</label><input id="admAdmissionNo" readonly style="background:#f7fafc;font-weight:900;" /></div>
+                        <div><label>Admission No *</label><input id="admAdmissionNo" style="font-weight:900;" placeholder="Enter Admission No" /></div>
                         <div><label>Roll No</label><input id="admRollNo" placeholder="Roll Number" /></div>
                         <div><label>Admission Date</label><input id="admAdmissionDate" type="date" value="${getTodayDateInput()}" /></div>
                         <div><label>Student Name *</label><input id="admName" placeholder="Full name" /></div>
@@ -1823,7 +1935,7 @@
         }
 
         function clearAdmissionForm() {
-            const fields = ['admRollNo', 'admName', 'admFather', 'admDob', 'admMother', 'admFatherNic', 'admAddress', 
+            const fields = ['admAdmissionNo', 'admRollNo', 'admName', 'admFather', 'admDob', 'admMother', 'admFatherNic', 'admAddress', 
                 'admRemarks', 'admPrevSchool', 'admGroup', 'admSession', 'admOccupation', 'admCast', 'admContact',
                 'admGuardianName', 'admGuardianRelation', 'admGuardianContact', 'admGuardianAddress', 'admGuardianPhone',
                 'admAdmissionFee', 'admAcademicFee', 'admRegistrationFee', 'admTuitionFee'];
@@ -1854,9 +1966,21 @@
         function saveAdmission() {
             const name = document.getElementById('admName').value.trim();
             const father = document.getElementById('admFather').value.trim();
+            const admissionNo = document.getElementById('admAdmissionNo').value.trim();
             
             if (!name || !father) {
                 showToast('⚠️ Name and Father are required!', 'error');
+                return;
+            }
+            
+            if (!admissionNo) {
+                showToast('⚠️ Admission Number is required!', 'error');
+                return;
+            }
+            
+            const exists = AppData.students.find(s => s.admissionNo === admissionNo);
+            if (exists) {
+                showToast('⚠️ Admission Number already exists!', 'error');
                 return;
             }
             
@@ -1868,7 +1992,7 @@
             
             const student = {
                 id: generateStudentId(),
-                admissionNo: document.getElementById('admAdmissionNo').value,
+                admissionNo: admissionNo,
                 rollNo: document.getElementById('admRollNo').value.trim(),
                 admissionDate: document.getElementById('admAdmissionDate').value,
                 name: name,
@@ -1915,7 +2039,7 @@
         }
 
         // ================================================================
-        // FEE CHALLAN - With Month Addition and Re-print
+        // FEE CHALLAN - 3 Copies (Student, School, Bank)
         // ================================================================
 
         function renderFeeChallan() {
@@ -1924,7 +2048,7 @@
             
             let html = `
                 <div class="card">
-                    <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Fee Challan / Voucher <span class="badge">Print Module</span></div>
+                    <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Fee Challan / Voucher <span class="badge">3 Copies per Page</span></div>
                     
                     <div class="fee-challan-grid">
                         <div class="full-width"><label>Select Student</label>
@@ -1956,7 +2080,8 @@
                         <div class="full-width">
                             <div class="btn-group">
                                 <button class="btn btn-primary" onclick="generateFeeChallan()">📄 Generate Vouchers</button>
-                                <button class="btn btn-success" onclick="printFeeChallan()">🖨️ Print All</button>
+                                <button class="btn btn-success" onclick="printFeeChallan()">🖨️ Print</button>
+                                <button class="btn btn-info" onclick="exportFeeChallanPDF()">📄 PDF</button>
                                 <button class="btn btn-warning" onclick="clearFeeChallan()">🔄 Clear</button>
                             </div>
                         </div>
@@ -1989,7 +2114,6 @@
             document.getElementById('fcName').value = student.name;
             document.getElementById('fcFather').value = student.fatherName;
             
-            // Check previous challans
             const existing = AppData.feeChallans.filter(c => c.studentId === studentId);
             if (existing.length > 0) {
                 const last = existing[existing.length - 1];
@@ -2053,7 +2177,6 @@
             
             const formattedDate = new Date(dueDate).toLocaleDateString();
             
-            // Save challan
             AppData.feeChallans.push({
                 studentId: studentId,
                 studentName: studentName,
@@ -2069,7 +2192,6 @@
                 generatedDate: getTodayDate()
             });
             
-            // Add to transactions
             AppData.transactions.push({
                 studentId: studentId,
                 studentName: studentName,
@@ -2083,10 +2205,10 @@
             });
             saveToStorage();
             
-            // Create 3 vouchers
+            // 3 copies: Student, School, Bank
             const copies = ['Student Copy', 'School Copy', 'Bank Copy'];
             
-            let vouchersHTML = '<div class="voucher-print-area">';
+            let vouchersHTML = '<div class="voucher-print-area" id="voucherPrintArea">';
             
             copies.forEach(copy => {
                 vouchersHTML += `
@@ -2123,7 +2245,7 @@
             vouchersHTML += '</div>';
             display.innerHTML = vouchersHTML;
             
-            showToast('✅ Vouchers generated! You can re-print anytime.', 'success');
+            showToast('✅ 3 Vouchers generated! (Student, School & Bank Copy)', 'success');
         }
 
         function printFeeChallan() {
@@ -2144,14 +2266,6 @@
                     @media print {
                         body { padding: 4px; background: #fce4ec !important; }
                         .voucher-print-area { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; }
-                        .voucher-box { border: 2px solid #d81b60 !important; background: #ffffff !important; color: #333333 !important; }
-                        .voucher-box .v-header { border-bottom: 2px solid #d81b60 !important; }
-                        .voucher-box .v-details .row { border-bottom: 1px solid #f8bbd0 !important; }
-                        .voucher-box .v-details .label { color: #d81b60 !important; }
-                        .voucher-box .v-details .value { color: #333333 !important; }
-                        .voucher-box .v-total { background: #d81b60 !important; color: #ffffff !important; }
-                        .voucher-box .v-footer { border-top: 1px solid #d81b60 !important; color: #d81b60 !important; }
-                        .voucher-box .v-copy-type { background: #d81b60 !important; color: #ffffff !important; }
                     }
                 </style>
                 </head><body>
@@ -2169,8 +2283,41 @@
             win.document.close();
         }
 
+        function exportFeeChallanPDF() {
+            const content = document.getElementById('feeChallanDisplay').innerHTML;
+            if (!content || content.includes('Select student')) {
+                showToast('⚠️ Generate vouchers first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Fee Challan PDF - ${getTodayDate()}</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 8px; background: #fff; margin: 0; }
+                    ${document.querySelector('style').textContent}
+                    .voucher-print-area { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 10px !important; }
+                    .voucher-box { page-break-inside: avoid; border: 2px solid #2b6cb0 !important; }
+                    .btn, .btn-group, .form-row, .no-print { display: none !important; }
+                </style>
+                </head><body>
+                <h2 style="text-align:center;color:#2b6cb0;">Fee Challan</h2>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
         // ================================================================
-        // FEE DEPOSIT - Student submits challan
+        // FEE DEPOSIT - With Delete Button
         // ================================================================
 
         function renderFeeDeposit() {
@@ -2213,7 +2360,7 @@
                     
                     <div class="table-wrap" style="margin-top:10px;">
                         <table>
-                            <thead><tr><th>Date</th><th>Student</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt</th></tr></thead>
+                            <thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt</th><th>Action</th></tr></thead>
                             <tbody id="fdTableBody"></tbody>
                         </table>
                     </div>
@@ -2235,7 +2382,6 @@
             document.getElementById('fdName').value = student.name;
             document.getElementById('fdClass').value = student.currentClass;
             
-            // Get due amount from latest challan
             const challans = AppData.feeChallans.filter(c => c.studentId === studentId);
             if (challans.length > 0) {
                 const last = challans[challans.length - 1];
@@ -2276,7 +2422,6 @@
             
             AppData.feeDeposits.push(deposit);
             
-            // Add to transactions
             AppData.transactions.push({
                 studentId: studentId,
                 studentName: student.name,
@@ -2299,7 +2444,7 @@
             const deposits = AppData.feeDeposits;
             
             if (deposits.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="padding:14px;color:var(--text-muted);text-align:center;">No deposits yet</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="padding:14px;color:var(--text-muted);text-align:center;">No deposits yet</td></tr>`;
                 return;
             }
             
@@ -2307,12 +2452,22 @@
                 <tr>
                     <td>${d.depositDate || 'N/A'}</td>
                     <td>${d.studentName}</td>
+                    <td>${d.className || 'N/A'}</td>
                     <td style="color:var(--accent-green);font-weight:900;">${formatCurrency(d.amount)}</td>
                     <td>${d.paymentMode}</td>
                     <td>${d.month} ${d.year}</td>
                     <td>${d.receiptNo || 'N/A'}</td>
+                    <td><button class="btn btn-danger btn-xs" onclick="deleteFeeDeposit('${d.id}')">🗑️</button></td>
                 </tr>
             `).join('');
+        }
+
+        function deleteFeeDeposit(id) {
+            if (!confirm('Delete this fee deposit record?')) return;
+            AppData.feeDeposits = AppData.feeDeposits.filter(d => d.id !== id);
+            saveToStorage();
+            loadFeeDeposits();
+            showToast('🗑️ Fee deposit deleted!', 'info');
         }
 
         function clearFeeDeposit() {
@@ -2327,7 +2482,7 @@
         }
 
         // ================================================================
-        // TRANSACTIONS - Daily, Weekly, Monthly, Yearly
+        // TRANSACTIONS
         // ================================================================
 
         function renderTransactions() {
@@ -2354,13 +2509,15 @@
                         <input type="date" id="txTo" style="display:none;" value="${getTodayDateInput()}" />
                         <button class="btn btn-primary" onclick="loadTransactions()">📊 Load</button>
                         <button class="btn btn-success" onclick="printTransactions()">🖨️ Print</button>
+                        <button class="btn btn-info" onclick="exportTransactionsPDF()">📄 PDF</button>
+                        <button class="btn btn-warning" onclick="exportTransactionsExcel()">📊 Excel</button>
                     </div>
                     
                     <div id="txSummary" style="padding:8px 14px;background:var(--bg-primary);border-radius:var(--radius);margin-bottom:8px;font-weight:900;">
                         Total Transactions: 0 | Total Amount: Rs.0
                     </div>
                     
-                    <div class="table-wrap">
+                    <div id="txTableWrap" class="table-wrap">
                         <table>
                             <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th></tr></thead>
                             <tbody id="txTableBody"></tbody>
@@ -2391,7 +2548,6 @@
             const summary = document.getElementById('txSummary');
             
             let filtered = AppData.transactions.slice();
-            const now = new Date();
             
             if (period === 'daily') {
                 const date = document.getElementById('txDate').value;
@@ -2404,8 +2560,13 @@
                 const end = new Date(start);
                 end.setDate(start.getDate() + 6);
                 filtered = filtered.filter(t => {
-                    const txDate = new Date(t.date.split('-').reverse().join('-'));
-                    return txDate >= start && txDate <= end;
+                    if (!t.date) return false;
+                    const parts = t.date.split('-');
+                    if (parts.length === 3) {
+                        const txDate = new Date(parts[2], parts[1]-1, parts[0]);
+                        return txDate >= start && txDate <= end;
+                    }
+                    return false;
                 });
             } else if (period === 'monthly') {
                 const date = document.getElementById('txDate').value;
@@ -2413,15 +2574,25 @@
                 const month = d.getMonth();
                 const year = d.getFullYear();
                 filtered = filtered.filter(t => {
-                    const txDate = new Date(t.date.split('-').reverse().join('-'));
-                    return txDate.getMonth() === month && txDate.getFullYear() === year;
+                    if (!t.date) return false;
+                    const parts = t.date.split('-');
+                    if (parts.length === 3) {
+                        const txDate = new Date(parts[2], parts[1]-1, parts[0]);
+                        return txDate.getMonth() === month && txDate.getFullYear() === year;
+                    }
+                    return false;
                 });
             } else if (period === 'yearly') {
                 const date = document.getElementById('txDate').value;
                 const year = new Date(date).getFullYear();
                 filtered = filtered.filter(t => {
-                    const txDate = new Date(t.date.split('-').reverse().join('-'));
-                    return txDate.getFullYear() === year;
+                    if (!t.date) return false;
+                    const parts = t.date.split('-');
+                    if (parts.length === 3) {
+                        const txDate = new Date(parts[2], parts[1]-1, parts[0]);
+                        return txDate.getFullYear() === year;
+                    }
+                    return false;
                 });
             } else if (period === 'custom') {
                 const from = document.getElementById('txFrom').value;
@@ -2430,8 +2601,13 @@
                     const fromDate = new Date(from);
                     const toDate = new Date(to);
                     filtered = filtered.filter(t => {
-                        const txDate = new Date(t.date.split('-').reverse().join('-'));
-                        return txDate >= fromDate && txDate <= toDate;
+                        if (!t.date) return false;
+                        const parts = t.date.split('-');
+                        if (parts.length === 3) {
+                            const txDate = new Date(parts[2], parts[1]-1, parts[0]);
+                            return txDate >= fromDate && txDate <= toDate;
+                        }
+                        return false;
                     });
                 }
             }
@@ -2440,7 +2616,7 @@
             summary.textContent = `Total Transactions: ${filtered.length} | Total Amount: ${formatCurrency(total)}`;
             
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found for this period</td></tr>`;
                 return;
             }
             
@@ -2468,15 +2644,13 @@
             win.document.write(`
                 <html><head><title>Transactions Report - ${getTodayDate()}</title>
                 <style>
-                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #1a1a1a; color: #fff; }
-                    table { width: 100%; border-collapse: collapse; color: #fff; }
-                    th { background: #333; color: #d69e2e; border: 2px solid #fff; padding: 8px; font-weight: 900; }
-                    td { border: 1px solid #555; padding: 6px; color: #fff; }
-                    tr:nth-child(even) td { background: #2a2a2a; }
-                    .summary { background: #2a2a2a; padding: 10px; border: 2px solid #d69e2e; margin-bottom: 10px; font-weight: 900; color: #d69e2e; }
-                    h1 { color: #d69e2e; }
-                    .no-print { display: none; }
-                    @media print { body { padding: 10px; } }
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th { background: #2b6cb0; color: #fff; border: 1px solid #2b6cb0; padding: 8px; font-weight: 900; }
+                    td { border: 1px solid #ddd; padding: 6px; }
+                    tr:nth-child(even) td { background: #f7fafc; }
+                    .summary { background: #ebf4ff; padding: 10px; border: 2px solid #2b6cb0; margin-bottom: 10px; font-weight: 900; }
+                    h1 { color: #2b6cb0; }
                 </style>
                 </head><body>
                 <h1>📊 Transactions Report</h1>
@@ -2498,8 +2672,74 @@
             win.document.close();
         }
 
+        function exportTransactionsPDF() {
+            const content = document.getElementById('txTableBody').innerHTML;
+            const summary = document.getElementById('txSummary').textContent;
+            
+            if (!content || content.includes('No transactions')) {
+                showToast('⚠️ No data to export!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Transactions Report PDF - ${getTodayDate()}</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th { background: #2b6cb0; color: #fff; border: 1px solid #2b6cb0; padding: 8px; font-weight: 900; }
+                    td { border: 1px solid #ddd; padding: 6px; }
+                    tr:nth-child(even) td { background: #f7fafc; }
+                    .summary { background: #ebf4ff; padding: 10px; border: 2px solid #2b6cb0; margin-bottom: 10px; font-weight: 900; }
+                    h1 { color: #2b6cb0; }
+                </style>
+                </head><body>
+                <h1>📊 Transactions Report</h1>
+                <div class="summary">${summary}</div>
+                <table>
+                    <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th></tr></thead>
+                    <tbody>${content}</tbody>
+                </table>
+                <p style="margin-top:20px;color:#718096;">Generated on: ${getTodayWithMonthName()}</p>
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportTransactionsExcel() {
+            const rows = document.querySelectorAll('#txTableBody tr');
+            if (rows.length === 0 || (rows.length === 1 && rows[0].textContent.includes('No transactions'))) {
+                showToast('⚠️ No data to export!', 'error');
+                return;
+            }
+            
+            const data = [];
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 0) {
+                    data.push({
+                        'Date': cells[0]?.textContent || 'N/A',
+                        'Student': cells[1]?.textContent || 'N/A',
+                        'Admission No': cells[2]?.textContent || 'N/A',
+                        'Type': cells[3]?.textContent || 'N/A',
+                        'Amount': cells[4]?.textContent || '0'
+                    });
+                }
+            });
+            
+            exportToExcel(data, 'Transactions_Report_' + getTodayDate());
+        }
+
         // ================================================================
-        // MARKSHEET ENTRY - Complete with subjects
+        // MARKSHEET ENTRY
         // ================================================================
 
         let subjectRows = [];
@@ -2589,7 +2829,6 @@
             if (row) {
                 row.remove();
                 subjectRows.splice(index, 1);
-                // Re-index
                 document.querySelectorAll('.ms-subject, .ms-total, .ms-obtained').forEach(el => {
                     const idx = parseInt(el.dataset.index);
                     if (idx > index) {
@@ -2619,7 +2858,6 @@
             document.getElementById('msPercentage').value = percentage.toFixed(1) + '%';
             document.getElementById('msGrade').value = getGrade(percentage);
             
-            // Update subject rows data
             document.querySelectorAll('.ms-subject').forEach(el => {
                 const idx = parseInt(el.dataset.index);
                 if (subjectRows[idx]) {
@@ -2680,7 +2918,6 @@
             
             AppData.marksheets.push(marksheet);
             
-            // Also save to results
             AppData.results.push({
                 studentId: studentId,
                 studentName: student.name,
@@ -2750,7 +2987,7 @@
             const statusColor = percentage >= 33 ? '#38a169' : '#e53e3e';
             
             display.innerHTML = `
-                <div class="certificate-wrapper">
+                <div class="certificate-wrapper" id="marksheetPrintArea">
                     <div class="cert-header">
                         <div class="cert-logo">${logoHtml}</div>
                         <div class="school-name">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
@@ -2822,7 +3059,7 @@
         }
 
         // ================================================================
-        // RESULTS - List all results
+        // RESULTS
         // ================================================================
 
         function renderResults() {
@@ -2832,10 +3069,14 @@
             let html = `
                 <div class="card">
                     <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Results <span class="badge">${results.length}</span></div>
-                    <div class="table-wrap">
+                    <div class="form-row">
+                        <button class="btn btn-info" onclick="exportResultsPDF()">📄 PDF</button>
+                        <button class="btn btn-warning" onclick="exportResultsExcel()">📊 Excel</button>
+                    </div>
+                    <div id="resultsTableWrap" class="table-wrap">
                         <table>
                             <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Class</th><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
-                            <tbody>
+                            <tbody id="resultsTableBody">
                     `;
             
             if (results.length === 0) {
@@ -2862,8 +3103,75 @@
             container.innerHTML = html;
         }
 
+        function exportResultsPDF() {
+            const content = document.getElementById('resultsTableWrap').innerHTML;
+            if (!content || content.includes('No results')) {
+                showToast('⚠️ No data to export!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Results Report - ${getTodayDate()}</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th { background: #2b6cb0; color: #fff; border: 1px solid #2b6cb0; padding: 8px; font-weight: 900; }
+                    td { border: 1px solid #ddd; padding: 6px; }
+                    tr:nth-child(even) td { background: #f7fafc; }
+                    h1 { color: #2b6cb0; }
+                </style>
+                </head><body>
+                <h1>📊 Results Report</h1>
+                <p>Generated on: ${getTodayWithMonthName()}</p>
+                <table>
+                    <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Class</th><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
+                    <tbody>${content}</tbody>
+                </table>
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportResultsExcel() {
+            const rows = document.querySelectorAll('#resultsTableBody tr');
+            if (rows.length === 0 || (rows.length === 1 && rows[0].textContent.includes('No results'))) {
+                showToast('⚠️ No data to export!', 'error');
+                return;
+            }
+            
+            const data = [];
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 0) {
+                    data.push({
+                        'Date': cells[0]?.textContent || 'N/A',
+                        'Student': cells[1]?.textContent || 'N/A',
+                        'Admission No': cells[2]?.textContent || 'N/A',
+                        'Class': cells[3]?.textContent || 'N/A',
+                        'Exam': cells[4]?.textContent || 'N/A',
+                        'Total Marks': cells[5]?.textContent || 0,
+                        'Obtained Marks': cells[6]?.textContent || 0,
+                        'Percentage': cells[7]?.textContent || '0%',
+                        'Grade': cells[8]?.textContent || 'N/A',
+                        'Status': cells[9]?.textContent || 'N/A'
+                    });
+                }
+            });
+            
+            exportToExcel(data, 'Results_Report_' + getTodayDate());
+        }
+
         // ================================================================
-        // CERTIFICATES - Leaving, Character, Birth (Simplified - kept from before)
+        // CERTIFICATES - Leaving, Character, Birth (Shortened)
         // ================================================================
 
         function renderLeavingCertificate() {
@@ -2882,6 +3190,7 @@
                         </select>
                         <button class="btn btn-primary" onclick="generateLeavingCertificate()">📄 Generate</button>
                         <button class="btn btn-success" onclick="printLeavingCertificate()">🖨️ Print</button>
+                        <button class="btn btn-info" onclick="exportLeavingCertificatePDF()">📄 PDF</button>
                     </div>
                     
                     <div class="admission-form-grid" style="margin-top:10px;">
@@ -2957,7 +3266,7 @@
             saveToStorage();
             
             display.innerHTML = `
-                <div class="certificate-wrapper">
+                <div class="certificate-wrapper" id="lcCertArea">
                     <div class="cert-header">
                         <div class="cert-logo">${logoHtml}</div>
                         <div class="school-name">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
@@ -3013,9 +3322,39 @@
             win.document.write(`
                 <html><head><title>School Leaving Certificate</title>
                 <style>
-                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #1a1a1a; color: #fff; }
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
                     ${document.querySelector('style').textContent}
                     @media print { body { padding: 0; background: #fce4ec !important; } }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportLeavingCertificatePDF() {
+            const content = document.getElementById('lcDisplay').innerHTML;
+            if (!content || content.includes('Select a student')) {
+                showToast('⚠️ Generate a certificate first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Leaving Certificate PDF</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    ${document.querySelector('style').textContent}
+                    .btn, .form-row, .no-print { display: none !important; }
                 </style>
                 </head><body>
                 ${content}
@@ -3052,6 +3391,7 @@
                         </select>
                         <button class="btn btn-primary" onclick="generateCharacterCertificate()">📄 Generate</button>
                         <button class="btn btn-success" onclick="printCharacterCertificate()">🖨️ Print</button>
+                        <button class="btn btn-info" onclick="exportCharacterCertificatePDF()">📄 PDF</button>
                     </div>
                     
                     <div class="admission-form-grid" style="margin-top:10px;">
@@ -3136,7 +3476,7 @@
             saveToStorage();
             
             display.innerHTML = `
-                <div class="certificate-wrapper">
+                <div class="certificate-wrapper" id="ccCertArea">
                     <div class="cert-header">
                         <div class="cert-logo">${logoHtml}</div>
                         <div class="school-name">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
@@ -3188,9 +3528,39 @@
             win.document.write(`
                 <html><head><title>Character Certificate</title>
                 <style>
-                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #1a1a1a; color: #fff; }
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
                     ${document.querySelector('style').textContent}
                     @media print { body { padding: 0; background: #fce4ec !important; } }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportCharacterCertificatePDF() {
+            const content = document.getElementById('ccDisplay').innerHTML;
+            if (!content || content.includes('Select a student')) {
+                showToast('⚠️ Generate a certificate first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Character Certificate PDF</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    ${document.querySelector('style').textContent}
+                    .btn, .form-row, .no-print { display: none !important; }
                 </style>
                 </head><body>
                 ${content}
@@ -3227,6 +3597,7 @@
                         </select>
                         <button class="btn btn-primary" onclick="generateBirthCertificate()">📄 Generate</button>
                         <button class="btn btn-success" onclick="printBirthCertificate()">🖨️ Print</button>
+                        <button class="btn btn-info" onclick="exportBirthCertificatePDF()">📄 PDF</button>
                     </div>
                     
                     <div class="admission-form-grid" style="margin-top:10px;">
@@ -3324,7 +3695,7 @@
             saveToStorage();
             
             display.innerHTML = `
-                <div class="certificate-wrapper">
+                <div class="certificate-wrapper" id="bcCertArea">
                     <div class="cert-header">
                         <div class="cert-logo">${logoHtml}</div>
                         <div class="school-name">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
@@ -3371,9 +3742,39 @@
             win.document.write(`
                 <html><head><title>Birth Certificate</title>
                 <style>
-                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #1a1a1a; color: #fff; }
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
                     ${document.querySelector('style').textContent}
                     @media print { body { padding: 0; background: #fce4ec !important; } }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportBirthCertificatePDF() {
+            const content = document.getElementById('bcDisplay').innerHTML;
+            if (!content || content.includes('Select a student')) {
+                showToast('⚠️ Generate a certificate first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Birth Certificate PDF</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    ${document.querySelector('style').textContent}
+                    .btn, .form-row, .no-print { display: none !important; }
                 </style>
                 </head><body>
                 ${content}
@@ -3409,6 +3810,7 @@
                         </select>
                         <button class="btn btn-primary" onclick="generateIDCard()">📄 Generate</button>
                         <button class="btn btn-success" onclick="printIDCard()">🖨️ Print</button>
+                        <button class="btn btn-info" onclick="exportIDCardPDF()">📄 PDF</button>
                     </div>
                     <div id="idDisplay" style="min-height:100px;padding:10px;">
                         <p style="color:var(--text-muted);text-align:center;padding:20px;">Select a student and click Generate</p>
@@ -3438,7 +3840,7 @@
                 `<span class="no-photo" style="font-size:32px;">👤</span>`;
             
             display.innerHTML = `
-                <div style="background:#fff;border:3px solid #2b6cb0;border-radius:12px;padding:16px 20px;max-width:350px;margin:10px auto;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
+                <div id="idCardArea" style="background:#fff;border:3px solid #2b6cb0;border-radius:12px;padding:16px 20px;max-width:350px;margin:10px auto;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
                     <div style="width:50px;height:50px;border-radius:50%;border:2px solid #d69e2e;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
                     <div style="font-size:16px;font-weight:900;color:#2b6cb0;line-height:1.2;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
                     <div style="font-size:11px;color:#2b6cb0;">${settings.schoolAddress || 'NOWSHERA'}</div>
@@ -3449,7 +3851,7 @@
                         <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#2b6cb0;">Roll No</span><span style="font-weight:600;">${student.rollNo || 'N/A'}</span></div>
                         <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#2b6cb0;">Name</span><span style="font-weight:600;">${student.name}</span></div>
                         <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#2b6cb0;">Father</span><span style="font-weight:600;">${student.fatherName}</span></div>
-                        <div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="font-weight:900;color:#2b6cb0;">Class</span><span style="font-weight:600;">${student.currentClass} (${student.section || 'N/A'})</span></div>
+                        <div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="font-weight:900;color:#2b6cb0;">Class</span><span style="font-weight:600;">${student.currentClass}</span></div>
                     </div>
                     <div style="background:#d69e2e;color:#fff;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:900;letter-spacing:2px;margin-top:4px;">🎓 Success with Wisdom!</div>
                 </div>
@@ -3467,11 +3869,39 @@
             win.document.write(`
                 <html><head><title>ID Card</title>
                 <style>
-                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #1a1a1a; color: #fff; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; display:flex; justify-content:center; align-items:center; min-height:100vh; }
                     ${document.querySelector('style').textContent}
                     @media print { body { padding: 0; background: #fce4ec !important; } }
-                    .id-card-wrapper { background: #ffffff !important; border: 2px solid #d81b60 !important; color: #333333 !important; }
-                    .id-card-wrapper div { color: #333333 !important; }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportIDCardPDF() {
+            const content = document.getElementById('idDisplay').innerHTML;
+            if (!content || content.includes('Select a student')) {
+                showToast('⚠️ Generate an ID card first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>ID Card PDF</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+                    ${document.querySelector('style').textContent}
+                    .btn, .form-row, .no-print { display: none !important; }
                 </style>
                 </head><body>
                 ${content}
@@ -3515,6 +3945,7 @@
                         </select>
                         <button class="btn btn-primary" onclick="generateAdmitCard()">📄 Generate</button>
                         <button class="btn btn-success" onclick="printAdmitCard()">🖨️ Print</button>
+                        <button class="btn btn-info" onclick="exportAdmitCardPDF()">📄 PDF</button>
                     </div>
                     <div id="admitDisplay" style="min-height:100px;padding:10px;">
                         <p style="color:var(--text-muted);text-align:center;padding:20px;">Select a student and click Generate</p>
@@ -3545,7 +3976,7 @@
                 `<span class="no-photo" style="font-size:32px;">👤</span>`;
             
             display.innerHTML = `
-                <div style="background:#fff;border:3px solid #2b6cb0;border-radius:12px;padding:16px 20px;max-width:350px;margin:10px auto;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
+                <div id="admitCardArea" style="background:#fff;border:3px solid #2b6cb0;border-radius:12px;padding:16px 20px;max-width:350px;margin:10px auto;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
                     <div style="width:50px;height:50px;border-radius:50%;border:2px solid #d69e2e;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
                     <div style="font-size:16px;font-weight:900;color:#2b6cb0;line-height:1.2;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
                     <div style="font-size:11px;color:#2b6cb0;">${settings.schoolAddress || 'NOWSHERA'}</div>
@@ -3557,7 +3988,7 @@
                         <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#2b6cb0;">Roll No</span><span style="font-weight:600;">${student.rollNo || 'N/A'}</span></div>
                         <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#2b6cb0;">Name</span><span style="font-weight:600;">${student.name}</span></div>
                         <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#2b6cb0;">Father</span><span style="font-weight:600;">${student.fatherName}</span></div>
-                        <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#2b6cb0;">Class</span><span style="font-weight:600;">${student.currentClass} (${student.section || 'N/A'})</span></div>
+                        <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#2b6cb0;">Class</span><span style="font-weight:600;">${student.currentClass}</span></div>
                         <div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="font-weight:900;color:#2b6cb0;">Exam</span><span style="font-weight:600;">${exam}</span></div>
                     </div>
                     <div style="background:#d69e2e;color:#fff;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:900;letter-spacing:2px;margin-top:4px;">🎓 Success with Wisdom!</div>
@@ -3576,11 +4007,39 @@
             win.document.write(`
                 <html><head><title>Admit Card</title>
                 <style>
-                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #1a1a1a; color: #fff; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; display:flex; justify-content:center; align-items:center; min-height:100vh; }
                     ${document.querySelector('style').textContent}
                     @media print { body { padding: 0; background: #fce4ec !important; } }
-                    .admit-card-wrapper { background: #ffffff !important; border: 2px solid #d81b60 !important; color: #333333 !important; }
-                    .admit-card-wrapper div { color: #333333 !important; }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportAdmitCardPDF() {
+            const content = document.getElementById('admitDisplay').innerHTML;
+            if (!content || content.includes('Select a student')) {
+                showToast('⚠️ Generate an admit card first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Admit Card PDF</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+                    ${document.querySelector('style').textContent}
+                    .btn, .form-row, .no-print { display: none !important; }
                 </style>
                 </head><body>
                 ${content}
@@ -3598,7 +4057,7 @@
         }
 
         // ================================================================
-        // EMPLOYEES
+        // EMPLOYEES - With Delete, Edit, ID Card Print buttons
         // ================================================================
 
         function renderEmployees() {
@@ -3609,12 +4068,12 @@
                 <div class="card">
                     <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Employee Management <span class="badge">${employees.length}</span></div>
                     <div class="employee-form-grid">
-                        <div class="full-width"><label>Employee ID</label><input id="empId" readonly style="background:#f7fafc;font-weight:900;color:var(--accent-blue);" /></div>
+                        <div><label>Employee ID *</label><input id="empId" style="font-weight:900;" placeholder="Enter Employee ID" /></div>
                         <div><label>Name *</label><input id="empName" placeholder="Full name" /></div>
                         <div><label>Designation</label><select id="empDesignation">${getDesignationOptions('Teacher')}</select></div>
                         <div><label>Department</label><select id="empDepartment">${getDepartmentOptions('Teaching')}</select></div>
                         <div><label>Mobile No</label><input id="empMobile" placeholder="03XXXXXXXXX" /></div>
-                        <div><label>Status</label><select id="empStatus">${getStatusOptions('Currently-in')}</select></div>
+                        <div><label>Status</label><select id="empStatus">${getStatusOptions('Active')}</select></div>
                         <div><label>Basic Salary</label><input type="number" id="empSalary" value="0" /></div>
                         <div class="full-width">
                             <label>Employee Photo</label>
@@ -3636,12 +4095,12 @@
                     <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Employee List <span class="badge">${employees.length}</span></div>
                     <div class="table-wrap">
                         <table>
-                            <thead><tr><th>ID</th><th>Name</th><th>Designation</th><th>Status</th><th>Salary</th><th>Mobile</th></tr></thead>
-                            <tbody>
+                            <thead><tr><th>ID</th><th>Name</th><th>Designation</th><th>Status</th><th>Salary</th><th>Mobile</th><th>Actions</th></tr></thead>
+                            <tbody id="employeesTableBody">
                     `;
             
             if (employees.length === 0) {
-                html += `<tr><td colspan="6" style="padding:14px;color:var(--text-muted);text-align:center;">No employees added</td></tr>`;
+                html += `<tr><td colspan="7" style="padding:14px;color:var(--text-muted);text-align:center;">No employees added</td></tr>`;
             } else {
                 employees.forEach(e => {
                     const statusClass = e.status === 'Active' ? 'badge-active' : 'badge-inactive';
@@ -3652,13 +4111,21 @@
                         <td><span class="badge-status ${statusClass}">${e.status}</span></td>
                         <td>${formatCurrency(e.salary || 0)}</td>
                         <td>${e.mobile || 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-info btn-xs" onclick="viewEmployee('${e.id}')">📄</button>
+                            <button class="btn btn-primary btn-xs" onclick="editEmployee('${e.id}')">✏️</button>
+                            <button class="btn btn-danger btn-xs" onclick="deleteEmployee('${e.id}')">🗑️</button>
+                            <button class="btn btn-warning btn-xs" onclick="printEmployeeIDCardFromList('${e.id}')">🪪</button>
+                        </td>
                     </tr>`;
                 });
             }
             
             html += `</tbody></table></div></div>`;
             container.innerHTML = html;
-            document.getElementById('empId').value = generateEmployeeId();
+            
+            const nextNum = AppData.employees.length + 1;
+            document.getElementById('empId').value = 'EMP' + String(nextNum).padStart(4, '0');
         }
 
         function previewEmployeePhoto(input) {
@@ -3675,7 +4142,8 @@
         }
 
         function clearEmployeeForm() {
-            document.getElementById('empId').value = generateEmployeeId();
+            const nextNum = AppData.employees.length + 1;
+            document.getElementById('empId').value = 'EMP' + String(nextNum).padStart(4, '0');
             document.getElementById('empName').value = '';
             document.getElementById('empDesignation').value = 'Teacher';
             document.getElementById('empDepartment').value = 'Teaching';
@@ -3690,12 +4158,18 @@
 
         function saveEmployee() {
             const name = document.getElementById('empName').value.trim();
+            const empId = document.getElementById('empId').value.trim();
+            
             if (!name) {
                 showToast('⚠️ Employee Name is required!', 'error');
                 return;
             }
             
-            const empId = document.getElementById('empId').value;
+            if (!empId) {
+                showToast('⚠️ Employee ID is required!', 'error');
+                return;
+            }
+            
             const existing = AppData.employees.find(e => e.empId === empId);
             if (existing) {
                 if (!confirm(`Update employee ${name}?`)) return;
@@ -3725,8 +4199,282 @@
             showToast(`✅ Employee ${name} saved! ID: ${empId}`, 'success');
         }
 
+        function viewEmployee(id) {
+            const employee = getEmployee(id);
+            if (!employee) return;
+            
+            let msg = '═══════════════════════════════════════\n';
+            msg += '  📋 EMPLOYEE DETAILS\n';
+            msg += '═══════════════════════════════════════\n\n';
+            msg += `Employee ID: ${employee.empId}\n`;
+            msg += `Name: ${employee.name}\n`;
+            msg += `Designation: ${employee.designation || 'N/A'}\n`;
+            msg += `Department: ${employee.department || 'N/A'}\n`;
+            msg += `Mobile: ${employee.mobile || 'N/A'}\n`;
+            msg += `Status: ${employee.status}\n`;
+            msg += `Salary: ${formatCurrency(employee.salary || 0)}\n`;
+            msg += '═══════════════════════════════════════\n';
+            alert(msg);
+        }
+
+        function editEmployee(id) {
+            const employee = getEmployee(id);
+            if (!employee) return;
+            
+            let content = `
+                <div class="employee-form-grid">
+                    <div class="full-width"><label>Employee ID</label><input id="editEmpId" value="${employee.empId}" style="font-weight:900;" /></div>
+                    <div><label>Name *</label><input id="editEmpName" value="${employee.name}" /></div>
+                    <div><label>Designation</label>
+                        <select id="editEmpDesignation">${getDesignationOptions(employee.designation || 'Teacher')}</select>
+                    </div>
+                    <div><label>Department</label>
+                        <select id="editEmpDepartment">${getDepartmentOptions(employee.department || 'Teaching')}</select>
+                    </div>
+                    <div><label>Mobile No</label><input id="editEmpMobile" value="${employee.mobile || ''}" /></div>
+                    <div><label>Status</label>
+                        <select id="editEmpStatus">${getStatusOptions(employee.status || 'Active')}</select>
+                    </div>
+                    <div><label>Basic Salary</label><input type="number" id="editEmpSalary" value="${employee.salary || 0}" /></div>
+                    <div class="full-width">
+                        <div class="btn-group">
+                            <button class="btn btn-success" onclick="saveEditEmployee('${id}')">💾 Save</button>
+                            <button class="btn btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            openModal('✏️ Edit Employee', content);
+        }
+
+        function saveEditEmployee(id) {
+            const employee = getEmployee(id);
+            if (!employee) return;
+            
+            const name = document.getElementById('editEmpName').value.trim();
+            const empId = document.getElementById('editEmpId').value.trim();
+            
+            if (!name) {
+                showToast('⚠️ Name is required!', 'error');
+                return;
+            }
+            
+            if (!empId) {
+                showToast('⚠️ Employee ID is required!', 'error');
+                return;
+            }
+            
+            employee.empId = empId;
+            employee.name = name;
+            employee.designation = document.getElementById('editEmpDesignation').value;
+            employee.department = document.getElementById('editEmpDepartment').value;
+            employee.mobile = document.getElementById('editEmpMobile').value.trim();
+            employee.status = document.getElementById('editEmpStatus').value;
+            employee.salary = parseFloat(document.getElementById('editEmpSalary').value) || 0;
+            
+            saveToStorage();
+            closeModal();
+            renderEmployees();
+            showToast('✅ Employee updated!', 'success');
+        }
+
+        function deleteEmployee(id) {
+            if (!confirm('Delete this employee?')) return;
+            const employee = getEmployee(id);
+            AppData.employees = AppData.employees.filter(e => e.id !== id);
+            saveToStorage();
+            renderEmployees();
+            showToast(`🗑️ Employee ${employee.name} deleted!`, 'info');
+        }
+
+        function printEmployeeIDCardFromList(id) {
+            const employee = getEmployee(id);
+            if (!employee) {
+                showToast('⚠️ Employee not found!', 'error');
+                return;
+            }
+            
+            const settings = AppData.schoolSettings || {};
+            const logoHtml = getLogoHTML(40);
+            const empPhoto = employee.photo ? 
+                `<img src="${employee.photo}" alt="Photo" style="width:100%;height:100%;object-fit:cover;" />` : 
+                `<span class="no-photo" style="font-size:32px;">👤</span>`;
+            
+            const content = `
+                <div class="emp-id-card">
+                    <div style="width:50px;height:50px;border-radius:50%;border:2px solid #d69e2e;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
+                    <div style="font-size:16px;font-weight:900;color:#2b6cb0;line-height:1.2;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                    <div style="font-size:11px;color:#2b6cb0;">${settings.schoolAddress || 'NOWSHERA'}</div>
+                    <div style="font-size:10px;color:#d69e2e;margin-bottom:4px;">✨ Success with Wisdom ✨</div>
+                    <div style="display:inline-block;background:#2b6cb0;color:#d69e2e;padding:2px 16px;border-radius:4px;font-size:12px;font-weight:900;letter-spacing:2px;margin-bottom:6px;">STAFF ID</div>
+                    <div class="emp-photo">${empPhoto}</div>
+                    <div class="emp-details">
+                        <div class="row"><span class="label">Employee ID</span><span class="value">${employee.empId}</span></div>
+                        <div class="row"><span class="label">Name</span><span class="value">${employee.name}</span></div>
+                        <div class="row"><span class="label">Designation</span><span class="value">${employee.designation || 'N/A'}</span></div>
+                        <div class="row"><span class="label">Department</span><span class="value">${employee.department || 'N/A'}</span></div>
+                        <div class="row"><span class="label">Mobile</span><span class="value">${employee.mobile || 'N/A'}</span></div>
+                        <div class="row"><span class="label">Status</span><span class="value">${employee.status || 'Active'}</span></div>
+                    </div>
+                    <div style="background:#d69e2e;color:#fff;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:900;letter-spacing:2px;margin-top:4px;">🎓 Success with Wisdom!</div>
+                </div>
+            `;
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Employee ID Card</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+                    ${document.querySelector('style').textContent}
+                    @media print { body { padding: 0; background: #fce4ec !important; } }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
         // ================================================================
-        // PAY SLIP - Complete with Credit and Debit
+        // EMPLOYEE ID CARD
+        // ================================================================
+
+        function renderEmployeeIDCard() {
+            const container = document.getElementById('contentArea');
+            const employees = AppData.employees;
+            
+            let html = `
+                <div class="card">
+                    <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Employee ID Card <span class="badge">Print Module</span></div>
+                    <div class="form-row">
+                        <label>Employee:</label>
+                        <select id="empIdCardSelect">
+                            <option value="">-- Select Employee --</option>
+                            ${employees.map(e => `<option value="${e.id}">${e.empId} - ${e.name}</option>`).join('')}
+                        </select>
+                        <button class="btn btn-primary" onclick="generateEmployeeIDCard()">📄 Generate</button>
+                        <button class="btn btn-success" onclick="printEmployeeIDCard()">🖨️ Print</button>
+                        <button class="btn btn-info" onclick="exportEmployeeIDCardPDF()">📄 PDF</button>
+                    </div>
+                    <div id="empIdCardDisplay" style="min-height:100px;padding:10px;">
+                        <p style="color:var(--text-muted);text-align:center;padding:20px;">Select an employee and click Generate</p>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function generateEmployeeIDCard() {
+            const employeeId = document.getElementById('empIdCardSelect').value;
+            const display = document.getElementById('empIdCardDisplay');
+            
+            if (!employeeId) {
+                showToast('⚠️ Select an employee!', 'error');
+                return;
+            }
+            
+            const employee = getEmployee(employeeId);
+            if (!employee) return;
+            
+            const settings = AppData.schoolSettings || {};
+            const logoHtml = getLogoHTML(40);
+            const empPhoto = employee.photo ? 
+                `<img src="${employee.photo}" alt="Photo" style="width:100%;height:100%;object-fit:cover;" />` : 
+                `<span class="no-photo" style="font-size:32px;">👤</span>`;
+            
+            display.innerHTML = `
+                <div id="empIdCardArea" class="emp-id-card">
+                    <div style="width:50px;height:50px;border-radius:50%;border:2px solid #d69e2e;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
+                    <div style="font-size:16px;font-weight:900;color:#2b6cb0;line-height:1.2;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                    <div style="font-size:11px;color:#2b6cb0;">${settings.schoolAddress || 'NOWSHERA'}</div>
+                    <div style="font-size:10px;color:#d69e2e;margin-bottom:4px;">✨ Success with Wisdom ✨</div>
+                    <div style="display:inline-block;background:#2b6cb0;color:#d69e2e;padding:2px 16px;border-radius:4px;font-size:12px;font-weight:900;letter-spacing:2px;margin-bottom:6px;">STAFF ID</div>
+                    <div class="emp-photo">${empPhoto}</div>
+                    <div class="emp-details">
+                        <div class="row"><span class="label">Employee ID</span><span class="value">${employee.empId}</span></div>
+                        <div class="row"><span class="label">Name</span><span class="value">${employee.name}</span></div>
+                        <div class="row"><span class="label">Designation</span><span class="value">${employee.designation || 'N/A'}</span></div>
+                        <div class="row"><span class="label">Department</span><span class="value">${employee.department || 'N/A'}</span></div>
+                        <div class="row"><span class="label">Mobile</span><span class="value">${employee.mobile || 'N/A'}</span></div>
+                        <div class="row"><span class="label">Status</span><span class="value">${employee.status || 'Active'}</span></div>
+                    </div>
+                    <div style="background:#d69e2e;color:#fff;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:900;letter-spacing:2px;margin-top:4px;">🎓 Success with Wisdom!</div>
+                </div>
+            `;
+        }
+
+        function printEmployeeIDCard() {
+            const content = document.getElementById('empIdCardDisplay').innerHTML;
+            if (!content || content.includes('Select an employee')) {
+                showToast('⚠️ Generate an ID card first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Employee ID Card</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+                    ${document.querySelector('style').textContent}
+                    @media print { body { padding: 0; background: #fce4ec !important; } }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportEmployeeIDCardPDF() {
+            const content = document.getElementById('empIdCardDisplay').innerHTML;
+            if (!content || content.includes('Select an employee')) {
+                showToast('⚠️ Generate an ID card first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Employee ID Card PDF</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+                    ${document.querySelector('style').textContent}
+                    .btn, .form-row, .no-print { display: none !important; }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        // ================================================================
+        // PAY SLIP - Complete Salary Sheet with all columns
         // ================================================================
 
         function renderPaySlip() {
@@ -3735,7 +4483,7 @@
             
             let html = `
                 <div class="card">
-                    <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Pay Slip <span class="badge">Print Module</span></div>
+                    <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Salary Sheet / Pay Slip <span class="badge">Complete</span></div>
                     
                     <div class="form-row">
                         <label>Employee:</label>
@@ -3747,6 +4495,10 @@
                         <select id="psMonth">${getMonthOptions(MONTHS[new Date().getMonth()])}</select>
                         <label>Year:</label>
                         <select id="psYear">${getYearOptions(new Date().getFullYear())}</select>
+                        <button class="btn btn-primary" onclick="generatePaySlip()">📄 Generate</button>
+                        <button class="btn btn-success" onclick="printPaySlip()">🖨️ Print</button>
+                        <button class="btn btn-info" onclick="exportPaySlipPDF()">📄 PDF</button>
+                        <button class="btn btn-warning" onclick="exportPaySlipExcel()">📊 Excel</button>
                     </div>
                     
                     <div class="employee-form-grid">
@@ -3768,11 +4520,6 @@
                         <div><label>Payment Mode</label>
                             <select id="psPaymentMode">${getPaymentModeOptions('Cash')}</select>
                         </div>
-                    </div>
-                    
-                    <div class="btn-group">
-                        <button class="btn btn-primary" onclick="generatePaySlip()">📄 Generate</button>
-                        <button class="btn btn-success" onclick="printPaySlip()">🖨️ Print</button>
                     </div>
                     
                     <div id="paySlipDisplay" style="min-height:100px;padding:10px;margin-top:10px;">
@@ -3851,7 +4598,7 @@
             const netSalary = totalCredit - totalDebit;
             
             display.innerHTML = `
-                <div class="payslip-wrapper">
+                <div class="payslip-wrapper" id="paySlipArea">
                     <div class="ps-header">
                         <div class="ps-logo">${logoHtml}</div>
                         <div class="ps-title">
@@ -3859,7 +4606,13 @@
                             <div class="subtitle">${settings.schoolAddress || 'NOWSHERA'}</div>
                         </div>
                     </div>
+                    
+                    <div style="text-align:center;font-size:16px;font-weight:900;color:#2b6cb0;margin:4px 0;">
+                        Salary for the Month of ${month} ${year}
+                    </div>
+                    
                     <div class="ps-badge">PAY SLIP</div>
+                    
                     <div class="ps-employee">
                         <div class="ps-photo">${employeePhoto}</div>
                         <div class="ps-details">
@@ -3873,19 +4626,24 @@
                     </div>
                     
                     <table class="ps-table">
-                        <thead><tr><th>Particulars</th><th>Amount (Rs.)</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Particulars</th>
+                                <th>Amount (Rs.)</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr class="credit-row"><td>Basic Salary</td><td>${formatCurrency(basic)}</td></tr>
                             <tr class="credit-row"><td>Attendance Allowance</td><td>${formatCurrency(attendance)}</td></tr>
                             <tr class="credit-row"><td>Spoken Allowance</td><td>${formatCurrency(spoken)}</td></tr>
                             <tr class="credit-row"><td>Productivity Allowance</td><td>${formatCurrency(productivity)}</td></tr>
                             <tr class="credit-row"><td>Stay Back Allowance</td><td>${formatCurrency(stayBack)}</td></tr>
-                            <tr style="font-weight:900;background:#e8f5e9;"><td>Total Credits</td><td style="color:#38a169;">${formatCurrency(totalCredit)}</td></tr>
+                            <tr style="font-weight:900;background:#e8f5e9;"><td><strong>Total Credit</strong></td><td style="color:#38a169;font-weight:900;">${formatCurrency(totalCredit)}</td></tr>
                             <tr class="debit-row"><td>Security Deduction</td><td>${formatCurrency(security)}</td></tr>
                             <tr class="debit-row"><td>Advanced Paid</td><td>${formatCurrency(advanced)}</td></tr>
                             <tr class="debit-row"><td>Absentee</td><td>${formatCurrency(absentee)}</td></tr>
-                            <tr style="font-weight:900;background:#fee2e2;"><td>Total Debits</td><td style="color:#e53e3e;">${formatCurrency(totalDebit)}</td></tr>
-                            <tr class="total-row"><td style="font-size:14px;">NET SALARY</td><td style="font-size:16px;color:#2b6cb0;">${formatCurrency(netSalary)}</td></tr>
+                            <tr style="font-weight:900;background:#fee2e2;"><td><strong>Total Debit</strong></td><td style="color:#e53e3e;font-weight:900;">${formatCurrency(totalDebit)}</td></tr>
+                            <tr class="total-row"><td style="font-size:14px;"><strong>NET SALARY</strong></td><td style="font-size:16px;color:#2b6cb0;font-weight:900;">${formatCurrency(netSalary)}</td></tr>
                         </tbody>
                     </table>
                     
@@ -3896,7 +4654,7 @@
                     
                     <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:6px;border-top:2px solid #2b6cb0;flex-wrap:wrap;gap:6px;font-size:10px;color:#2b6cb0;">
                         <div>📅 Date: ${getTodayDate()}</div>
-                        <div>💳 Payment: ${paymentMode}</div>
+                        <div>💳 Payment Mode: ${paymentMode}</div>
                     </div>
                     
                     <div class="ps-footer">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'} — Success with Wisdom</div>
@@ -3913,21 +4671,11 @@
             
             const win = window.open('', '_blank');
             win.document.write(`
-                <html><head><title>Pay Slip</title>
+                <html><head><title>Pay Slip - ${getTodayDate()}</title>
                 <style>
-                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #1a1a1a; color: #fff; }
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
                     ${document.querySelector('style').textContent}
                     @media print { body { padding: 0; background: #fce4ec !important; } }
-                    .payslip-wrapper { background: #ffffff !important; border: 2px solid #d81b60 !important; color: #333333 !important; }
-                    .payslip-wrapper .ps-title h1 { color: #d81b60 !important; }
-                    .payslip-wrapper .ps-details .label { color: #d81b60 !important; }
-                    .payslip-wrapper .ps-details .value { color: #333333 !important; }
-                    .payslip-wrapper .ps-table td { border: 1px solid #f8bbd0 !important; }
-                    .payslip-wrapper .ps-table .credit-row { background: #e8f5e9 !important; }
-                    .payslip-wrapper .ps-table .debit-row { background: #ffebee !important; }
-                    .payslip-wrapper .ps-table .total-row { background: #e3f2fd !important; }
-                    .payslip-wrapper .ps-net { background: #d81b60 !important; color: #ffffff !important; }
-                    .payslip-wrapper .ps-footer { border-top: 2px solid #d81b60 !important; color: #d81b60 !important; }
                 </style>
                 </head><body>
                 ${content}
@@ -3944,8 +4692,80 @@
             win.document.close();
         }
 
+        function exportPaySlipPDF() {
+            const content = document.getElementById('paySlipDisplay').innerHTML;
+            if (!content || content.includes('Select employee')) {
+                showToast('⚠️ Generate pay slip first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Pay Slip PDF - ${getTodayDate()}</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    ${document.querySelector('style').textContent}
+                    .btn, .form-row, .no-print { display: none !important; }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportPaySlipExcel() {
+            const employeeId = document.getElementById('psEmployee').value;
+            if (!employeeId) {
+                showToast('⚠️ Select an employee!', 'error');
+                return;
+            }
+            
+            const employee = getEmployee(employeeId);
+            if (!employee) return;
+            
+            const basic = parseFloat(document.getElementById('psBasic').value) || 0;
+            const attendance = parseFloat(document.getElementById('psAttendanceAllowance').value) || 0;
+            const spoken = parseFloat(document.getElementById('psSpokenAllowance').value) || 0;
+            const productivity = parseFloat(document.getElementById('psProductivityAllowance').value) || 0;
+            const stayBack = parseFloat(document.getElementById('psStayBackAllowance').value) || 0;
+            const security = parseFloat(document.getElementById('psSecurityDeduction').value) || 0;
+            const advanced = parseFloat(document.getElementById('psAdvancedPaid').value) || 0;
+            const absentee = parseFloat(document.getElementById('psAbsentee').value) || 0;
+            
+            const data = [{
+                'Employee ID': employee.empId,
+                'Name': employee.name,
+                'Designation': employee.designation || 'N/A',
+                'Department': employee.department || 'N/A',
+                'Basic Salary': basic,
+                'Attendance Allowance': attendance,
+                'Spoken Allowance': spoken,
+                'Productivity Allowance': productivity,
+                'Stay Back Allowance': stayBack,
+                'Total Credit': basic + attendance + spoken + productivity + stayBack,
+                'Security Deduction': security,
+                'Advanced Paid': advanced,
+                'Absentee': absentee,
+                'Total Debit': security + advanced + absentee,
+                'Net Salary': (basic + attendance + spoken + productivity + stayBack) - (security + advanced + absentee),
+                'Payment Mode': document.getElementById('psPaymentMode').value,
+                'Month': document.getElementById('psMonth').value + ' ' + document.getElementById('psYear').value
+            }];
+            
+            exportToExcel(data, 'Salary_Sheet_' + employee.name + '_' + getTodayDate());
+        }
+
         // ================================================================
-        // EXPENDITURE - Item Name, Qty, Rate, Total
+        // EXPENDITURE - With PDF and Print options
         // ================================================================
 
         let expenseItems = [];
@@ -3974,9 +4794,12 @@
                         <input type="date" id="expDate" value="${getTodayDateInput()}" />
                         <button class="btn btn-success" onclick="saveExpenditure()">💾 Save</button>
                         <button class="btn btn-warning" onclick="clearExpenditure()">🔄 Clear</button>
+                        <button class="btn btn-info" onclick="exportExpenditurePDF()">📄 PDF</button>
+                        <button class="btn btn-success" onclick="printExpenditure()">🖨️ Print</button>
+                        <button class="btn btn-warning" onclick="exportExpenditureExcel()">📊 Excel</button>
                     </div>
                     
-                    <div class="table-wrap" style="margin-top:10px;">
+                    <div id="expTableWrap" class="table-wrap" style="margin-top:10px;">
                         <table>
                             <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
                             <tbody id="expTableBody"></tbody>
@@ -4030,7 +4853,6 @@
             if (row) {
                 row.remove();
                 expenseItems.splice(index, 1);
-                // Re-index
                 document.querySelectorAll('.exp-item, .exp-qty, .exp-rate, .exp-total').forEach(el => {
                     const idx = parseInt(el.dataset.index);
                     if (idx > index) {
@@ -4126,8 +4948,108 @@
             showToast('🔄 Cleared!', 'info');
         }
 
+        function printExpenditure() {
+            const content = document.getElementById('expTableWrap').innerHTML;
+            if (!content || content.includes('No expenditures')) {
+                showToast('⚠️ No data to print!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Expenditure Report - ${getTodayDate()}</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th { background: #2b6cb0; color: #fff; border: 1px solid #2b6cb0; padding: 8px; font-weight: 900; }
+                    td { border: 1px solid #ddd; padding: 6px; }
+                    tr:nth-child(even) td { background: #f7fafc; }
+                    h1 { color: #2b6cb0; }
+                </style>
+                </head><body>
+                <h1>📊 Expenditure Report</h1>
+                <p>Generated on: ${getTodayWithMonthName()}</p>
+                <table>
+                    <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
+                    <tbody>${content}</tbody>
+                </table>
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportExpenditurePDF() {
+            const content = document.getElementById('expTableWrap').innerHTML;
+            if (!content || content.includes('No expenditures')) {
+                showToast('⚠️ No data to export!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Expenditure Report PDF - ${getTodayDate()}</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th { background: #2b6cb0; color: #fff; border: 1px solid #2b6cb0; padding: 8px; font-weight: 900; }
+                    td { border: 1px solid #ddd; padding: 6px; }
+                    tr:nth-child(even) td { background: #f7fafc; }
+                    h1 { color: #2b6cb0; }
+                </style>
+                </head><body>
+                <h1>📊 Expenditure Report</h1>
+                <p>Generated on: ${getTodayWithMonthName()}</p>
+                <table>
+                    <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
+                    <tbody>${content}</tbody>
+                </table>
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function exportExpenditureExcel() {
+            const rows = document.querySelectorAll('#expTableBody tr');
+            if (rows.length === 0 || (rows.length === 1 && rows[0].textContent.includes('No expenditures'))) {
+                showToast('⚠️ No data to export!', 'error');
+                return;
+            }
+            
+            const data = [];
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 0) {
+                    data.push({
+                        'Date': cells[0]?.textContent || 'N/A',
+                        'Item': cells[1]?.textContent || 'N/A',
+                        'Qty': cells[2]?.textContent || 'N/A',
+                        'Rate': cells[3]?.textContent || 'N/A',
+                        'Total': cells[4]?.textContent || 'N/A'
+                    });
+                }
+            });
+            
+            exportToExcel(data, 'Expenditure_Report_' + getTodayDate());
+        }
+
         // ================================================================
-        // REPORTS - All types
+        // REPORTS - With PDF, Excel, Print options
         // ================================================================
 
         function renderReports() {
@@ -4142,8 +5064,7 @@
                         <select id="rptType" onchange="toggleReportFields()">
                             <option value="admission">📋 Admission Report</option>
                             <option value="monthlyfee">💰 Monthly Fee Report</option>
-                            <option value="salary">💼 Salary Report</option>
-                            <option value="basicsalary">📊 Basic Salary Report</option>
+                            <option value="salary">💼 Salary Report (All Employees)</option>
                             <option value="expenditure">📤 Expenditure Report</option>
                             <option value="passing">✅ Passing Report</option>
                             <option value="failure">❌ Failure Report</option>
@@ -4161,6 +5082,8 @@
                         <select id="rptYear" style="display:none;">${getYearOptions(new Date().getFullYear())}</select>
                         <button class="btn btn-primary" onclick="generateReport()">📄 Generate</button>
                         <button class="btn btn-success" onclick="printReport()">🖨️ Print</button>
+                        <button class="btn btn-info" onclick="exportReportPDF()">📄 PDF</button>
+                        <button class="btn btn-warning" onclick="exportReportExcel()">📊 Excel</button>
                     </div>
                     
                     <div class="report-box" id="reportOutput">Select report type and click Generate</div>
@@ -4174,8 +5097,8 @@
         function toggleReportFields() {
             const type = document.getElementById('rptType').value;
             const showClass = ['admission', 'passing', 'failure', 'paidfee'].includes(type);
-            const showMonth = ['monthlyfee', 'salary', 'basicsalary', 'paidfee', 'arrears'].includes(type);
-            const showYear = ['monthlyfee', 'salary', 'basicsalary', 'paidfee', 'arrears'].includes(type);
+            const showMonth = ['monthlyfee', 'salary', 'paidfee', 'arrears'].includes(type);
+            const showYear = ['monthlyfee', 'salary', 'paidfee', 'arrears'].includes(type);
             
             document.getElementById('rptClass').style.display = showClass ? 'inline' : 'none';
             document.getElementById('rptMonth').style.display = showMonth ? 'inline' : 'none';
@@ -4218,6 +5141,7 @@
                     text += `Total Students: ${monthlyDeposits.length}\n\n`;
                     monthlyDeposits.forEach((d, i) => {
                         text += `${i+1}. ${d.studentName} (${d.admissionNo})\n`;
+                        text += `   Class: ${d.className || 'N/A'}\n`;
                         text += `   Amount: ${formatCurrency(d.amount)} | Mode: ${d.paymentMode}\n`;
                         text += `   Date: ${d.paymentDate || d.depositDate}\n\n`;
                     });
@@ -4228,23 +5152,30 @@
                     const totalSalary = AppData.employees.reduce((sum, e) => sum + (e.salary || 0), 0);
                     text += `Total Employees: ${AppData.employees.length}\n`;
                     text += `Total Salary: ${formatCurrency(totalSalary)}\n\n`;
-                    AppData.employees.forEach((e, i) => {
-                        text += `${i+1}. ${e.name} (${e.empId})\n`;
-                        text += `   Designation: ${e.designation || 'N/A'}\n`;
-                        text += `   Salary: ${formatCurrency(e.salary || 0)}\n`;
-                        text += `   Status: ${e.status}\n\n`;
-                    });
-                    break;
                     
-                case 'basicsalary':
-                    text += `📊 Basic Salary Report\n`;
-                    const totalBasic = AppData.employees.reduce((sum, e) => sum + (e.salary || 0), 0);
-                    text += `Total Employees: ${AppData.employees.length}\n`;
-                    text += `Total Basic Salary: ${formatCurrency(totalBasic)}\n\n`;
-                    AppData.employees.forEach((e, i) => {
-                        text += `${i+1}. ${e.name}\n`;
-                        text += `   Basic Salary: ${formatCurrency(e.salary || 0)}\n\n`;
+                    text += `┌─────────────┬──────────────────┬──────────────┬─────────────┬──────────────────┬──────────────────┬─────────────────┬─────────────────┬───────────┬──────────────┬─────────────┬──────────────┐\n`;
+                    text += `│     Name    │ Basic Salary     │ Attendance   │ Spoken      │ Productivity     │ Stay Back        │ Security        │ Advanced Paid  │ Absentee  │ Total Credit │ Total Debit │ Net Salary   │\n`;
+                    text += `├─────────────┼──────────────────┼──────────────┼─────────────┼──────────────────┼──────────────────┼─────────────────┼─────────────────┼───────────┼──────────────┼─────────────┼──────────────┤\n`;
+                    
+                    AppData.employees.forEach(e => {
+                        const name = (e.name || 'N/A').padEnd(11);
+                        const salary = formatCurrency(e.salary || 0).padEnd(16);
+                        const attendance = formatCurrency(0).padEnd(12);
+                        const spoken = formatCurrency(0).padEnd(11);
+                        const productivity = formatCurrency(0).padEnd(16);
+                        const stayBack = formatCurrency(0).padEnd(16);
+                        const security = formatCurrency(0).padEnd(15);
+                        const advanced = formatCurrency(0).padEnd(15);
+                        const absentee = formatCurrency(0).padEnd(9);
+                        const totalCredit = formatCurrency(e.salary || 0).padEnd(12);
+                        const totalDebit = formatCurrency(0).padEnd(11);
+                        const netSalary = formatCurrency(e.salary || 0).padEnd(12);
+                        
+                        text += `│ ${name} │ ${salary} │ ${attendance} │ ${spoken} │ ${productivity} │ ${stayBack} │ ${security} │ ${advanced} │ ${absentee} │ ${totalCredit} │ ${totalDebit} │ ${netSalary} │\n`;
                     });
+                    
+                    text += `└─────────────┴──────────────────┴──────────────┴─────────────┴──────────────────┴──────────────────┴─────────────────┴─────────────────┴───────────┴──────────────┴─────────────┴──────────────┘\n`;
+                    text += `\nTotal Employees: ${AppData.employees.length} | Total Salary: ${formatCurrency(totalSalary)}\n`;
                     break;
                     
                 case 'expenditure':
@@ -4307,7 +5238,8 @@
                     break;
                     
                 case 'paidfee':
-                    text += `💳 Paid Fee Report - ${className} - ${month} ${year}\n`;
+                    text += `💳 Paid Fee Report - Class Wise\n`;
+                    text += `Class: ${className} - ${month} ${year}\n`;
                     const paidStudents = AppData.feeDeposits.filter(d => d.month === month && d.year == year);
                     const classPaid = className !== 'All' ? paidStudents.filter(d => d.className === className) : paidStudents;
                     const totalPaid = classPaid.reduce((sum, d) => sum + d.amount, 0);
@@ -4337,13 +5269,84 @@
             win.document.write(`
                 <html><head><title>Report - ${getTodayDate()}</title>
                 <style>
-                    body { font-family: 'Courier New', monospace; padding: 20px; background: #1a1a1a; color: #fff; white-space: pre-wrap; font-size: 12px; }
+                    body { font-family: 'Courier New', monospace; padding: 20px; background: #fff; color: #333; white-space: pre-wrap; font-size: 12px; }
                     @media print { body { padding: 10px; background: #fce4ec !important; } }
                 </style>
                 </head><body>${content}</body></html>
             `);
             win.document.close();
             setTimeout(() => win.print(), 500);
+        }
+
+        function exportReportPDF() {
+            const content = document.getElementById('reportOutput').textContent;
+            if (!content || content.includes('Select report type')) {
+                showToast('⚠️ Generate report first!', 'error');
+                return;
+            }
+            
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Report PDF - ${getTodayDate()}</title>
+                <style>
+                    body { font-family: 'Courier New', monospace; padding: 20px; background: #fff; color: #333; white-space: pre-wrap; font-size: 12px; }
+                </style>
+                </head><body>${content}</body></html>
+            `);
+            win.document.close();
+            setTimeout(() => win.print(), 500);
+        }
+
+        function exportReportExcel() {
+            const type = document.getElementById('rptType').value;
+            const content = document.getElementById('reportOutput').textContent;
+            if (!content || content.includes('Select report type')) {
+                showToast('⚠️ Generate report first!', 'error');
+                return;
+            }
+            
+            // Parse the text report into Excel data
+            const lines = content.split('\n').filter(line => line.trim());
+            const data = [];
+            let headers = [];
+            let isTable = false;
+            
+            lines.forEach(line => {
+                if (line.includes('┌') || line.includes('├') || line.includes('└')) return;
+                if (line.includes('│')) {
+                    isTable = true;
+                    const parts = line.split('│').filter(p => p.trim());
+                    if (parts.length > 1) {
+                        const row = {};
+                        parts.forEach((p, i) => {
+                            const key = headers[i] || `Column${i+1}`;
+                            row[key] = p.trim();
+                        });
+                        data.push(row);
+                    }
+                } else if (!isTable) {
+                    // For non-table reports, create simple data
+                    const parts = line.split(':');
+                    if (parts.length > 1) {
+                        const row = {};
+                        row[parts[0].trim()] = parts.slice(1).join(':').trim();
+                        data.push(row);
+                    }
+                }
+            });
+            
+            // If no table data, create simple export
+            if (data.length === 0) {
+                const rows = content.split('\n').filter(line => line.trim());
+                rows.forEach((line, i) => {
+                    const row = {};
+                    row[`Line ${i+1}`] = line;
+                    data.push(row);
+                });
+            }
+            
+            const filename = type.toUpperCase() + '_Report_' + getTodayDate();
+            exportToExcel(data, filename);
         }
 
         // ================================================================
@@ -4429,7 +5432,7 @@
                             <strong>Last Backup:</strong> ${localStorage.getItem('educatorsLastBackup') || 'Never'}
                         </div>
                         <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;">
-                            <strong>Version:</strong> 4.0.0
+                            <strong>Version:</strong> 4.0.0 (Fixed)
                         </div>
                     </div>
                 </div>
