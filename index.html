@@ -4,11 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>THE EDUCATORS - School Management System</title>
-    <!-- Include SheetJS for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
     </script>
     <style>
-        /* ===== RESET & ROOT - AMAZON STYLE ===== */
+        /* ===== RESET & ROOT ===== */
         * {
             margin: 0;
             padding: 0;
@@ -26,7 +25,6 @@
             --accent-green: #067d62;
             --accent-red: #b12704;
             --accent-teal: #007185;
-            --accent-orange: #ff9900;
             --sidebar-bg: #131921;
             --sidebar-text: #ffffff;
             --sidebar-hover: #1a2530;
@@ -34,7 +32,7 @@
             --radius: 6px;
             --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
-            --font-family: 'Amazon Ember', Arial, Helvetica, sans-serif;
+            --font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
         }
         body {
             font-family: var(--font-family);
@@ -564,6 +562,39 @@
             background: rgba(255, 153, 0, 0.05);
         }
 
+        /* ===== SEARCH BAR ===== */
+        .search-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            align-items: center;
+            padding: 6px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .search-bar input,
+        .search-bar select {
+            padding: 5px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            background: var(--bg-card);
+            font-family: var(--font-family);
+        }
+        .search-bar input:focus,
+        .search-bar select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
+        }
+        .search-bar label {
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
         /* ===== BADGES ===== */
         .badge-status {
             padding: 2px 10px;
@@ -807,7 +838,7 @@
             flex: 1;
         }
 
-        /* ===== VOUCHER PRINT STYLES - 3 copies ===== */
+        /* ===== VOUCHER PRINT STYLES ===== */
         .voucher-print-area {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -824,6 +855,7 @@
             max-width: 320px;
             margin: 0 auto;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            page-break-inside: avoid;
         }
         .voucher-box .v-header {
             text-align: center;
@@ -1356,6 +1388,37 @@
             font-weight: 600;
         }
 
+        /* ===== FAMILY DISCOUNT ===== */
+        .family-group {
+            background: #f0fdf4;
+            border: 2px solid #067d62;
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin: 8px 0;
+        }
+        .family-group .family-title {
+            font-weight: 900;
+            color: #067d62;
+            font-size: 14px;
+        }
+        .family-group .family-member {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 0;
+            border-bottom: 1px dashed #d5d9dd;
+        }
+        .family-group .family-member:last-child {
+            border-bottom: none;
+        }
+        .discount-input {
+            max-width: 100px;
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 992px) {
             .sidebar {
@@ -1459,8 +1522,20 @@
                 font-size: 11pt !important;
                 line-height: 1.4 !important;
             }
-            h1, h2, h3, h4, .card-title, .cert-title, .ps-title h1, .school-name,
-            .v-school, .v-total, .ps-badge, .badge, .form-title, .section-title {
+            h1,
+            h2,
+            h3,
+            h4,
+            .card-title,
+            .cert-title,
+            .ps-title h1,
+            .school-name,
+            .v-school,
+            .v-total,
+            .ps-badge,
+            .badge,
+            .form-title,
+            .section-title {
                 font-family: 'Times New Roman', Times, serif !important;
                 font-size: 14pt !important;
                 font-weight: 900 !important;
@@ -1656,9 +1731,6 @@
             .emp-id-card .emp-details .value {
                 color: #333333 !important;
             }
-            .emp-id-card .emp-details .row .label {
-                font-weight: 900 !important;
-            }
 
             table {
                 color: #333333 !important;
@@ -1719,9 +1791,9 @@
     <div id="loginScreen">
         <div class="login-box">
             <div class="login-logo" id="loginLogo">
-                <span class="no-logo"></span>
+                <span class="no-logo">🏫</span>
             </div>
-            <h1> THE EDUCATORS</h1>
+            <h1>🏫 THE EDUCATORS</h1>
             <div class="subtitle">PABBI CAMPUS - NOWSHERA</div>
             <div class="tagline">School Management System</div>
 
@@ -1749,7 +1821,7 @@
             <div class="logo-area">
                 <div class="logo-box">
                     <div class="logo-img" id="topLogoImg">
-                        <span class="no-logo"></span>
+                        <span class="no-logo">🏫</span>
                     </div>
                     <div class="logo-text">
                         <div class="line1" id="topSchoolName">THE EDUCATORS PABBI</div>
@@ -1773,12 +1845,13 @@
 
             <!-- SIDEBAR -->
             <nav class="sidebar" id="sidebar">
-                <div class="section-label">Dashboard</div>
+                <div class="section-label">📊 Dashboard</div>
                 <a class="active" data-tab="dashboard"><span class="emoji">📊</span> Dashboard</a>
 
                 <div class="section-label">👨‍🎓 Students</div>
                 <a data-tab="students"><span class="emoji">👨‍🎓</span> Students</a>
                 <a data-tab="admission"><span class="emoji">📝</span> Admission</a>
+                <a data-tab="familydiscount"><span class="emoji">👨‍👩‍👧‍👦</span> Family Discount</a>
 
                 <div class="section-label">🧾 Fee</div>
                 <a data-tab="feechallan"><span class="emoji">🧾</span> Fee Challan</a>
@@ -1802,7 +1875,8 @@
                 <div class="section-label">👨‍💼 Staff</div>
                 <a data-tab="employees"><span class="emoji">👨‍</span> Employees</a>
                 <a data-tab="employeeidcard"><span class="emoji">🪪</span> Employee ID Card</a>
-                <a data-tab="payslip"><span class="emoji">💳</span> Pay Slip</a>
+                <a data-tab="payslip"><span class="emoji">💳</span> Salary Detail Slip</a>
+                <a data-tab="salarysummary"><span class="emoji">📊</span> Salary Summary</a>
 
                 <div class="section-label">💰 Accounts</div>
                 <a data-tab="expenditure"><span class="emoji">📊</span> Expenditure</a>
@@ -1849,6 +1923,7 @@
             expenditures: [],
             marksheets: [],
             results: [],
+            familyGroups: [],
             schoolSettings: {
                 schoolName: 'THE EDUCATORS PABBI CAMPUS',
                 schoolAddress: 'NOWSHERA',
@@ -1925,14 +2000,12 @@
 
         function parseDateInput(dateStr) {
             if (!dateStr) return '';
-            // Check if already in DD/MM/YYYY format
             if (dateStr.includes('/')) {
                 const parts = dateStr.split('/');
                 if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
                     return parts[2] + '-' + parts[1] + '-' + parts[0];
                 }
             }
-            // If YYYY-MM-DD format
             const parts = dateStr.split('-');
             if (parts.length === 3 && parts[0].length === 4) {
                 return dateStr;
@@ -1971,7 +2044,7 @@
             if (settings.logo) {
                 logoContainer.innerHTML = `<img src="${settings.logo}" alt="Logo" />`;
             } else {
-                logoContainer.innerHTML = `<span class="no-logo"></span>`;
+                logoContainer.innerHTML = `<span class="no-logo">🏫</span>`;
             }
         }
 
@@ -1993,6 +2066,7 @@
                     if (!AppData.expenditures) AppData.expenditures = [];
                     if (!AppData.marksheets) AppData.marksheets = [];
                     if (!AppData.results) AppData.results = [];
+                    if (!AppData.familyGroups) AppData.familyGroups = [];
                     if (!AppData.schoolSettings) {
                         AppData.schoolSettings = {
                             schoolName: 'THE EDUCATORS PABBI CAMPUS',
@@ -2032,7 +2106,7 @@
                 logoImg.innerHTML =
                     `<img src="${settings.logo}" alt="Logo" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;" />`;
             } else {
-                logoImg.innerHTML = `<span class="no-logo"></span>`;
+                logoImg.innerHTML = `<span class="no-logo">🏫</span>`;
             }
             updateLoginLogo();
         }
@@ -2043,7 +2117,7 @@
             if (settings.logo) {
                 return `<img src="${settings.logo}" alt="Logo" style="width:${s}px;height:${s}px;border-radius:50%;object-fit:cover;" />`;
             }
-            return `<span class="no-logo" style="font-size:24px;"></span>`;
+            return `<span class="no-logo" style="font-size:24px;">🏫</span>`;
         }
 
         // ================================================================
@@ -2130,6 +2204,9 @@
                 case 'admission':
                     renderAdmission();
                     break;
+                case 'familydiscount':
+                    renderFamilyDiscount();
+                    break;
                 case 'feechallan':
                     renderFeeChallan();
                     break;
@@ -2171,6 +2248,9 @@
                     break;
                 case 'payslip':
                     renderPaySlip();
+                    break;
+                case 'salarysummary':
+                    renderSalarySummary();
                     break;
                 case 'expenditure':
                     renderExpenditure();
@@ -2286,7 +2366,7 @@
         }
 
         // ================================================================
-        // EXPORT FUNCTIONS (Excel, Word) - FIXED
+        // EXPORT FUNCTIONS (Excel, Word)
         // ================================================================
 
         function exportToExcel(data, filename, schoolName) {
@@ -2344,7 +2424,6 @@
                         </xml>
                         <![endif]-->
                         <style>
-                            /* Word Document Styles */
                             body { 
                                 font-family: Arial, Helvetica, sans-serif; 
                                 font-size: 11pt; 
@@ -2421,32 +2500,12 @@
                                 border-top: 1px solid #ddd; 
                                 padding-top: 8px; 
                             }
-                            .salary-table th {
-                                background: #131921;
-                                color: #ffffff;
-                                font-weight: 900;
-                                font-size: 10pt;
-                            }
-                            .salary-table td {
-                                font-size: 9pt;
-                                padding: 4px 6px;
-                            }
-                            .salary-table .total-row {
-                                background: #ebf4ff;
-                                font-weight: 900;
-                            }
-                            .salary-table .credit-row {
-                                background: #f0fdf4;
-                            }
-                            .salary-table .debit-row {
-                                background: #fef2f2;
-                            }
                         </style>
                     </head>
                     <body>
                         <div class="school-header">${school}</div>
                         <div class="school-subheader">${address}</div>
-                        <div class="report-title">${filename}</div>
+                        <div class="report-title">📊 ${filename}</div>
                         <div class="report-date">Generated on: ${getTodayDateFormatted()}</div>
                         ${content}
                         <div class="footer">${school} — Success with Wisdom</div>
@@ -2475,6 +2534,10 @@
             const activeStudents = students.filter(s => s.status === 'Currently-in').length;
             const totalDeposits = AppData.feeDeposits.reduce((sum, d) => sum + (d.amount || 0), 0);
             const totalExpenses = AppData.expenditures.reduce((sum, e) => sum + (e.grandTotal || 0), 0);
+            const cashDeposits = AppData.feeDeposits.filter(d => d.paymentMode === 'Cash').reduce((sum, d) => sum + (d
+                .amount || 0), 0);
+            const bankDeposits = AppData.feeDeposits.filter(d => d.paymentMode === 'Bank Transfer' || d.paymentMode ===
+                'Cheque' || d.paymentMode === 'Online').reduce((sum, d) => sum + (d.amount || 0), 0);
 
             let html = `
                     <div class="card">
@@ -2486,7 +2549,9 @@
                         <div class="stat-card"><div class="stat-icon">👨‍🎓</div><div class="label">Total Students</div><div class="value blue">${students.length}</div></div>
                         <div class="stat-card"><div class="stat-icon">✅</div><div class="label">Active Students</div><div class="value green">${activeStudents}</div></div>
                         <div class="stat-card"><div class="stat-icon">👨‍</div><div class="label">Total Staff</div><div class="value blue">${employees.length}</div></div>
-                        <div class="stat-card"><div class="stat-icon">💰</div><div class="label">Fee Collected</div><div class="value green">${formatCurrency(totalDeposits)}</div></div>
+                        <div class="stat-card"><div class="stat-icon">💰</div><div class="label">Total Fee Collected</div><div class="value green">${formatCurrency(totalDeposits)}</div></div>
+                        <div class="stat-card"><div class="stat-icon">💵</div><div class="label">Cash Collection</div><div class="value gold">${formatCurrency(cashDeposits)}</div></div>
+                        <div class="stat-card"><div class="stat-icon">🏦</div><div class="label">Bank Collection</div><div class="value blue">${formatCurrency(bankDeposits)}</div></div>
                         <div class="stat-card"><div class="stat-icon">📤</div><div class="label">Expenditure</div><div class="value danger">${formatCurrency(totalExpenses)}</div></div>
                         <div class="stat-card"><div class="stat-icon">📈</div><div class="label">Balance</div><div class="value gold">${formatCurrency(totalDeposits - totalExpenses)}</div></div>
                     </div>
@@ -2520,7 +2585,7 @@
         }
 
         // ================================================================
-        // STUDENTS (Shortened)
+        // STUDENTS - With Search
         // ================================================================
 
         function renderStudents() {
@@ -2530,21 +2595,18 @@
             let html = `
                     <div class="card">
                         <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> All Students <span class="badge">${students.length}</span></div>
-                        <div class="form-row">
+                        
+                        <div class="search-bar">
                             <label>🔍 Search:</label>
-                            <input id="studentSearch" placeholder="Name, Admission No, Father..." oninput="filterStudents()" />
+                            <input id="studentSearchInput" placeholder="Name, Father Name, Admission No..." oninput="filterStudentsWithSearch()" />
                             <label>Class:</label>
-                            <select id="studentClassFilter" onchange="filterStudents()">
+                            <select id="studentClassFilter" onchange="filterStudentsWithSearch()">
                                 <option value="All">All</option>
                                 ${CLASS_OPTIONS.map(c => `<option value="${c}">${c}</option>`).join('')}
                             </select>
-                            <label>Status:</label>
-                            <select id="studentStatusFilter" onchange="filterStudents()">
-                                <option value="All">All</option>
-                                ${STATUS_OPTIONS.map(s => `<option value="${s}">${s}</option>`).join('')}
-                            </select>
-                            <button class="btn btn-success" onclick="showTab('admission')">➕ Add New</button>
+                            <button class="btn btn-success btn-sm" onclick="showTab('admission')">➕ Add New</button>
                         </div>
+                        
                         <div class="table-wrap">
                             <table>
                                 <thead>
@@ -2579,10 +2641,9 @@
             container.innerHTML = html;
         }
 
-        function filterStudents() {
-            const search = document.getElementById('studentSearch').value.toLowerCase();
+        function filterStudentsWithSearch() {
+            const search = document.getElementById('studentSearchInput').value.toLowerCase();
             const classFilter = document.getElementById('studentClassFilter').value;
-            const statusFilter = document.getElementById('studentStatusFilter').value;
             const tbody = document.getElementById('studentsTableBody');
 
             let filtered = AppData.students;
@@ -2595,9 +2656,6 @@
             }
             if (classFilter !== 'All') {
                 filtered = filtered.filter(s => s.currentClass === classFilter);
-            }
-            if (statusFilter !== 'All') {
-                filtered = filtered.filter(s => s.status === statusFilter);
             }
 
             if (filtered.length === 0) {
@@ -2765,6 +2823,127 @@
             });
         }
 
+        function previewAdmissionPhoto(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    admissionPhotoData = e.target.result;
+                    document.getElementById('admPhotoImg').src = e.target.result;
+                    document.getElementById('admPhotoPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearAdmissionForm() {
+            const fields = ['admAdmissionNo', 'admRollNo', 'admName', 'admFather', 'admDob', 'admMother', 'admFatherNic',
+                'admAddress',
+                'admRemarks', 'admPrevSchool', 'admGroup', 'admSession', 'admOccupation', 'admCast', 'admContact',
+                'admGuardianName', 'admGuardianRelation', 'admGuardianContact', 'admGuardianAddress', 'admGuardianPhone',
+                'admAdmissionFee', 'admAcademicFee', 'admRegistrationFee', 'admTuitionFee'
+            ];
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+
+            document.getElementById('admAdmissionDate').value = getTodayDateInput();
+            document.getElementById('admGender').value = 'Male';
+            document.getElementById('admFree').value = 'No';
+            document.getElementById('admAdmittedClass').value = '1st';
+            document.getElementById('admCurrentClass').value = '1st';
+            document.getElementById('admStatus').value = 'Currently-in';
+            document.getElementById('admNationality').value = 'Pakistani';
+            document.getElementById('admReligion').value = 'Islam';
+            document.getElementById('admTotalFee').value = '';
+            document.getElementById('admPhoto').value = '';
+            document.getElementById('admPhotoPreview').style.display = 'none';
+            admissionPhotoData = null;
+
+            const nextNum = AppData.students.length + 1;
+            document.getElementById('admAdmissionNo').value = 'ADM' + String(nextNum).padStart(4, '0');
+
+            showToast('🔄 Form cleared!', 'info');
+        }
+
+        function saveAdmission() {
+            const name = document.getElementById('admName').value.trim();
+            const father = document.getElementById('admFather').value.trim();
+            const admissionNo = document.getElementById('admAdmissionNo').value.trim();
+
+            if (!name || !father) {
+                showToast('⚠️ Name and Father are required!', 'error');
+                return;
+            }
+
+            if (!admissionNo) {
+                showToast('⚠️ Admission Number is required!', 'error');
+                return;
+            }
+
+            const exists = AppData.students.find(s => s.admissionNo === admissionNo);
+            if (exists) {
+                showToast('⚠️ Admission Number already exists!', 'error');
+                return;
+            }
+
+            const admissionFee = parseFloat(document.getElementById('admAdmissionFee').value) || 0;
+            const academicFee = parseFloat(document.getElementById('admAcademicFee').value) || 0;
+            const registrationFee = parseFloat(document.getElementById('admRegistrationFee').value) || 0;
+            const tuitionFee = parseFloat(document.getElementById('admTuitionFee').value) || 0;
+            const totalFee = admissionFee + academicFee + registrationFee + tuitionFee;
+
+            const student = {
+                id: generateStudentId(),
+                admissionNo: admissionNo,
+                rollNo: document.getElementById('admRollNo').value.trim(),
+                admissionDate: document.getElementById('admAdmissionDate').value,
+                name: name,
+                fatherName: father,
+                dob: document.getElementById('admDob').value,
+                gender: document.getElementById('admGender').value,
+                free: document.getElementById('admFree').value,
+                motherName: document.getElementById('admMother').value.trim(),
+                fatherNic: document.getElementById('admFatherNic').value.trim(),
+                address: document.getElementById('admAddress').value.trim(),
+                remarks: document.getElementById('admRemarks').value.trim(),
+                bloodGroup: document.getElementById('admBloodGroup').value,
+                prevSchool: document.getElementById('admPrevSchool').value.trim(),
+                admittedClass: document.getElementById('admAdmittedClass').value,
+                currentClass: document.getElementById('admCurrentClass').value,
+                group: document.getElementById('admGroup').value.trim(),
+                session: document.getElementById('admSession').value.trim(),
+                status: document.getElementById('admStatus').value,
+                occupation: document.getElementById('admOccupation').value.trim(),
+                nationality: document.getElementById('admNationality').value,
+                religion: document.getElementById('admReligion').value,
+                cast: document.getElementById('admCast').value.trim(),
+                contactNumber: document.getElementById('admContact').value.trim(),
+                guardianName: document.getElementById('admGuardianName').value.trim(),
+                guardianRelation: document.getElementById('admGuardianRelation').value.trim(),
+                guardianContact: document.getElementById('admGuardianContact').value.trim(),
+                guardianAddress: document.getElementById('admGuardianAddress').value.trim(),
+                guardianPhone: document.getElementById('admGuardianPhone').value.trim(),
+                admissionFee: admissionFee,
+                academicFee: academicFee,
+                registrationFee: registrationFee,
+                tuitionFee: tuitionFee,
+                totalFee: totalFee,
+                photo: admissionPhotoData || '',
+                familyGroup: '',
+                discount: 0,
+                createdAt: new Date().toISOString()
+            };
+
+            AppData.students.push(student);
+            saveToStorage();
+
+            showToast(`✅ Student ${name} admitted! Admission No: ${student.admissionNo}`, 'success');
+            clearAdmissionForm();
+            renderStudents();
+        }
+
         function printAdmissionForm() {
             const form = document.getElementById('admissionForm');
             if (!form) {
@@ -2880,123 +3059,172 @@
             win.document.close();
         }
 
-        function previewAdmissionPhoto(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    admissionPhotoData = e.target.result;
-                    document.getElementById('admPhotoImg').src = e.target.result;
-                    document.getElementById('admPhotoPreview').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
+        // ================================================================
+        // FAMILY DISCOUNT MODULE
+        // ================================================================
+
+        function renderFamilyDiscount() {
+            const container = document.getElementById('contentArea');
+            const students = AppData.students;
+
+            let html = `
+                    <div class="card">
+                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Family Discount Management <span class="badge">👨‍👩‍👧‍👦</span></div>
+                        
+                        <div class="form-row">
+                            <label>Family Group Name:</label>
+                            <input id="familyGroupName" placeholder="e.g. Ahmed Family" style="flex:1;" />
+                            <label>Discount (%):</label>
+                            <input type="number" id="familyDiscountPercent" value="10" style="max-width:80px;" />
+                            <button class="btn btn-success" onclick="createFamilyGroup()">➕ Create Family Group</button>
+                        </div>
+                        
+                        <div style="background:var(--bg-primary);padding:10px;border-radius:4px;margin:8px 0;">
+                            <strong>Add Students to Family:</strong>
+                            <select id="familyStudentSelect" style="padding:5px 10px;border:1px solid var(--border-color);border-radius:4px;min-width:200px;">
+                                <option value="">-- Select Student --</option>
+                                ${students.map(s => `<option value="${s.id}">${s.admissionNo} - ${s.name}</option>`).join('')}
+                            </select>
+                            <select id="familyGroupSelect" style="padding:5px 10px;border:1px solid var(--border-color);border-radius:4px;min-width:200px;">
+                                <option value="">-- Select Family --</option>
+                                ${AppData.familyGroups.map(g => `<option value="${g.id}">${g.name}</option>`).join('')}
+                            </select>
+                            <button class="btn btn-primary btn-sm" onclick="addStudentToFamily()">➕ Add to Family</button>
+                        </div>
+                        
+                        <div id="familyGroupsDisplay">
+                            ${AppData.familyGroups.length === 0 ? '<p style="color:var(--text-muted);padding:20px;text-align:center;">No family groups created yet</p>' : ''}
+                            ${AppData.familyGroups.map(g => `
+                                <div class="family-group">
+                                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                                        <div class="family-title">👨‍👩‍👧‍👦 ${g.name} (${g.discount}% Discount)</div>
+                                        <div>
+                                            <button class="btn btn-danger btn-xs" onclick="deleteFamilyGroup('${g.id}')">🗑️ Delete</button>
+                                        </div>
+                                    </div>
+                                    ${g.members.map(m => {
+                                        const student = getStudent(m);
+                                        return student ? `
+                                            <div class="family-member">
+                                                <span><strong>${student.admissionNo}</strong> - ${student.name}</span>
+                                                <span style="color:var(--text-muted);">${student.currentClass}</span>
+                                                <button class="btn btn-danger btn-xs" onclick="removeStudentFromFamily('${g.id}','${m}')">✕</button>
+                                            </div>
+                                        ` : '';
+                                    }).join('')}
+                                    <div style="margin-top:4px;font-size:12px;color:var(--text-muted);">
+                                        Total Members: ${g.members.length} | Discount Applied: ${g.discount}%
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+            container.innerHTML = html;
         }
 
-        function clearAdmissionForm() {
-            const fields = ['admAdmissionNo', 'admRollNo', 'admName', 'admFather', 'admDob', 'admMother', 'admFatherNic',
-                'admAddress',
-                'admRemarks', 'admPrevSchool', 'admGroup', 'admSession', 'admOccupation', 'admCast', 'admContact',
-                'admGuardianName', 'admGuardianRelation', 'admGuardianContact', 'admGuardianAddress', 'admGuardianPhone',
-                'admAdmissionFee', 'admAcademicFee', 'admRegistrationFee', 'admTuitionFee'
-            ];
-            fields.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
+        function createFamilyGroup() {
+            const name = document.getElementById('familyGroupName').value.trim();
+            const discount = parseFloat(document.getElementById('familyDiscountPercent').value) || 0;
+
+            if (!name) {
+                showToast('⚠️ Family name is required!', 'error');
+                return;
+            }
+
+            const exists = AppData.familyGroups.find(g => g.name.toLowerCase() === name.toLowerCase());
+            if (exists) {
+                showToast('⚠️ Family name already exists!', 'error');
+                return;
+            }
+
+            AppData.familyGroups.push({
+                id: 'FAM' + String(AppData.familyGroups.length + 1).padStart(4, '0'),
+                name: name,
+                discount: discount,
+                members: []
             });
 
-            document.getElementById('admAdmissionDate').value = getTodayDateInput();
-            document.getElementById('admGender').value = 'Male';
-            document.getElementById('admFree').value = 'No';
-            document.getElementById('admAdmittedClass').value = '1st';
-            document.getElementById('admCurrentClass').value = '1st';
-            document.getElementById('admStatus').value = 'Currently-in';
-            document.getElementById('admNationality').value = 'Pakistani';
-            document.getElementById('admReligion').value = 'Islam';
-            document.getElementById('admTotalFee').value = '';
-            document.getElementById('admPhoto').value = '';
-            document.getElementById('admPhotoPreview').style.display = 'none';
-            admissionPhotoData = null;
-
-            const nextNum = AppData.students.length + 1;
-            document.getElementById('admAdmissionNo').value = 'ADM' + String(nextNum).padStart(4, '0');
-
-            showToast('🔄 Form cleared!', 'info');
+            saveToStorage();
+            renderFamilyDiscount();
+            showToast(`✅ Family "${name}" created with ${discount}% discount!`, 'success');
         }
 
-        function saveAdmission() {
-            const name = document.getElementById('admName').value.trim();
-            const father = document.getElementById('admFather').value.trim();
-            const admissionNo = document.getElementById('admAdmissionNo').value.trim();
+        function addStudentToFamily() {
+            const studentId = document.getElementById('familyStudentSelect').value;
+            const familyId = document.getElementById('familyGroupSelect').value;
 
-            if (!name || !father) {
-                showToast('⚠️ Name and Father are required!', 'error');
+            if (!studentId) {
+                showToast('⚠️ Select a student!', 'error');
+                return;
+            }
+            if (!familyId) {
+                showToast('⚠️ Select a family!', 'error');
                 return;
             }
 
-            if (!admissionNo) {
-                showToast('⚠️ Admission Number is required!', 'error');
-                return;
+            const student = getStudent(studentId);
+            if (!student) return;
+
+            const family = AppData.familyGroups.find(g => g.id === familyId);
+            if (!family) return;
+
+            // Check if student already in any family
+            for (let g of AppData.familyGroups) {
+                if (g.members.includes(studentId)) {
+                    showToast('⚠️ Student already in a family!', 'error');
+                    return;
+                }
             }
 
-            const exists = AppData.students.find(s => s.admissionNo === admissionNo);
-            if (exists) {
-                showToast('⚠️ Admission Number already exists!', 'error');
-                return;
-            }
+            family.members.push(studentId);
+            student.familyGroup = family.name;
+            student.discount = family.discount;
 
-            const admissionFee = parseFloat(document.getElementById('admAdmissionFee').value) || 0;
-            const academicFee = parseFloat(document.getElementById('admAcademicFee').value) || 0;
-            const registrationFee = parseFloat(document.getElementById('admRegistrationFee').value) || 0;
-            const tuitionFee = parseFloat(document.getElementById('admTuitionFee').value) || 0;
-            const totalFee = admissionFee + academicFee + registrationFee + tuitionFee;
-
-            const student = {
-                id: generateStudentId(),
-                admissionNo: admissionNo,
-                rollNo: document.getElementById('admRollNo').value.trim(),
-                admissionDate: document.getElementById('admAdmissionDate').value,
-                name: name,
-                fatherName: father,
-                dob: document.getElementById('admDob').value,
-                gender: document.getElementById('admGender').value,
-                free: document.getElementById('admFree').value,
-                motherName: document.getElementById('admMother').value.trim(),
-                fatherNic: document.getElementById('admFatherNic').value.trim(),
-                address: document.getElementById('admAddress').value.trim(),
-                remarks: document.getElementById('admRemarks').value.trim(),
-                bloodGroup: document.getElementById('admBloodGroup').value,
-                prevSchool: document.getElementById('admPrevSchool').value.trim(),
-                admittedClass: document.getElementById('admAdmittedClass').value,
-                currentClass: document.getElementById('admCurrentClass').value,
-                group: document.getElementById('admGroup').value.trim(),
-                session: document.getElementById('admSession').value.trim(),
-                status: document.getElementById('admStatus').value,
-                occupation: document.getElementById('admOccupation').value.trim(),
-                nationality: document.getElementById('admNationality').value,
-                religion: document.getElementById('admReligion').value,
-                cast: document.getElementById('admCast').value.trim(),
-                contactNumber: document.getElementById('admContact').value.trim(),
-                guardianName: document.getElementById('admGuardianName').value.trim(),
-                guardianRelation: document.getElementById('admGuardianRelation').value.trim(),
-                guardianContact: document.getElementById('admGuardianContact').value.trim(),
-                guardianAddress: document.getElementById('admGuardianAddress').value.trim(),
-                guardianPhone: document.getElementById('admGuardianPhone').value.trim(),
-                admissionFee: admissionFee,
-                academicFee: academicFee,
-                registrationFee: registrationFee,
-                tuitionFee: tuitionFee,
-                totalFee: totalFee,
-                photo: admissionPhotoData || '',
-                createdAt: new Date().toISOString()
-            };
-
-            AppData.students.push(student);
             saveToStorage();
+            renderFamilyDiscount();
+            showToast(`✅ ${student.name} added to ${family.name}!`, 'success');
+        }
 
-            showToast(`✅ Student ${name} admitted! Admission No: ${student.admissionNo}`, 'success');
-            clearAdmissionForm();
-            renderStudents();
+        function removeStudentFromFamily(familyId, studentId) {
+            const family = AppData.familyGroups.find(g => g.id === familyId);
+            if (!family) return;
+
+            family.members = family.members.filter(m => m !== studentId);
+            const student = getStudent(studentId);
+            if (student) {
+                student.familyGroup = '';
+                student.discount = 0;
+            }
+
+            if (family.members.length === 0) {
+                AppData.familyGroups = AppData.familyGroups.filter(g => g.id !== familyId);
+            }
+
+            saveToStorage();
+            renderFamilyDiscount();
+            showToast('🗑️ Student removed from family!', 'info');
+        }
+
+        function deleteFamilyGroup(familyId) {
+            if (!confirm('Delete this family group?')) return;
+
+            const family = AppData.familyGroups.find(g => g.id === familyId);
+            if (family) {
+                family.members.forEach(m => {
+                    const student = getStudent(m);
+                    if (student) {
+                        student.familyGroup = '';
+                        student.discount = 0;
+                    }
+                });
+            }
+
+            AppData.familyGroups = AppData.familyGroups.filter(g => g.id !== familyId);
+            saveToStorage();
+            renderFamilyDiscount();
+            showToast('🗑️ Family group deleted!', 'info');
         }
 
         // ================================================================
@@ -3037,6 +3265,7 @@
                             <div><label>Previous Arears</label><input type="number" id="fcPreviousArears" value="0" oninput="calcFeeChallanTotal()" /></div>
                             <div><label>Activity Charges</label><input type="number" id="fcActivityCharges" value="0" oninput="calcFeeChallanTotal()" /></div>
                             <div><label>Books Charges</label><input type="number" id="fcBooksCharges" value="0" oninput="calcFeeChallanTotal()" /></div>
+                            <div><label>Family Discount</label><input type="number" id="fcFamilyDiscount" value="0" readonly style="background:#f7fafc;color:var(--accent-green);" /></div>
                             <div><label>Total</label><input id="fcTotal" readonly style="background:#f7fafc;font-weight:900;color:var(--accent-blue);" /></div>
                             <div class="full-width">
                                 <div class="btn-group">
@@ -3075,6 +3304,9 @@
             document.getElementById('fcName').value = student.name;
             document.getElementById('fcFather').value = student.fatherName;
 
+            let discount = student.discount || 0;
+            document.getElementById('fcFamilyDiscount').value = discount;
+
             const existing = AppData.feeChallans.filter(c => c.studentId === studentId);
             if (existing.length > 0) {
                 const last = existing[existing.length - 1];
@@ -3089,7 +3321,10 @@
             const arears = parseFloat(document.getElementById('fcPreviousArears').value) || 0;
             const activity = parseFloat(document.getElementById('fcActivityCharges').value) || 0;
             const books = parseFloat(document.getElementById('fcBooksCharges').value) || 0;
-            const total = monthly + arears + activity + books;
+            const discount = parseFloat(document.getElementById('fcFamilyDiscount').value) || 0;
+            const subtotal = monthly + arears + activity + books;
+            const discountAmount = (subtotal * discount) / 100;
+            const total = subtotal - discountAmount;
             document.getElementById('fcTotal').value = total.toFixed(2);
         }
 
@@ -3103,6 +3338,7 @@
             document.getElementById('fcPreviousArears').value = '0';
             document.getElementById('fcActivityCharges').value = '0';
             document.getElementById('fcBooksCharges').value = '0';
+            document.getElementById('fcFamilyDiscount').value = '0';
             document.getElementById('fcTotal').value = '';
             document.getElementById('feeChallanDisplay').innerHTML =
                 '<p style="color:var(--text-muted);text-align:center;padding:20px;">Select student, fill details and click Generate</p>';
@@ -3135,7 +3371,10 @@
             const previousArears = parseFloat(document.getElementById('fcPreviousArears').value) || 0;
             const activityCharges = parseFloat(document.getElementById('fcActivityCharges').value) || 0;
             const booksCharges = parseFloat(document.getElementById('fcBooksCharges').value) || 0;
-            const total = monthlyFee + previousArears + activityCharges + booksCharges;
+            const discount = student.discount || 0;
+            const subtotal = monthlyFee + previousArears + activityCharges + booksCharges;
+            const discountAmount = (subtotal * discount) / 100;
+            const total = subtotal - discountAmount;
 
             const formattedDate = dueDate ? formatDate(dueDate) : 'N/A';
 
@@ -3149,6 +3388,8 @@
                 previousArears: previousArears,
                 activityCharges: activityCharges,
                 booksCharges: booksCharges,
+                discount: discount,
+                discountAmount: discountAmount,
                 total: total,
                 dueDate: dueDate,
                 generatedDate: getTodayDateFormatted()
@@ -3193,6 +3434,7 @@
                                 <div class="row"><span class="label">Previous Arears</span><span class="value">${formatCurrency(previousArears)}</span></div>
                                 <div class="row"><span class="label">Activity Charges</span><span class="value">${formatCurrency(activityCharges)}</span></div>
                                 <div class="row"><span class="label">Books Charges</span><span class="value">${formatCurrency(booksCharges)}</span></div>
+                                ${discount > 0 ? `<div class="row"><span class="label" style="color:#067d62;">Family Discount (${discount}%)</span><span class="value" style="color:#067d62;">-${formatCurrency(discountAmount)}</span></div>` : ''}
                             </div>
                             <div class="v-total">
                                 <span>Total</span>
@@ -3284,7 +3526,7 @@
         }
 
         // ================================================================
-        // BULK FEE VOUCHER - Complete like Fee Challan
+        // BULK FEE VOUCHER - With Family Discount
         // ================================================================
 
         function renderBulkFeeVoucher() {
@@ -3294,7 +3536,7 @@
 
             let html = `
                     <div class="card">
-                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Bulk Fee Voucher <span class="badge">Complete like Fee Challan</span></div>
+                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Bulk Fee Voucher <span class="badge">with Family Discount</span></div>
                         
                         <div class="form-row">
                             <label>Select Class:</label>
@@ -3309,6 +3551,11 @@
                             <label>Year:</label>
                             <select id="bulkYear">
                                 ${YEARS.map(y => `<option value="${y}" ${y === new Date().getFullYear() ? 'selected' : ''}>${y}</option>`).join('')}
+                            </select>
+                            <label>Apply Family Discount:</label>
+                            <select id="bulkApplyDiscount" style="max-width:150px;">
+                                <option value="yes">✅ Yes</option>
+                                <option value="no">❌ No</option>
                             </select>
                             <button class="btn btn-primary" onclick="selectAllBulkStudents()">☑️ Select All</button>
                             <button class="btn btn-secondary" onclick="deselectAllBulkStudents()">☐ Deselect All</button>
@@ -3351,10 +3598,11 @@
             let html =
                 `<div style="font-weight:900;color:var(--accent-blue);padding:8px;border-bottom:2px solid var(--accent-blue);">Total Students: ${students.length}</div>`;
             students.forEach(s => {
+                const discount = s.discount || 0;
                 html += `
                         <div class="student-item">
                             <input type="checkbox" id="bulk_${s.id}" value="${s.id}" />
-                            <label for="bulk_${s.id}"><strong>${s.admissionNo}</strong> - ${s.name} (${s.fatherName})</label>
+                            <label for="bulk_${s.id}"><strong>${s.admissionNo}</strong> - ${s.name} ${discount > 0 ? `🏷️ (${discount}% off)` : ''}</label>
                         </div>
                     `;
             });
@@ -3382,6 +3630,7 @@
 
             const month = document.getElementById('bulkMonth').value;
             const year = document.getElementById('bulkYear').value;
+            const applyDiscount = document.getElementById('bulkApplyDiscount').value === 'yes';
             const display = document.getElementById('bulkVoucherDisplay');
 
             const settings = AppData.schoolSettings || {};
@@ -3415,7 +3664,10 @@
                     booksCharges = last.booksCharges || 0;
                 }
 
-                const total = monthlyFee + previousArears + activityCharges + booksCharges;
+                const discount = applyDiscount ? (student.discount || 0) : 0;
+                const subtotal = monthlyFee + previousArears + activityCharges + booksCharges;
+                const discountAmount = (subtotal * discount) / 100;
+                const total = subtotal - discountAmount;
                 const formattedDate = dueDate ? formatDate(dueDate) : 'N/A';
 
                 AppData.feeChallans.push({
@@ -3428,6 +3680,8 @@
                     previousArears: previousArears,
                     activityCharges: activityCharges,
                     booksCharges: booksCharges,
+                    discount: discount,
+                    discountAmount: discountAmount,
                     total: total,
                     dueDate: dueDate,
                     generatedDate: getTodayDateFormatted(),
@@ -3469,6 +3723,7 @@
                                     <div class="row"><span class="label">Previous Arears</span><span class="value">${formatCurrency(previousArears)}</span></div>
                                     <div class="row"><span class="label">Activity Charges</span><span class="value">${formatCurrency(activityCharges)}</span></div>
                                     <div class="row"><span class="label">Books Charges</span><span class="value">${formatCurrency(booksCharges)}</span></div>
+                                    ${discount > 0 ? `<div class="row"><span class="label" style="color:#067d62;">Family Discount (${discount}%)</span><span class="value" style="color:#067d62;">-${formatCurrency(discountAmount)}</span></div>` : ''}
                                 </div>
                                 <div class="v-total">
                                     <span>Total</span>
@@ -3491,6 +3746,7 @@
             display.innerHTML = `
                     <div style="background:var(--bg-primary);padding:10px;border-radius:4px;margin-bottom:10px;font-weight:900;color:var(--accent-blue);">
                         Total Vouchers Generated: ${totalCount * 3} (${totalCount} Students × 3 Copies)
+                        ${document.getElementById('bulkApplyDiscount').value === 'yes' ? ' | ✅ Family Discount Applied' : ''}
                     </div>
                     <div class="voucher-print-area" id="bulkVoucherPrintArea">
                         ${allVouchers}
@@ -3583,7 +3839,7 @@
         }
 
         // ================================================================
-        // FEE DEPOSIT (Shortened)
+        // FEE DEPOSIT - With Cash/Bank tracking
         // ================================================================
 
         function renderFeeDeposit() {
@@ -3606,7 +3862,12 @@
                             <div><label>Class</label><input id="fdClass" readonly style="background:#f7fafc;" /></div>
                             <div><label>Amount</label><input type="number" id="fdAmount" value="0" /></div>
                             <div><label>Payment Mode</label>
-                                <select id="fdPaymentMode">${getPaymentModeOptions('Cash')}</select>
+                                <select id="fdPaymentMode">
+                                    <option value="Cash">💵 Cash</option>
+                                    <option value="Bank Transfer">🏦 Bank Transfer</option>
+                                    <option value="Cheque">📝 Cheque</option>
+                                    <option value="Online">💳 Online</option>
+                                </select>
                             </div>
                             <div><label>Payment Date</label><input type="date" id="fdPaymentDate" value="${getTodayDateInput()}" /></div>
                             <div><label>Month</label>
@@ -3615,7 +3876,7 @@
                             <div><label>Year</label>
                                 <select id="fdYear">${getYearOptions(new Date().getFullYear())}</select>
                             </div>
-                            <div><label>Receipt No</label><input id="fdReceiptNo" placeholder="Receipt Number" /></div>
+                            <div><label>Receipt No</label><input id="fdReceiptNo" placeholder="Admission No as Receipt" /></div>
                             <div class="full-width">
                                 <div class="btn-group">
                                     <button class="btn btn-success" onclick="saveFeeDeposit()">💾 Save Deposit</button>
@@ -3626,7 +3887,7 @@
                         
                         <div class="table-wrap" style="margin-top:10px;">
                             <table>
-                                <thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt</th><th>Action</th></tr></thead>
+                                <thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt/Adm No</th><th>Action</th></tr></thead>
                                 <tbody id="fdTableBody"></tbody>
                             </table>
                         </div>
@@ -3647,6 +3908,7 @@
             document.getElementById('fdAdmissionNo').value = student.admissionNo;
             document.getElementById('fdName').value = student.name;
             document.getElementById('fdClass').value = student.currentClass;
+            document.getElementById('fdReceiptNo').value = student.admissionNo;
 
             const challans = AppData.feeChallans.filter(c => c.studentId === studentId);
             if (challans.length > 0) {
@@ -3682,8 +3944,7 @@
                 paymentDate: document.getElementById('fdPaymentDate').value,
                 month: document.getElementById('fdMonth').value,
                 year: document.getElementById('fdYear').value,
-                receiptNo: document.getElementById('fdReceiptNo').value || 'RCP-' + String(AppData.feeDeposits.length + 1)
-                    .padStart(4, '0'),
+                receiptNo: document.getElementById('fdReceiptNo').value || student.admissionNo,
                 depositDate: getTodayDateFormatted()
             };
 
@@ -3694,7 +3955,7 @@
                 studentName: student.name,
                 admissionNo: student.admissionNo,
                 amount: amount,
-                type: 'Fee Deposit - ' + deposit.month + ' ' + deposit.year,
+                type: 'Fee Deposit - ' + deposit.month + ' ' + deposit.year + ' (' + deposit.paymentMode + ')',
                 date: getTodayDateFormatted(),
                 method: deposit.paymentMode,
                 receiptNo: deposit.receiptNo
@@ -3703,7 +3964,7 @@
             saveToStorage();
             loadFeeDeposits();
             clearFeeDeposit();
-            showToast(`✅ Fee deposited: ${formatCurrency(amount)} for ${student.name}`, 'success');
+            showToast(`✅ Fee deposited: ${formatCurrency(amount)} for ${student.name} via ${deposit.paymentMode}`, 'success');
         }
 
         function loadFeeDeposits() {
@@ -3750,7 +4011,7 @@
         }
 
         // ================================================================
-        // TRANSACTIONS (Shortened)
+        // TRANSACTIONS - With Search
         // ================================================================
 
         function renderTransactions() {
@@ -3764,7 +4025,7 @@
                             <label>Period:</label>
                             <select id="txPeriod" onchange="loadTransactions()">
                                 <option value="daily">📅 Daily</option>
-                                <option value="weekly">Weekly</option>
+                                <option value="weekly">📊 Weekly</option>
                                 <option value="monthly">📆 Monthly</option>
                                 <option value="yearly">📈 Yearly</option>
                                 <option value="custom">📋 Custom Range</option>
@@ -3775,11 +4036,22 @@
                             <input type="date" id="txFrom" style="display:none;" value="${getTodayDateInput()}" />
                             <label id="txRangeLabel2" style="display:none;">To:</label>
                             <input type="date" id="txTo" style="display:none;" value="${getTodayDateInput()}" />
-                            <button class="btn btn-primary" onclick="loadTransactions()">Load</button>
+                            <button class="btn btn-primary" onclick="loadTransactions()">📊 Load</button>
                             <button class="btn btn-success" onclick="printTransactions()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportTransactionsPDF()">📄 PDF</button>
-                            <button class="btn btn-warning" onclick="exportTransactionsExcel()">Excel</button>
+                            <button class="btn btn-warning" onclick="exportTransactionsExcel()">📊 Excel</button>
                             <button class="btn btn-secondary" onclick="exportTransactionsWord()">📄 Word</button>
+                        </div>
+                        
+                        <div class="search-bar" style="margin-bottom:8px;">
+                            <label>🔍 Search:</label>
+                            <input id="txSearch" placeholder="Student Name, Admission No..." oninput="filterTransactions()" />
+                            <label>Type:</label>
+                            <select id="txTypeFilter" onchange="filterTransactions()">
+                                <option value="All">All</option>
+                                <option value="Challan Generated">Challan Generated</option>
+                                <option value="Fee Deposit">Fee Deposit</option>
+                            </select>
                         </div>
                         
                         <div id="txSummary" style="padding:8px 14px;background:var(--bg-primary);border-radius:var(--radius);margin-bottom:8px;font-weight:900;">
@@ -3886,9 +4158,50 @@
             const total = filtered.reduce((sum, t) => sum + (t.amount || 0), 0);
             summary.textContent = `Total Transactions: ${filtered.length} | Total Amount: ${formatCurrency(total)}`;
 
+            // Store for search
+            window._txFiltered = filtered;
+
             if (filtered.length === 0) {
                 tbody.innerHTML =
                     `<tr><td colspan="5" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found for this period</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.slice().reverse().map(t => `
+                    <tr>
+                        <td>${t.date || 'N/A'}</td>
+                        <td>${t.studentName || 'N/A'}</td>
+                        <td>${t.admissionNo || 'N/A'}</td>
+                        <td>${t.type || 'N/A'}</td>
+                        <td style="color:var(--accent-green);font-weight:900;">${formatCurrency(t.amount || 0)}</td>
+                    </tr>
+                `).join('');
+        }
+
+        function filterTransactions() {
+            const search = document.getElementById('txSearch').value.toLowerCase();
+            const typeFilter = document.getElementById('txTypeFilter').value;
+            const tbody = document.getElementById('txTableBody');
+            const summary = document.getElementById('txSummary');
+
+            let filtered = window._txFiltered || AppData.transactions;
+
+            if (search) {
+                filtered = filtered.filter(t =>
+                    (t.studentName || '').toLowerCase().includes(search) ||
+                    (t.admissionNo || '').toLowerCase().includes(search)
+                );
+            }
+            if (typeFilter !== 'All') {
+                filtered = filtered.filter(t => t.type && t.type.includes(typeFilter));
+            }
+
+            const total = filtered.reduce((sum, t) => sum + (t.amount || 0), 0);
+            summary.textContent = `Total Transactions: ${filtered.length} | Total Amount: ${formatCurrency(total)}`;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="5" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found</td></tr>`;
                 return;
             }
 
@@ -3931,7 +4244,7 @@
                     </head><body>
                     <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
-                    <h1>Transactions Report</h1>
+                    <h1>📊 Transactions Report</h1>
                     <div class="summary">${summary}</div>
                     <table>
                         <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th></tr></thead>
@@ -3978,7 +4291,7 @@
                     </head><body>
                     <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
-                    <h1>Transactions Report</h1>
+                    <h1>📊 Transactions Report</h1>
                     <div class="summary">${summary}</div>
                     <table>
                         <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th></tr></thead>
@@ -4046,7 +4359,7 @@
         }
 
         // ================================================================
-        // MARKSHEET ENTRY (Shortened but complete)
+        // MARKSHEET ENTRY
         // ================================================================
 
         function renderMarksheetEntry() {
@@ -4105,7 +4418,7 @@
                             <button class="btn btn-success" onclick="saveMarksheet()">💾 Save Marksheet</button>
                             <button class="btn btn-primary" onclick="generateMarksheetPrint()">📄 Generate</button>
                             <button class="btn btn-info" onclick="exportMarksheetPDF()">📄 PDF</button>
-                            <button class="btn btn-warning" onclick="exportMarksheetExcel()">Excel</button>
+                            <button class="btn btn-warning" onclick="exportMarksheetExcel()">📊 Excel</button>
                             <button class="btn btn-secondary" onclick="clearMarksheet()">🔄 Clear</button>
                         </div>
                         
@@ -4335,7 +4648,7 @@
                             <div class="motto">✨ Success with Wisdom ✨</div>
                         </div>
                         
-                        <div class="cert-title">Marksheet - ${exam}</div>
+                        <div class="cert-title">📊 Marksheet - ${exam}</div>
                         
                         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 16px;padding:8px 12px;background:#f7fafc;border-radius:4px;margin-bottom:10px;border:1px solid #e2e8f0;">
                             <div><strong>Student Name:</strong> ${student.name}</div>
@@ -4477,7 +4790,7 @@
         }
 
         // ================================================================
-        // RESULTS (Shortened)
+        // RESULTS
         // ================================================================
 
         function renderResults() {
@@ -4489,7 +4802,7 @@
                         <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Results <span class="badge">${results.length}</span></div>
                         <div class="form-row">
                             <button class="btn btn-info" onclick="exportResultsPDF()">📄 PDF</button>
-                            <button class="btn btn-warning" onclick="exportResultsExcel()">Excel</button>
+                            <button class="btn btn-warning" onclick="exportResultsExcel()">📊 Excel</button>
                             <button class="btn btn-secondary" onclick="exportResultsWord()">📄 Word</button>
                         </div>
                         <div id="resultsTableWrap" class="table-wrap">
@@ -4548,7 +4861,7 @@
                     </head><body>
                     <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
-                    <h1>Results Report</h1>
+                    <h1>📊 Results Report</h1>
                     <p>Generated on: ${getTodayWithMonthName()}</p>
                     <table>
                         <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Class</th><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
@@ -4614,6 +4927,442 @@
                 `;
 
             exportToWord(htmlContent, 'Results_Report_' + getTodayDateFormatted(), settings.schoolName);
+        }
+
+        // ================================================================
+        // SALARY SUMMARY - All Employees (Month Wise)
+        // ================================================================
+
+        function renderSalarySummary() {
+            const container = document.getElementById('contentArea');
+            const employees = AppData.employees;
+            const currentMonth = MONTHS[new Date().getMonth()];
+            const currentYear = new Date().getFullYear();
+
+            let html = `
+                    <div class="card">
+                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Salary Summary Report <span class="badge">All Employees - Month Wise</span></div>
+                        
+                        <div class="form-row">
+                            <label>Month:</label>
+                            <select id="salarySummaryMonth">
+                                ${MONTHS.map(m => `<option value="${m}" ${m === currentMonth ? 'selected' : ''}>${m}</option>`).join('')}
+                            </select>
+                            <label>Year:</label>
+                            <select id="salarySummaryYear">
+                                ${YEARS.map(y => `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`).join('')}
+                            </select>
+                            <button class="btn btn-primary" onclick="generateSalarySummary()">📄 Generate</button>
+                            <button class="btn btn-success" onclick="printSalarySummary()">🖨️ Print</button>
+                            <button class="btn btn-info" onclick="exportSalarySummaryPDF()">📄 PDF</button>
+                            <button class="btn btn-warning" onclick="exportSalarySummaryExcel()">📊 Excel</button>
+                            <button class="btn btn-secondary" onclick="exportSalarySummaryWord()">📄 Word</button>
+                        </div>
+                        
+                        <div id="salarySummaryDisplay" style="min-height:100px;padding:10px;margin-top:10px;">
+                            <p style="color:var(--text-muted);text-align:center;padding:20px;">Select Month/Year and click Generate</p>
+                        </div>
+                    </div>
+                `;
+
+            container.innerHTML = html;
+        }
+
+        function generateSalarySummary() {
+            const month = document.getElementById('salarySummaryMonth').value;
+            const year = parseInt(document.getElementById('salarySummaryYear').value);
+            const display = document.getElementById('salarySummaryDisplay');
+
+            const employees = AppData.employees;
+            const settings = AppData.schoolSettings || {};
+            const logoHtml = getLogoHTML(40);
+
+            if (employees.length === 0) {
+                display.innerHTML =
+                    '<p style="color:var(--text-muted);text-align:center;padding:20px;">No employees added yet</p>';
+                return;
+            }
+
+            let totalBasic = 0,
+                totalAttendance = 0,
+                totalSpoken = 0,
+                totalProductivity = 0,
+                totalStayBack = 0;
+            let totalCredit = 0,
+                totalSecurity = 0,
+                totalAdvanced = 0,
+                totalAbsentee = 0,
+                totalDebit = 0,
+                totalNet = 0;
+
+            let tableRows = '';
+
+            employees.forEach((e, index) => {
+                const basic = e.salary || 0;
+                const attendance = e.allowances?.attendance || 0;
+                const spoken = e.allowances?.spoken || 0;
+                const productivity = e.allowances?.productivity || 0;
+                const stayBack = e.allowances?.stayBack || 0;
+                const security = e.allowances?.security || 0;
+                const advanced = e.allowances?.advanced || 0;
+                const absentee = e.allowances?.absentee || 0;
+
+                const totalCreditEmp = basic + attendance + spoken + productivity + stayBack;
+                const totalDebitEmp = security + advanced + absentee;
+                const netSalary = totalCreditEmp - totalDebitEmp;
+
+                totalBasic += basic;
+                totalAttendance += attendance;
+                totalSpoken += spoken;
+                totalProductivity += productivity;
+                totalStayBack += stayBack;
+                totalCredit += totalCreditEmp;
+                totalSecurity += security;
+                totalAdvanced += advanced;
+                totalAbsentee += absentee;
+                totalDebit += totalDebitEmp;
+                totalNet += netSalary;
+
+                tableRows += `
+                        <tr>
+                            <td>${e.empId}</td>
+                            <td><strong>${e.name}</strong></td>
+                            <td>${e.designation || 'N/A'}</td>
+                            <td style="color:#067d62;font-weight:600;">${formatCurrency(basic)}</td>
+                            <td style="color:#067d62;">${formatCurrency(attendance)}</td>
+                            <td style="color:#067d62;">${formatCurrency(spoken)}</td>
+                            <td style="color:#067d62;">${formatCurrency(productivity)}</td>
+                            <td style="color:#067d62;">${formatCurrency(stayBack)}</td>
+                            <td style="color:#067d62;font-weight:700;">${formatCurrency(totalCreditEmp)}</td>
+                            <td style="color:#b12704;">${formatCurrency(security)}</td>
+                            <td style="color:#b12704;">${formatCurrency(advanced)}</td>
+                            <td style="color:#b12704;">${formatCurrency(absentee)}</td>
+                            <td style="color:#b12704;font-weight:700;">${formatCurrency(totalDebitEmp)}</td>
+                            <td style="color:#131921;font-weight:900;font-size:13px;">${formatCurrency(netSalary)}</td>
+                        </tr>
+                    `;
+            });
+
+            // Grand Total Row
+            tableRows += `
+                    <tr style="background:#ebf4ff;font-weight:900;border-top:3px solid #131921;">
+                        <td colspan="3" style="text-align:right;font-size:13px;">GRAND TOTAL</td>
+                        <td style="color:#067d62;">${formatCurrency(totalBasic)}</td>
+                        <td style="color:#067d62;">${formatCurrency(totalAttendance)}</td>
+                        <td style="color:#067d62;">${formatCurrency(totalSpoken)}</td>
+                        <td style="color:#067d62;">${formatCurrency(totalProductivity)}</td>
+                        <td style="color:#067d62;">${formatCurrency(totalStayBack)}</td>
+                        <td style="color:#067d62;font-weight:900;">${formatCurrency(totalCredit)}</td>
+                        <td style="color:#b12704;">${formatCurrency(totalSecurity)}</td>
+                        <td style="color:#b12704;">${formatCurrency(totalAdvanced)}</td>
+                        <td style="color:#b12704;">${formatCurrency(totalAbsentee)}</td>
+                        <td style="color:#b12704;font-weight:900;">${formatCurrency(totalDebit)}</td>
+                        <td style="color:#131921;font-weight:900;font-size:15px;">${formatCurrency(totalNet)}</td>
+                    </tr>
+                `;
+
+            display.innerHTML = `
+                    <div id="salarySummaryArea">
+                        <div style="display:flex;align-items:center;gap:15px;padding:8px 12px;background:#f7fafc;border-radius:6px;margin-bottom:12px;border:1px solid #e2e8f0;">
+                            <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
+                            <div>
+                                <div style="font-size:18px;font-weight:900;color:#131921;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                                <div style="font-size:12px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'} — Salary Summary Report</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+                            <div style="font-size:16px;font-weight:900;color:#131921;">📊 Salary Summary — ${month} ${year}</div>
+                            <div style="font-size:12px;color:#565959;">Generated on: ${getTodayDateFormatted()} | Total Employees: ${employees.length}</div>
+                        </div>
+                        
+                        <div style="overflow-x:auto;">
+                            <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:1200px;">
+                                <thead>
+                                    <tr>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:center;font-size:10px;">Emp ID</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:left;font-size:10px;">Name</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:left;font-size:10px;">Designation</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Basic Salary</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Attendance</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Spoken</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Productivity</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Stay Back</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Total Credit</th>
+                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Security</th>
+                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Advanced</th>
+                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Absentee</th>
+                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Total Debit</th>
+                                        <th style="background:#ff9900;color:#fff;padding:6px 8px;border:1px solid #ff9900;text-align:right;font-size:11px;font-weight:900;">Net Salary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:12px;padding:10px;background:#f7fafc;border-radius:6px;border:1px solid #e2e8f0;">
+                            <div><strong>Total Employees:</strong> ${employees.length}</div>
+                            <div><strong>Total Credit:</strong> <span style="color:#067d62;">${formatCurrency(totalCredit)}</span></div>
+                            <div><strong>Total Debit:</strong> <span style="color:#b12704;">${formatCurrency(totalDebit)}</span></div>
+                            <div><strong>Total Net Salary:</strong> <span style="color:#131921;font-weight:900;">${formatCurrency(totalNet)}</span></div>
+                            <div><strong>Month:</strong> ${month} ${year}</div>
+                        </div>
+                        
+                        <div style="text-align:center;font-size:10px;color:#565959;margin-top:10px;border-top:1px solid #ddd;padding-top:6px;">
+                            ${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'} — Success with Wisdom
+                        </div>
+                    </div>
+                `;
+
+            // Store for export
+            window._salarySummaryData = {
+                employees: employees,
+                month: month,
+                year: year,
+                totalBasic: totalBasic,
+                totalAttendance: totalAttendance,
+                totalSpoken: totalSpoken,
+                totalProductivity: totalProductivity,
+                totalStayBack: totalStayBack,
+                totalCredit: totalCredit,
+                totalSecurity: totalSecurity,
+                totalAdvanced: totalAdvanced,
+                totalAbsentee: totalAbsentee,
+                totalDebit: totalDebit,
+                totalNet: totalNet
+            };
+        }
+
+        function printSalarySummary() {
+            const content = document.getElementById('salarySummaryDisplay').innerHTML;
+            if (!content || content.includes('No employees')) {
+                showToast('⚠️ Generate report first!', 'error');
+                return;
+            }
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                    <html><head><title>Salary Summary Report - ${getTodayDateFormatted()}</title>
+                    <style>
+                        body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; font-size: 11pt; }
+                        table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+                        th { background: #131921; color: #fff; border: 1px solid #232f3e; padding: 4px 6px; text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 10pt; font-weight: 900; }
+                        td { border: 1px solid #ddd; padding: 4px 6px; text-align: right; }
+                        td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
+                        .grand-total { background: #ebf4ff; font-weight: 900; border-top: 3px solid #131921; }
+                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 3px; }
+                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 10px; }
+                        .report-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 5px; margin-bottom: 10px; }
+                        .footer { text-align: center; font-size: 9pt; color: #565959; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 6px; }
+                        .summary-box { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 6px; padding: 8px; background: #f7fafc; border: 1px solid #e2e8f0; margin-top: 10px; }
+                        @media print {
+                            body { padding: 10px; }
+                            .btn, .form-row, .no-print { display: none !important; }
+                        }
+                    </style>
+                    </head><body>
+                    ${content}
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() { window.close(); }, 1000);
+                            }, 500);
+                        };
+                    <\/script>
+                    </body></html>
+                `);
+            win.document.close();
+        }
+
+        function exportSalarySummaryPDF() {
+            const content = document.getElementById('salarySummaryDisplay').innerHTML;
+            if (!content || content.includes('No employees')) {
+                showToast('⚠️ Generate report first!', 'error');
+                return;
+            }
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                    <html><head><title>Salary Summary PDF - ${getTodayDateFormatted()}</title>
+                    <style>
+                        body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; font-size: 11pt; }
+                        table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+                        th { background: #131921; color: #fff; border: 1px solid #232f3e; padding: 4px 6px; text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 10pt; font-weight: 900; }
+                        td { border: 1px solid #ddd; padding: 4px 6px; text-align: right; }
+                        td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
+                        .grand-total { background: #ebf4ff; font-weight: 900; border-top: 3px solid #131921; }
+                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 3px; }
+                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 10px; }
+                        .report-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 5px; margin-bottom: 10px; }
+                        .footer { text-align: center; font-size: 9pt; color: #565959; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 6px; }
+                        .summary-box { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 6px; padding: 8px; background: #f7fafc; border: 1px solid #e2e8f0; margin-top: 10px; }
+                        .btn, .form-row, .no-print { display: none !important; }
+                    </style>
+                    </head><body>
+                    ${content}
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() { window.close(); }, 1000);
+                            }, 500);
+                        };
+                    <\/script>
+                    </body></html>
+                `);
+            win.document.close();
+        }
+
+        function exportSalarySummaryExcel() {
+            const data = [];
+            const employees = AppData.employees;
+            const month = document.getElementById('salarySummaryMonth')?.value || MONTHS[new Date().getMonth()];
+            const year = document.getElementById('salarySummaryYear')?.value || new Date().getFullYear();
+
+            if (employees.length === 0) {
+                showToast('⚠️ No employees to export!', 'error');
+                return;
+            }
+
+            employees.forEach(e => {
+                const basic = e.salary || 0;
+                const attendance = e.allowances?.attendance || 0;
+                const spoken = e.allowances?.spoken || 0;
+                const productivity = e.allowances?.productivity || 0;
+                const stayBack = e.allowances?.stayBack || 0;
+                const security = e.allowances?.security || 0;
+                const advanced = e.allowances?.advanced || 0;
+                const absentee = e.allowances?.absentee || 0;
+
+                data.push({
+                    'Employee ID': e.empId,
+                    'Name': e.name,
+                    'Designation': e.designation || 'N/A',
+                    'Basic Salary': basic,
+                    'Attendance Allowance': attendance,
+                    'Spoken Allowance': spoken,
+                    'Productivity Allowance': productivity,
+                    'Stay Back Allowance': stayBack,
+                    'Total Credit': basic + attendance + spoken + productivity + stayBack,
+                    'Security Deduction': security,
+                    'Advanced Paid': advanced,
+                    'Absentee': absentee,
+                    'Total Debit': security + advanced + absentee,
+                    'Net Salary': (basic + attendance + spoken + productivity + stayBack) - (security + advanced +
+                        absentee),
+                    'Month': month,
+                    'Year': year
+                });
+            });
+
+            const settings = AppData.schoolSettings || {};
+            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+
+            const wsData = [
+                [`School: ${schoolName}`],
+                [`Salary Summary Report - ${month} ${year}`],
+                [`Generated on: ${getTodayDateFormatted()}`],
+                [`Total Employees: ${employees.length}`],
+                []
+            ];
+
+            const headers = Object.keys(data[0]);
+            wsData.push(headers);
+
+            data.forEach(row => {
+                wsData.push(headers.map(h => row[h] || ''));
+            });
+
+            // Add totals row
+            const totalBasic = data.reduce((sum, r) => sum + r['Basic Salary'], 0);
+            const totalCredit = data.reduce((sum, r) => sum + r['Total Credit'], 0);
+            const totalDebit = data.reduce((sum, r) => sum + r['Total Debit'], 0);
+            const totalNet = data.reduce((sum, r) => sum + r['Net Salary'], 0);
+
+            wsData.push([]);
+            wsData.push([
+                'TOTAL', '', '',
+                totalBasic,
+                data.reduce((sum, r) => sum + r['Attendance Allowance'], 0),
+                data.reduce((sum, r) => sum + r['Spoken Allowance'], 0),
+                data.reduce((sum, r) => sum + r['Productivity Allowance'], 0),
+                data.reduce((sum, r) => sum + r['Stay Back Allowance'], 0),
+                totalCredit,
+                data.reduce((sum, r) => sum + r['Security Deduction'], 0),
+                data.reduce((sum, r) => sum + r['Advanced Paid'], 0),
+                data.reduce((sum, r) => sum + r['Absentee'], 0),
+                totalDebit,
+                totalNet,
+                '', ''
+            ]);
+
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Salary Summary');
+            XLSX.writeFile(wb, 'Salary_Summary_Report_' + getTodayDateFormatted() + '.xlsx');
+            showToast('✅ Salary Summary Excel exported successfully!', 'success');
+        }
+
+        function exportSalarySummaryWord() {
+            const content = document.getElementById('salarySummaryDisplay').innerHTML;
+            if (!content || content.includes('No employees')) {
+                showToast('⚠️ Generate report first!', 'error');
+                return;
+            }
+
+            const settings = AppData.schoolSettings || {};
+            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const address = settings.schoolAddress || '';
+
+            const html = `
+                    <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                          xmlns:w='urn:schemas-microsoft-com:office:word' 
+                          xmlns='http://www.w3.org/TR/REC-html40'>
+                    <head>
+                        <meta charset="utf-8">
+                        <title>Salary Summary Report</title>
+                        <!--[if gte mso 9]>
+                        <xml>
+                            <w:WordDocument>
+                                <w:View>Print</w:View>
+                                <w:Zoom>100</w:Zoom>
+                            </w:WordDocument>
+                        </xml>
+                        <![endif]-->
+                        <style>
+                            body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; padding: 20px; margin: 0; }
+                            .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 3px; }
+                            .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 10px; }
+                            .report-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 5px; margin-bottom: 10px; }
+                            table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+                            th { background: #131921; color: #ffffff; border: 1px solid #232f3e; padding: 4px 6px; text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 10pt; font-weight: 900; }
+                            td { border: 1px solid #ddd; padding: 4px 6px; text-align: right; }
+                            td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
+                            .grand-total { background: #ebf4ff; font-weight: 900; border-top: 3px solid #131921; }
+                            .summary-box { display: flex; flex-wrap: wrap; gap: 15px; padding: 8px; background: #f7fafc; border: 1px solid #e2e8f0; margin-top: 10px; }
+                            .footer { text-align: center; font-size: 9pt; color: #565959; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 6px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="school-header">${schoolName}</div>
+                        <div class="school-subheader">${address}</div>
+                        <div class="report-title">📊 Salary Summary Report — All Employees</div>
+                        ${content}
+                    </body>
+                    </html>
+                `;
+
+            const blob = new Blob([html], { type: 'application/msword' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Salary_Summary_Report_' + getTodayDateFormatted() + '.doc';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('✅ Word document exported successfully!', 'success');
         }
 
         // ================================================================
@@ -5128,7 +5877,7 @@
         }
 
         // ================================================================
-        // ID CARDS (Shortened)
+        // ID CARDS
         // ================================================================
 
         function renderIDCards() {
@@ -5212,7 +5961,7 @@
         }
 
         // ================================================================
-        // ADMIT CARD (Shortened)
+        // ADMIT CARD
         // ================================================================
 
         function renderAdmitCard() {
@@ -5305,7 +6054,7 @@
         }
 
         // ================================================================
-        // EMPLOYEES (Shortened)
+        // EMPLOYEES - With Search
         // ================================================================
 
         function renderEmployees() {
@@ -5341,10 +6090,16 @@
                     
                     <div class="card">
                         <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Employee List <span class="badge">${employees.length}</span></div>
+                        
+                        <div class="search-bar">
+                            <label>🔍 Search:</label>
+                            <input id="empSearch" placeholder="Name, Employee ID..." oninput="filterEmployees()" />
+                        </div>
+                        
                         <div class="table-wrap">
                             <table>
                                 <thead><tr><th>ID</th><th>Name</th><th>Designation</th><th>Status</th><th>Salary</th><th>Mobile</th><th>Actions</th></tr></thead>
-                                <tbody>
+                                <tbody id="employeesTableBody">
                             `;
 
             if (employees.length === 0) {
@@ -5375,6 +6130,43 @@
 
             const nextNum = AppData.employees.length + 1;
             document.getElementById('empId').value = 'EMP' + String(nextNum).padStart(4, '0');
+        }
+
+        function filterEmployees() {
+            const search = document.getElementById('empSearch').value.toLowerCase();
+            const tbody = document.getElementById('employeesTableBody');
+
+            let filtered = AppData.employees;
+            if (search) {
+                filtered = filtered.filter(e =>
+                    e.name.toLowerCase().includes(search) ||
+                    e.empId.toLowerCase().includes(search)
+                );
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="7" style="padding:14px;color:var(--text-muted);text-align:center;">No employees found</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(e => {
+                const statusClass = e.status === 'Active' ? 'badge-active' : 'badge-inactive';
+                return `<tr>
+                        <td><strong>${e.empId}</strong></td>
+                        <td>${e.name}</td>
+                        <td>${e.designation || 'N/A'}</td>
+                        <td><span class="badge-status ${statusClass}">${e.status}</span></td>
+                        <td>${formatCurrency(e.salary || 0)}</td>
+                        <td>${e.mobile || 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-info btn-xs" onclick="viewEmployee('${e.id}')">📄</button>
+                            <button class="btn btn-primary btn-xs" onclick="editEmployee('${e.id}')">✏️</button>
+                            <button class="btn btn-danger btn-xs" onclick="deleteEmployee('${e.id}')">🗑️</button>
+                            <button class="btn btn-warning btn-xs" onclick="printEmployeeIDCardFromList('${e.id}')">🪪</button>
+                        </td>
+                    </tr>`;
+            }).join('');
         }
 
         function previewEmployeePhoto(input) {
@@ -5422,7 +6214,16 @@
                 mobile: document.getElementById('empMobile').value.trim(),
                 status: document.getElementById('empStatus').value,
                 salary: parseFloat(document.getElementById('empSalary').value) || 0,
-                photo: employeePhotoData || ''
+                photo: employeePhotoData || '',
+                allowances: {
+                    attendance: 0,
+                    spoken: 0,
+                    productivity: 0,
+                    stayBack: 0,
+                    security: 0,
+                    advanced: 0,
+                    absentee: 0
+                }
             };
 
             if (existing) {
@@ -5590,7 +6391,7 @@
         }
 
         // ================================================================
-        // PAY SLIP - Complete with all columns
+        // PAY SLIP - Salary Detail Slip
         // ================================================================
 
         function renderPaySlip() {
@@ -5599,7 +6400,7 @@
 
             let html = `
                     <div class="card">
-                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Salary Sheet / Pay Slip <span class="badge">Complete</span></div>
+                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Salary Detail Slip <span class="badge">All Allowances</span></div>
                         
                         <div class="form-row">
                             <label>Employee:</label>
@@ -5614,19 +6415,19 @@
                             <button class="btn btn-primary" onclick="generatePaySlip()">📄 Generate</button>
                             <button class="btn btn-success" onclick="printPaySlip()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportPaySlipPDF()">📄 PDF</button>
-                            <button class="btn btn-warning" onclick="exportPaySlipExcel()">Excel</button>
+                            <button class="btn btn-warning" onclick="exportPaySlipExcel()">📊 Excel</button>
                             <button class="btn btn-secondary" onclick="exportPaySlipWord()">📄 Word</button>
                         </div>
                         
                         <div class="employee-form-grid">
-                            <div class="full-width" style="background:var(--bg-primary);padding:8px 12px;border-radius:4px;font-weight:900;color:var(--accent-green);">✅ Credit Side</div>
+                            <div class="full-width" style="background:var(--bg-primary);padding:8px 12px;border-radius:4px;font-weight:900;color:var(--accent-green);">✅ Allowances (Credit)</div>
                             <div><label>Basic Salary</label><input type="number" id="psBasic" value="0" oninput="calculatePaySlip()" /></div>
                             <div><label>Attendance Allowance</label><input type="number" id="psAttendanceAllowance" value="0" oninput="calculatePaySlip()" /></div>
                             <div><label>Spoken Allowance</label><input type="number" id="psSpokenAllowance" value="0" oninput="calculatePaySlip()" /></div>
                             <div><label>Productivity Allowance</label><input type="number" id="psProductivityAllowance" value="0" oninput="calculatePaySlip()" /></div>
                             <div><label>Stay Back Allowance</label><input type="number" id="psStayBackAllowance" value="0" oninput="calculatePaySlip()" /></div>
                             
-                            <div class="full-width" style="background:var(--bg-primary);padding:8px 12px;border-radius:4px;font-weight:900;color:var(--accent-red);">❌ Debit Side</div>
+                            <div class="full-width" style="background:var(--bg-primary);padding:8px 12px;border-radius:4px;font-weight:900;color:var(--accent-red);">❌ Deductions (Debit)</div>
                             <div><label>Security Deduction</label><input type="number" id="psSecurityDeduction" value="0" oninput="calculatePaySlip()" /></div>
                             <div><label>Advanced Paid</label><input type="number" id="psAdvancedPaid" value="0" oninput="calculatePaySlip()" /></div>
                             <div><label>Absentee</label><input type="number" id="psAbsentee" value="0" oninput="calculatePaySlip()" /></div>
@@ -5654,6 +6455,16 @@
             const employee = getEmployee(employeeId);
             if (!employee) return;
             document.getElementById('psBasic').value = employee.salary || 0;
+
+            if (employee.allowances) {
+                document.getElementById('psAttendanceAllowance').value = employee.allowances.attendance || 0;
+                document.getElementById('psSpokenAllowance').value = employee.allowances.spoken || 0;
+                document.getElementById('psProductivityAllowance').value = employee.allowances.productivity || 0;
+                document.getElementById('psStayBackAllowance').value = employee.allowances.stayBack || 0;
+                document.getElementById('psSecurityDeduction').value = employee.allowances.security || 0;
+                document.getElementById('psAdvancedPaid').value = employee.allowances.advanced || 0;
+                document.getElementById('psAbsentee').value = employee.allowances.absentee || 0;
+            }
             calculatePaySlip();
         }
 
@@ -5695,6 +6506,18 @@
             const year = document.getElementById('psYear').value;
             const paymentMode = document.getElementById('psPaymentMode').value;
 
+            // Save allowances to employee
+            employee.allowances = {
+                attendance: parseFloat(document.getElementById('psAttendanceAllowance').value) || 0,
+                spoken: parseFloat(document.getElementById('psSpokenAllowance').value) || 0,
+                productivity: parseFloat(document.getElementById('psProductivityAllowance').value) || 0,
+                stayBack: parseFloat(document.getElementById('psStayBackAllowance').value) || 0,
+                security: parseFloat(document.getElementById('psSecurityDeduction').value) || 0,
+                advanced: parseFloat(document.getElementById('psAdvancedPaid').value) || 0,
+                absentee: parseFloat(document.getElementById('psAbsentee').value) || 0
+            };
+            saveToStorage();
+
             const basic = parseFloat(document.getElementById('psBasic').value) || 0;
             const attendance = parseFloat(document.getElementById('psAttendanceAllowance').value) || 0;
             const spoken = parseFloat(document.getElementById('psSpokenAllowance').value) || 0;
@@ -5719,10 +6542,10 @@
                         </div>
                         
                         <div style="text-align:center;font-size:16px;font-weight:900;color:#131921;margin:4px 0;">
-                            Salary for the Month of ${month} ${year}
+                            Salary Detail Slip for ${month} ${year}
                         </div>
                         
-                        <div class="ps-badge">PAY SLIP</div>
+                        <div class="ps-badge">SALARY SLIP</div>
                         
                         <div class="ps-employee">
                             <div class="ps-photo">${employeePhoto}</div>
@@ -5739,12 +6562,12 @@
                         <table class="ps-table">
                             <thead>
                                 <tr>
-                                    <th>Particulars</th>
-                                    <th>Amount (Rs.)</th>
+                                    <th style="width:40%;">Particulars</th>
+                                    <th style="width:30%;">Amount (Rs.)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="credit-row"><td>Basic Salary</td><td>${formatCurrency(basic)}</td></tr>
+                                <tr class="credit-row"><td><strong>Basic Salary</strong></td><td>${formatCurrency(basic)}</td></tr>
                                 <tr class="credit-row"><td>Attendance Allowance</td><td>${formatCurrency(attendance)}</td></tr>
                                 <tr class="credit-row"><td>Spoken Allowance</td><td>${formatCurrency(spoken)}</td></tr>
                                 <tr class="credit-row"><td>Productivity Allowance</td><td>${formatCurrency(productivity)}</td></tr>
@@ -5872,7 +6695,7 @@
             }];
 
             const settings = AppData.schoolSettings || {};
-            exportToExcel(data, 'Salary_Sheet_' + employee.name + '_' + getTodayDateFormatted(), settings.schoolName);
+            exportToExcel(data, 'Salary_Slip_' + employee.name + '_' + getTodayDateFormatted(), settings.schoolName);
         }
 
         function exportPaySlipWord() {
@@ -5881,11 +6704,11 @@
 
             const settings = AppData.schoolSettings || {};
             const htmlContent = content;
-            exportToWord(htmlContent, 'Pay_Slip_' + getTodayDateFormatted(), settings.schoolName);
+            exportToWord(htmlContent, 'Salary_Slip_' + getTodayDateFormatted(), settings.schoolName);
         }
 
         // ================================================================
-        // EXPENDITURE (Shortened)
+        // EXPENDITURE
         // ================================================================
 
         let expenseItems = [];
@@ -5916,7 +6739,7 @@
                             <button class="btn btn-warning" onclick="clearExpenditure()">🔄 Clear</button>
                             <button class="btn btn-info" onclick="exportExpenditurePDF()">📄 PDF</button>
                             <button class="btn btn-success" onclick="printExpenditure()">🖨️ Print</button>
-                            <button class="btn btn-warning" onclick="exportExpenditureExcel()">Excel</button>
+                            <button class="btn btn-warning" onclick="exportExpenditureExcel()">📊 Excel</button>
                             <button class="btn btn-secondary" onclick="exportExpenditureWord()">📄 Word</button>
                         </div>
                         
@@ -6064,7 +6887,7 @@
                     </head><body>
                     <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
-                    <h1>Expenditure Report</h1>
+                    <h1>📊 Expenditure Report</h1>
                     <p>Generated on: ${getTodayWithMonthName()}</p>
                     <table>
                         <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
@@ -6106,7 +6929,7 @@
                     </head><body>
                     <div class="school-header">${schoolName}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
-                    <h1>Expenditure Report</h1>
+                    <h1>📊 Expenditure Report</h1>
                     <p>Generated on: ${getTodayWithMonthName()}</p>
                     <table>
                         <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
@@ -6167,7 +6990,7 @@
         }
 
         // ================================================================
-        // REPORTS (Complete)
+        // REPORTS - All Types
         // ================================================================
 
         function renderReports() {
@@ -6180,12 +7003,22 @@
                         <div class="form-row">
                             <label>Report Type:</label>
                             <select id="rptType" onchange="toggleReportFields()">
-                                <option value="admission">📋 Admission Report</option>
-                                <option value="salary">💼 Salary Report (All Employees)</option>
-                                <option value="expenditure">📤 Expenditure Report</option>
-                                <option value="passing">✅ Passing Report</option>
-                                <option value="failure">❌ Failure Report</option>
+                                <option value="cash">💵 Cash Report</option>
+                                <option value="bank">🏦 Bank Report</option>
+                                <option value="arrears">⚠️ Fee Arrears Report</option>
+                                <option value="monthlyfee">📆 Monthly Fee Report</option>
+                                <option value="activity">📊 Activity Charges Report</option>
+                                <option value="books">📚 Books Charges Report</option>
+                                <option value="admissionfee">📝 Admission Fee Report</option>
+                                <option value="academic">📋 Academic Activities Fee Report</option>
+                                <option value="registration">📄 Registration Charges Report</option>
+                                <option value="tuitionmonthly">💰 Tuition Fee Report (Monthly)</option>
+                                <option value="tuitionyearly">💰 Tuition Fee Report (Yearly)</option>
                             </select>
+                            <label>Month:</label>
+                            <select id="rptMonth" style="display:none;">${getMonthOptions(MONTHS[new Date().getMonth()])}</select>
+                            <label>Year:</label>
+                            <select id="rptYear" style="display:none;">${getYearOptions(new Date().getFullYear())}</select>
                             <label>Class:</label>
                             <select id="rptClass" style="display:none;">
                                 <option value="All">All Classes</option>
@@ -6194,7 +7027,7 @@
                             <button class="btn btn-primary" onclick="generateReport()">📄 Generate</button>
                             <button class="btn btn-success" onclick="printReport()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportReportPDF()">📄 PDF</button>
-                            <button class="btn btn-warning" onclick="exportReportExcel()">Excel</button>
+                            <button class="btn btn-warning" onclick="exportReportExcel()">📊 Excel</button>
                             <button class="btn btn-secondary" onclick="exportReportWord()">📄 Word</button>
                         </div>
                         
@@ -6207,92 +7040,239 @@
 
         function toggleReportFields() {
             const type = document.getElementById('rptType').value;
-            document.getElementById('rptClass').style.display = ['admission', 'passing', 'failure'].includes(type) ?
-                'inline' : 'none';
+            const showMonth = ['monthlyfee', 'activity', 'books', 'admissionfee', 'academic', 'registration', 'tuitionmonthly',
+                'tuitionyearly', 'arrears'
+            ].includes(type);
+            const showYear = ['monthlyfee', 'activity', 'books', 'admissionfee', 'academic', 'registration', 'tuitionmonthly',
+                'tuitionyearly', 'arrears'
+            ].includes(type);
+            const showClass = ['monthlyfee', 'activity', 'books', 'admissionfee', 'academic', 'registration', 'tuitionmonthly',
+                'tuitionyearly', 'arrears'
+            ].includes(type);
+
+            document.getElementById('rptMonth').style.display = showMonth ? 'inline' : 'none';
+            document.getElementById('rptYear').style.display = showYear ? 'inline' : 'none';
+            document.getElementById('rptClass').style.display = showClass ? 'inline' : 'none';
         }
 
         function generateReport() {
             const type = document.getElementById('rptType').value;
             const output = document.getElementById('reportOutput');
+            const month = document.getElementById('rptMonth').value || MONTHS[new Date().getMonth()];
+            const year = document.getElementById('rptYear').value || new Date().getFullYear();
             const className = document.getElementById('rptClass').value || 'All';
 
             let text = '';
             text += '═══════════════════════════════════════════════════\n';
-            text += `  ${type.toUpperCase()} REPORT\n`;
+            text += `  📊 ${type.toUpperCase().replace(/_/g, ' ')} REPORT\n`;
             text += `  ${getTodayWithMonthName()}\n`;
             text += '═══════════════════════════════════════════════════\n\n';
 
+            const deposits = AppData.feeDeposits;
+            const filteredDeposits = className !== 'All' ? deposits.filter(d => d.className === className) : deposits;
+
             switch (type) {
-                case 'admission':
-                    const students = AppData.students;
-                    const filtered = className !== 'All' ? students.filter(s => s.currentClass === className) : students;
-                    text += `📋 Admission Report - ${className}\n`;
-                    text += `Total Students: ${filtered.length}\n\n`;
-                    filtered.forEach((s, i) => {
-                        text += `${i+1}. ${s.admissionNo} - ${s.name} (${s.fatherName}) - ${s.currentClass}\n`;
+                case 'cash':
+                    const cashDeposits = filteredDeposits.filter(d => d.paymentMode === 'Cash');
+                    const totalCash = cashDeposits.reduce((sum, d) => sum + d.amount, 0);
+                    text += `💵 Cash Report\n`;
+                    text += `Total Cash Deposits: ${formatCurrency(totalCash)}\n`;
+                    text += `Total Transactions: ${cashDeposits.length}\n\n`;
+                    cashDeposits.forEach((d, i) => {
+                        text += `${i+1}. ${d.studentName} (${d.admissionNo})\n`;
+                        text += `   Amount: ${formatCurrency(d.amount)} | Date: ${d.depositDate}\n`;
+                        text += `   Class: ${d.className} | Month: ${d.month} ${d.year}\n\n`;
                     });
                     break;
 
-                case 'salary':
-                    text += `💼 Salary Report - All Employees\n`;
-                    text += `Total Employees: ${AppData.employees.length}\n\n`;
-                    text +=
-                        `┌─────────────┬──────────────┬──────────────────┬─────────────┬──────────────────┬──────────────────┬─────────────────┬─────────────────┬───────────┬──────────────┬─────────────┬──────────────┐\n`;
-                    text +=
-                        `│     Name    │ Designation  │ Basic Salary     │ Attendance  │ Spoken Allowance │ Productivity     │ Stay Back       │ Security        │ Advanced  │ Absentee    │ Total Credit │ Total Debit  │ Net Salary   │\n`;
-                    text +=
-                        `├─────────────┼──────────────┼──────────────────┼─────────────┼──────────────────┼──────────────────┼─────────────────┼─────────────────┼───────────┼──────────────┼─────────────┼──────────────┤\n`;
-                    AppData.employees.forEach(e => {
-                        const name = (e.name || 'N/A').padEnd(11);
-                        const desig = (e.designation || 'N/A').padEnd(12);
-                        const salary = formatCurrency(e.salary || 0).padEnd(16);
-                        const attendance = formatCurrency(0).padEnd(11);
-                        const spoken = formatCurrency(0).padEnd(16);
-                        const productivity = formatCurrency(0).padEnd(16);
-                        const stayBack = formatCurrency(0).padEnd(15);
-                        const security = formatCurrency(0).padEnd(15);
-                        const advanced = formatCurrency(0).padEnd(9);
-                        const absentee = formatCurrency(0).padEnd(12);
-                        const totalCredit = formatCurrency(e.salary || 0).padEnd(11);
-                        const totalDebit = formatCurrency(0).padEnd(12);
-                        const netSalary = formatCurrency(e.salary || 0).padEnd(12);
-                        text +=
-                            `│ ${name} │ ${desig} │ ${salary} │ ${attendance} │ ${spoken} │ ${productivity} │ ${stayBack} │ ${security} │ ${advanced} │ ${absentee} │ ${totalCredit} │ ${totalDebit} │ ${netSalary} │\n`;
-                    });
-                    text +=
-                        `└─────────────┴──────────────┴──────────────────┴─────────────┴──────────────────┴──────────────────┴─────────────────┴─────────────────┴───────────┴──────────────┴─────────────┴──────────────┘\n`;
-                    break;
-
-                case 'expenditure':
-                    const totalExp = AppData.expenditures.reduce((sum, e) => sum + (e.grandTotal || 0), 0);
-                    text += `📤 Expenditure Report\n`;
-                    text += `Total Expenditures: ${AppData.expenditures.length}\n`;
-                    text += `Total Amount: ${formatCurrency(totalExp)}\n\n`;
-                    AppData.expenditures.slice().reverse().forEach((exp, i) => {
-                        text += `${i+1}. ${exp.date}: ${formatCurrency(exp.grandTotal)}\n`;
-                        exp.items.forEach(item => {
-                            text += `   - ${item.item}: ${item.qty} x ${formatCurrency(item.rate)}\n`;
-                        });
+                case 'bank':
+                    const bankDeposits = filteredDeposits.filter(d => d.paymentMode === 'Bank Transfer' || d.paymentMode ===
+                        'Cheque' || d.paymentMode === 'Online');
+                    const totalBank = bankDeposits.reduce((sum, d) => sum + d.amount, 0);
+                    text += `🏦 Bank Report\n`;
+                    text += `Total Bank Deposits: ${formatCurrency(totalBank)}\n`;
+                    text += `Total Transactions: ${bankDeposits.length}\n\n`;
+                    bankDeposits.forEach((d, i) => {
+                        text += `${i+1}. ${d.studentName} (${d.admissionNo})\n`;
+                        text += `   Amount: ${formatCurrency(d.amount)} | Mode: ${d.paymentMode}\n`;
+                        text += `   Date: ${d.depositDate} | Class: ${d.className}\n\n`;
                     });
                     break;
 
-                case 'passing':
-                    const passResults = AppData.results.filter(r => r.status === 'Pass' && (className === 'All' || r
-                        .className === className));
-                    text += `✅ Passing Report - ${className}\n`;
-                    text += `Total Pass: ${passResults.length}\n\n`;
-                    passResults.forEach((r, i) => {
-                        text += `${i+1}. ${r.studentName} - ${r.percentage.toFixed(1)}% (${r.grade})\n`;
+                case 'arrears':
+                    text += `⚠️ Fee Arrears Report - ${month} ${year}\n`;
+                    const arrearsStudents = [];
+                    AppData.students.forEach(s => {
+                        if (className === 'All' || s.currentClass === className) {
+                            const fees = AppData.feeChallans.filter(c => c.studentId === s.id && c.month === month && c
+                                .year == year);
+                            const totalDue = fees.reduce((sum, f) => sum + (f.total || 0), 0);
+                            const paid = AppData.feeDeposits.filter(d => d.studentId === s.id && d.month === month && d
+                                .year == year)
+                                .reduce((sum, d) => sum + d.amount, 0);
+                            const balance = totalDue - paid;
+                            if (balance > 0) {
+                                arrearsStudents.push({ student: s, balance: balance });
+                            }
+                        }
+                    });
+                    text += `Total Students with Arrears: ${arrearsStudents.length}\n\n`;
+                    arrearsStudents.forEach((a, i) => {
+                        text += `${i+1}. ${a.student.name} (${a.student.admissionNo})\n`;
+                        text += `   Class: ${a.student.currentClass}\n`;
+                        text += `   Arrears: ${formatCurrency(a.balance)}\n\n`;
                     });
                     break;
 
-                case 'failure':
-                    const failResults = AppData.results.filter(r => r.status === 'Fail' && (className === 'All' || r
-                        .className === className));
-                    text += `❌ Failure Report - ${className}\n`;
-                    text += `Total Fail: ${failResults.length}\n\n`;
-                    failResults.forEach((r, i) => {
-                        text += `${i+1}. ${r.studentName} - ${r.percentage.toFixed(1)}% (${r.grade})\n`;
+                case 'monthlyfee':
+                    text += `📆 Monthly Fee Report - ${month} ${year}\n`;
+                    const monthlyDeposits = filteredDeposits.filter(d => d.month === month && d.year == year);
+                    const totalMonthly = monthlyDeposits.reduce((sum, d) => sum + d.amount, 0);
+                    text += `Total Collected: ${formatCurrency(totalMonthly)}\n`;
+                    text += `Total Students: ${monthlyDeposits.length}\n\n`;
+                    monthlyDeposits.forEach((d, i) => {
+                        text += `${i+1}. ${d.studentName} (${d.admissionNo})\n`;
+                        text += `   Class: ${d.className || 'N/A'}\n`;
+                        text += `   Amount: ${formatCurrency(d.amount)} | Mode: ${d.paymentMode}\n`;
+                        text += `   Date: ${d.paymentDate || d.depositDate}\n\n`;
+                    });
+                    break;
+
+                case 'activity':
+                    text += `📊 Activity Charges Report - ${month} ${year}\n`;
+                    const activityChallans = AppData.feeChallans.filter(c => c.month === month && c.year == year);
+                    const classActivity = className !== 'All' ? activityChallans.filter(c => {
+                        const s = getStudent(c.studentId);
+                        return s && s.currentClass === className;
+                    }) : activityChallans;
+                    const totalActivity = classActivity.reduce((sum, c) => sum + (c.activityCharges || 0), 0);
+                    text += `Total Activity Charges: ${formatCurrency(totalActivity)}\n`;
+                    text += `Total Students: ${classActivity.length}\n\n`;
+                    classActivity.forEach((c, i) => {
+                        const s = getStudent(c.studentId);
+                        text += `${i+1}. ${s ? s.name : 'N/A'} (${c.admissionNo})\n`;
+                        text += `   Activity Charges: ${formatCurrency(c.activityCharges || 0)}\n`;
+                        text += `   Class: ${s ? s.currentClass : 'N/A'}\n\n`;
+                    });
+                    break;
+
+                case 'books':
+                    text += `📚 Books Charges Report - ${month} ${year}\n`;
+                    const booksChallans = AppData.feeChallans.filter(c => c.month === month && c.year == year);
+                    const classBooks = className !== 'All' ? booksChallans.filter(c => {
+                        const s = getStudent(c.studentId);
+                        return s && s.currentClass === className;
+                    }) : booksChallans;
+                    const totalBooks = classBooks.reduce((sum, c) => sum + (c.booksCharges || 0), 0);
+                    text += `Total Books Charges: ${formatCurrency(totalBooks)}\n`;
+                    text += `Total Students: ${classBooks.length}\n\n`;
+                    classBooks.forEach((c, i) => {
+                        const s = getStudent(c.studentId);
+                        text += `${i+1}. ${s ? s.name : 'N/A'} (${c.admissionNo})\n`;
+                        text += `   Books Charges: ${formatCurrency(c.booksCharges || 0)}\n`;
+                        text += `   Class: ${s ? s.currentClass : 'N/A'}\n\n`;
+                    });
+                    break;
+
+                case 'admissionfee':
+                    text += `📝 Admission Fee Report - ${month} ${year}\n`;
+                    const admissionChallans = AppData.feeChallans.filter(c => c.month === month && c.year == year);
+                    const classAdmission = className !== 'All' ? admissionChallans.filter(c => {
+                        const s = getStudent(c.studentId);
+                        return s && s.currentClass === className;
+                    }) : admissionChallans;
+                    const totalAdmission = classAdmission.reduce((sum, c) => sum + (c.admissionFee || 0), 0);
+                    text += `Total Admission Fees: ${formatCurrency(totalAdmission)}\n`;
+                    text += `Total Students: ${classAdmission.length}\n\n`;
+                    classAdmission.forEach((c, i) => {
+                        const s = getStudent(c.studentId);
+                        text += `${i+1}. ${s ? s.name : 'N/A'} (${c.admissionNo})\n`;
+                        text += `   Admission Fee: ${formatCurrency(c.admissionFee || 0)}\n`;
+                        text += `   Class: ${s ? s.currentClass : 'N/A'}\n\n`;
+                    });
+                    break;
+
+                case 'academic':
+                    text += `📋 Academic Activities Fee Report - ${month} ${year}\n`;
+                    const academicChallans = AppData.feeChallans.filter(c => c.month === month && c.year == year);
+                    const classAcademic = className !== 'All' ? academicChallans.filter(c => {
+                        const s = getStudent(c.studentId);
+                        return s && s.currentClass === className;
+                    }) : academicChallans;
+                    const totalAcademic = classAcademic.reduce((sum, c) => sum + (c.academicFee || 0), 0);
+                    text += `Total Academic Activities Fees: ${formatCurrency(totalAcademic)}\n`;
+                    text += `Total Students: ${classAcademic.length}\n\n`;
+                    classAcademic.forEach((c, i) => {
+                        const s = getStudent(c.studentId);
+                        text += `${i+1}. ${s ? s.name : 'N/A'} (${c.admissionNo})\n`;
+                        text += `   Academic Activities Fee: ${formatCurrency(c.academicFee || 0)}\n`;
+                        text += `   Class: ${s ? s.currentClass : 'N/A'}\n\n`;
+                    });
+                    break;
+
+                case 'registration':
+                    text += `📄 Registration Charges Report - ${month} ${year}\n`;
+                    const registrationChallans = AppData.feeChallans.filter(c => c.month === month && c.year == year);
+                    const classRegistration = className !== 'All' ? registrationChallans.filter(c => {
+                        const s = getStudent(c.studentId);
+                        return s && s.currentClass === className;
+                    }) : registrationChallans;
+                    const totalRegistration = classRegistration.reduce((sum, c) => sum + (c.registrationFee || 0), 0);
+                    text += `Total Registration Charges: ${formatCurrency(totalRegistration)}\n`;
+                    text += `Total Students: ${classRegistration.length}\n\n`;
+                    classRegistration.forEach((c, i) => {
+                        const s = getStudent(c.studentId);
+                        text += `${i+1}. ${s ? s.name : 'N/A'} (${c.admissionNo})\n`;
+                        text += `   Registration Charges: ${formatCurrency(c.registrationFee || 0)}\n`;
+                        text += `   Class: ${s ? s.currentClass : 'N/A'}\n\n`;
+                    });
+                    break;
+
+                case 'tuitionmonthly':
+                    text += `💰 Tuition Fee Report (Monthly) - ${month} ${year}\n`;
+                    const tuitionChallans = AppData.feeChallans.filter(c => c.month === month && c.year == year);
+                    const classTuition = className !== 'All' ? tuitionChallans.filter(c => {
+                        const s = getStudent(c.studentId);
+                        return s && s.currentClass === className;
+                    }) : tuitionChallans;
+                    const totalTuition = classTuition.reduce((sum, c) => sum + (c.monthlyFee || 0), 0);
+                    text += `Total Tuition Fees: ${formatCurrency(totalTuition)}\n`;
+                    text += `Total Students: ${classTuition.length}\n\n`;
+                    classTuition.forEach((c, i) => {
+                        const s = getStudent(c.studentId);
+                        text += `${i+1}. ${s ? s.name : 'N/A'} (${c.admissionNo})\n`;
+                        text += `   Tuition Fee: ${formatCurrency(c.monthlyFee || 0)}\n`;
+                        text += `   Class: ${s ? s.currentClass : 'N/A'}\n\n`;
+                    });
+                    break;
+
+                case 'tuitionyearly':
+                    text += `💰 Tuition Fee Report (Yearly) - ${year}\n`;
+                    const yearlyChallans = AppData.feeChallans.filter(c => c.year == year);
+                    const classYearly = className !== 'All' ? yearlyChallans.filter(c => {
+                        const s = getStudent(c.studentId);
+                        return s && s.currentClass === className;
+                    }) : yearlyChallans;
+                    const totalYearly = classYearly.reduce((sum, c) => sum + (c.monthlyFee || 0), 0);
+                    text += `Total Yearly Tuition Fees: ${formatCurrency(totalYearly)}\n`;
+                    text += `Total Students: ${classYearly.length}\n\n`;
+                    // Group by student
+                    const studentMap = {};
+                    classYearly.forEach(c => {
+                        const s = getStudent(c.studentId);
+                        if (s) {
+                            if (!studentMap[s.id]) {
+                                studentMap[s.id] = { student: s, total: 0, months: [] };
+                            }
+                            studentMap[s.id].total += (c.monthlyFee || 0);
+                            studentMap[s.id].months.push(c.month);
+                        }
+                    });
+                    Object.values(studentMap).forEach((item, i) => {
+                        text += `${i+1}. ${item.student.name} (${item.student.admissionNo})\n`;
+                        text += `   Class: ${item.student.currentClass}\n`;
+                        text += `   Yearly Tuition: ${formatCurrency(item.total)}\n`;
+                        text += `   Months: ${item.months.join(', ')}\n\n`;
                     });
                     break;
             }
@@ -6448,7 +7428,7 @@
                         <div class="form-row logo-upload-area">
                             <label>Logo</label>
                             <div class="logo-preview" id="settingsLogoPreview">
-                                ${settings.logo ? `<img src="${settings.logo}" alt="Logo" />` : `<span class="no-logo"></span>`}
+                                ${settings.logo ? `<img src="${settings.logo}" alt="Logo" />` : `<span class="no-logo">🏫</span>`}
                             </div>
                             <input type="file" id="setLogo" accept="image/*" onchange="previewSettingsLogo(this)" />
                             <button class="btn btn-danger btn-sm" onclick="removeSettingsLogo()">🗑️ Remove</button>
@@ -6473,6 +7453,7 @@
                             <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Employees:</strong> ${AppData.employees.length}</div>
                             <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Transactions:</strong> ${AppData.transactions.length}</div>
                             <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Fee Deposits:</strong> ${AppData.feeDeposits.length}</div>
+                            <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Family Groups:</strong> ${AppData.familyGroups.length}</div>
                             <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Storage Used:</strong> ${(new Blob([JSON.stringify(AppData)]).size / 1024).toFixed(2)} KB</div>
                             <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Version:</strong> 4.0.0</div>
                         </div>
@@ -6495,7 +7476,7 @@
         }
 
         function removeSettingsLogo() {
-            document.getElementById('settingsLogoPreview').innerHTML = `<span class="no-logo"></span>`;
+            document.getElementById('settingsLogoPreview').innerHTML = `<span class="no-logo">🏫</span>`;
             document.getElementById('setLogo').value = '';
         }
 
