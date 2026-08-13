@@ -244,6 +244,13 @@
         .top-bar .user-info .username {
             font-weight: 600;
         }
+        .top-bar .user-info .user-role {
+            font-size: 10px;
+            color: var(--accent-gold);
+            background: rgba(255, 153, 0, 0.15);
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
         .top-bar .user-info .btn-danger {
             background: var(--accent-red);
             color: #fff;
@@ -465,6 +472,57 @@
         .form-row textarea {
             min-height: 40px;
             resize: vertical;
+        }
+
+        /* ===== STUDENT SELECT WITH SEARCH ===== */
+        .student-search-select {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+        .student-search-select input {
+            width: 100%;
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            background: var(--bg-card);
+            font-family: var(--font-family);
+        }
+        .student-search-select input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
+        }
+        .student-search-select .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 50;
+            box-shadow: var(--shadow-hover);
+        }
+        .student-search-select .dropdown.show {
+            display: block;
+        }
+        .student-search-select .dropdown .item {
+            padding: 6px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+        .student-search-select .dropdown .item:hover {
+            background: var(--bg-primary);
+        }
+        .student-search-select .dropdown .item .adm-no {
+            color: var(--accent-gold);
+            font-weight: 600;
         }
 
         /* ===== STATS GRID ===== */
@@ -1797,6 +1855,13 @@
             <div class="subtitle">PABBI CAMPUS - NOWSHERA</div>
             <div class="tagline">School Management System</div>
 
+            <div style="background:#f0fdf4;padding:10px;border-radius:6px;margin-bottom:15px;border:1px solid #067d62;">
+                <div style="font-size:11px;color:#065f46;font-weight:600;">🔐 Login Options</div>
+                <div style="font-size:10px;color:#565959;margin-top:4px;">
+                    <strong>Admin:</strong> admin/admin123 | <strong>Principal:</strong> principal/principal123 | <strong>Teacher:</strong> teacher/teacher123
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>Username</label>
                 <input type="text" id="loginUsername" value="admin" />
@@ -1836,6 +1901,7 @@
             </div>
             <div class="user-info">
                 <span class="username" id="currentUser">admin</span>
+                <span class="user-role" id="currentRole">Admin</span>
                 <button class="btn btn-danger" onclick="doLogout()">🔓 Logout</button>
             </div>
         </div>
@@ -1845,45 +1911,7 @@
 
             <!-- SIDEBAR -->
             <nav class="sidebar" id="sidebar">
-                <div class="section-label">📊 Dashboard</div>
-                <a class="active" data-tab="dashboard"><span class="emoji">📊</span> Dashboard</a>
-
-                <div class="section-label">👨‍🎓 Students</div>
-                <a data-tab="students"><span class="emoji">👨‍🎓</span> Students</a>
-                <a data-tab="admission"><span class="emoji">📝</span> Admission</a>
-                <a data-tab="familydiscount"><span class="emoji">👨‍👩‍👧‍👦</span> Family Discount</a>
-
-                <div class="section-label">🧾 Fee</div>
-                <a data-tab="feechallan"><span class="emoji">🧾</span> Fee Challan</a>
-                <a data-tab="feedeposit"><span class="emoji">💰</span> Fee Deposit</a>
-                <a data-tab="transactions"><span class="emoji">📊</span> Transactions</a>
-                <a data-tab="bulkfee"><span class="emoji">📋</span> Bulk Fee Voucher</a>
-
-                <div class="section-label">📝 Academics</div>
-                <a data-tab="marksheet"><span class="emoji">📊</span> Marksheet Entry</a>
-                <a data-tab="results"><span class="emoji">📈</span> Results</a>
-
-                <div class="section-label">📜 Certificates</div>
-                <a data-tab="leavingcert"><span class="emoji">📜</span> Leaving Certificate</a>
-                <a data-tab="charactercert"><span class="emoji">⭐</span> Character Certificate</a>
-                <a data-tab="birthcert"><span class="emoji">👶</span> Birth Certificate</a>
-
-                <div class="section-label">🪪 Cards</div>
-                <a data-tab="idcards"><span class="emoji">🪪</span> ID Cards</a>
-                <a data-tab="admitcard"><span class="emoji">🎫</span> Admit Card</a>
-
-                <div class="section-label">👨‍💼 Staff</div>
-                <a data-tab="employees"><span class="emoji">👨‍</span> Employees</a>
-                <a data-tab="employeeidcard"><span class="emoji">🪪</span> Employee ID Card</a>
-                <a data-tab="payslip"><span class="emoji">💳</span> Salary Detail Slip</a>
-                <a data-tab="salarysummary"><span class="emoji">📊</span> Salary Summary</a>
-
-                <div class="section-label">💰 Accounts</div>
-                <a data-tab="expenditure"><span class="emoji">📊</span> Expenditure</a>
-                <a data-tab="reports"><span class="emoji">📈</span> Reports</a>
-
-                <div class="section-label">⚙️ Settings</div>
-                <a data-tab="settings"><span class="emoji">⚙️</span> Settings</a>
+                <!-- Will be rendered by JavaScript based on role -->
             </nav>
 
             <!-- CONTENT -->
@@ -1912,6 +1940,23 @@
         // THE EDUCATORS - COMPLETE JAVASCRIPT
         // ================================================================
 
+        // ===== USER ROLES =====
+        const ROLES = {
+            ADMIN: 'admin',
+            PRINCIPAL: 'principal',
+            TEACHER: 'teacher'
+        };
+
+        // ===== USER CREDENTIALS =====
+        const USERS = {
+            admin: { password: 'admin123', role: 'admin', name: 'Admin' },
+            principal: { password: 'principal123', role: 'principal', name: 'Principal' },
+            teacher: { password: 'teacher123', role: 'teacher', name: 'Teacher' }
+        };
+
+        let currentUser = null;
+        let currentUserRole = null;
+
         // ===== DATA STORE =====
         let AppData = {
             students: [],
@@ -1924,6 +1969,7 @@
             marksheets: [],
             results: [],
             familyGroups: [],
+            receiptCounter: 0,
             schoolSettings: {
                 schoolName: 'THE EDUCATORS PABBI CAMPUS',
                 schoolAddress: 'NOWSHERA',
@@ -1935,7 +1981,6 @@
             }
         };
 
-        let currentUser = null;
         let currentTab = 'dashboard';
         let studentIdCounter = 0;
         let employeeIdCounter = 0;
@@ -2024,18 +2069,32 @@
 
         function init() {
             loadFromStorage();
+            // Check if user is already logged in
+            const savedUser = sessionStorage.getItem('educatorsUser');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                currentUser = user.username;
+                currentUserRole = user.role;
+                if (USERS[currentUser] && USERS[currentUser].password === user.password) {
+                    showApp();
+                    return;
+                }
+            }
+            showLogin();
+        }
+
+        function showLogin() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('appContainer').style.display = 'none';
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            updateTopBar();
             setupSidebar();
-            showTab('dashboard');
+            showTab(currentTab);
             updateLoginLogo();
-
-            document.getElementById('loginPassword').addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') doLogin();
-            });
-            document.getElementById('loginUsername').addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') document.getElementById('loginPassword').focus();
-            });
-
-            console.log('THE EDUCATORS System Initialized!');
         }
 
         function updateLoginLogo() {
@@ -2054,7 +2113,7 @@
 
         function loadFromStorage() {
             try {
-                const data = localStorage.getItem('educatorsDataV4');
+                const data = localStorage.getItem('educatorsDataV5');
                 if (data) {
                     AppData = JSON.parse(data);
                     if (!AppData.students) AppData.students = [];
@@ -2078,6 +2137,7 @@
                             adminPassword: 'admin123'
                         };
                     }
+                    if (!AppData.receiptCounter) AppData.receiptCounter = 0;
                 }
             } catch (e) { console.warn('Error loading data:', e); }
 
@@ -2090,7 +2150,7 @@
 
         function saveToStorage() {
             try {
-                localStorage.setItem('educatorsDataV4', JSON.stringify(AppData));
+                localStorage.setItem('educatorsDataV5', JSON.stringify(AppData));
                 localStorage.setItem('educatorsLastBackup', new Date().toLocaleString());
             } catch (e) { console.warn('Error saving data:', e); }
         }
@@ -2109,6 +2169,12 @@
                 logoImg.innerHTML = `<span class="no-logo">🏫</span>`;
             }
             updateLoginLogo();
+
+            if (currentUser) {
+                const user = USERS[currentUser];
+                document.getElementById('currentUser').textContent = currentUser;
+                document.getElementById('currentRole').textContent = user ? user.name : 'User';
+            }
         }
 
         function getLogoHTML(size) {
@@ -2121,41 +2187,21 @@
         }
 
         // ================================================================
-        // MODAL FUNCTIONS
-        // ================================================================
-
-        function openModal(title, content) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalBody').innerHTML = content;
-            document.getElementById('modalOverlay').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('show');
-        }
-
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-
-        // ================================================================
         // AUTHENTICATION
         // ================================================================
 
         function doLogin() {
-            const username = document.getElementById('loginUsername').value.trim();
+            const username = document.getElementById('loginUsername').value.trim().toLowerCase();
             const password = document.getElementById('loginPassword').value.trim();
 
-            const settings = AppData.schoolSettings || {};
-            const adminPassword = settings.adminPassword || 'admin123';
-
-            if (username === 'admin' && password === adminPassword) {
+            const user = USERS[username];
+            if (user && user.password === password) {
                 currentUser = username;
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appContainer').style.display = 'block';
-                document.getElementById('currentUser').textContent = username;
-                showToast('✅ Login successful!', 'success');
-                showTab(currentTab);
+                currentUserRole = user.role;
+                sessionStorage.setItem('educatorsUser', JSON.stringify({ username: username, password: password, role: user
+                        .role }));
+                showApp();
+                showToast(`✅ Welcome ${user.name}!`, 'success');
             } else {
                 document.getElementById('loginError').style.display = 'block';
                 setTimeout(() => {
@@ -2167,18 +2213,131 @@
         function doLogout() {
             if (confirm('Are you sure you want to logout?')) {
                 currentUser = null;
-                document.getElementById('appContainer').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
+                currentUserRole = null;
+                sessionStorage.removeItem('educatorsUser');
+                showLogin();
                 document.getElementById('loginPassword').value = '';
                 showToast('👋 Logged out', 'info');
             }
         }
 
         // ================================================================
-        // SIDEBAR NAVIGATION
+        // SIDEBAR NAVIGATION - Role Based
         // ================================================================
 
         function setupSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            let html = '';
+
+            // Common menus for all users
+            const commonMenus = `
+                    <div class="section-label">📊 Dashboard</div>
+                    <a data-tab="dashboard"><span class="emoji">📊</span> Dashboard</a>
+
+                    <div class="section-label">👨‍🎓 Students</div>
+                    <a data-tab="students"><span class="emoji">👨‍🎓</span> Students</a>
+                    <a data-tab="admission"><span class="emoji">📝</span> Admission</a>
+                `;
+
+            // Menus based on role
+            let roleMenus = '';
+
+            if (currentUserRole === ROLES.ADMIN) {
+                // Admin/Accountant - Full Access
+                roleMenus = `
+                        <a data-tab="familydiscount"><span class="emoji">👨‍👩‍👧‍👦</span> Family Discount</a>
+
+                        <div class="section-label">🧾 Fee</div>
+                        <a data-tab="feechallan"><span class="emoji">🧾</span> Fee Challan</a>
+                        <a data-tab="feedeposit"><span class="emoji">💰</span> Fee Deposit</a>
+                        <a data-tab="transactions"><span class="emoji">📊</span> Transactions</a>
+                        <a data-tab="bulkfee"><span class="emoji">📋</span> Bulk Fee Voucher</a>
+
+                        <div class="section-label">📝 Academics</div>
+                        <a data-tab="marksheet"><span class="emoji">📊</span> Marksheet Entry</a>
+                        <a data-tab="results"><span class="emoji">📈</span> Results</a>
+
+                        <div class="section-label">📜 Certificates</div>
+                        <a data-tab="leavingcert"><span class="emoji">📜</span> Leaving Certificate</a>
+                        <a data-tab="charactercert"><span class="emoji">⭐</span> Character Certificate</a>
+                        <a data-tab="birthcert"><span class="emoji">👶</span> Birth Certificate</a>
+
+                        <div class="section-label">🪪 Cards</div>
+                        <a data-tab="idcards"><span class="emoji">🪪</span> ID Cards</a>
+                        <a data-tab="admitcard"><span class="emoji">🎫</span> Admit Card</a>
+
+                        <div class="section-label">👨‍💼 Staff</div>
+                        <a data-tab="employees"><span class="emoji">👨‍</span> Employees</a>
+                        <a data-tab="employeeidcard"><span class="emoji">🪪</span> Employee ID Card</a>
+                        <a data-tab="payslip"><span class="emoji">💳</span> Salary Detail Slip</a>
+                        <a data-tab="salarysummary"><span class="emoji">📊</span> Salary Summary</a>
+
+                        <div class="section-label">💰 Accounts</div>
+                        <a data-tab="expenditure"><span class="emoji">📊</span> Expenditure</a>
+                        <a data-tab="reports"><span class="emoji">📈</span> Reports</a>
+
+                        <div class="section-label">⚙️ Settings</div>
+                        <a data-tab="settings"><span class="emoji">⚙️</span> Settings</a>
+                    `;
+            } else if (currentUserRole === ROLES.PRINCIPAL) {
+                // Principal - Can view all, add students, generate reports, limited financial
+                roleMenus = `
+                        <a data-tab="familydiscount"><span class="emoji">👨‍👩‍👧‍👦</span> Family Discount</a>
+
+                        <div class="section-label">🧾 Fee</div>
+                        <a data-tab="feechallan"><span class="emoji">🧾</span> Fee Challan</a>
+                        <a data-tab="feedeposit"><span class="emoji">💰</span> Fee Deposit</a>
+                        <a data-tab="transactions"><span class="emoji">📊</span> Transactions</a>
+                        <a data-tab="bulkfee"><span class="emoji">📋</span> Bulk Fee Voucher</a>
+
+                        <div class="section-label">📝 Academics</div>
+                        <a data-tab="marksheet"><span class="emoji">📊</span> Marksheet Entry</a>
+                        <a data-tab="results"><span class="emoji">📈</span> Results</a>
+
+                        <div class="section-label">📜 Certificates</div>
+                        <a data-tab="leavingcert"><span class="emoji">📜</span> Leaving Certificate</a>
+                        <a data-tab="charactercert"><span class="emoji">⭐</span> Character Certificate</a>
+                        <a data-tab="birthcert"><span class="emoji">👶</span> Birth Certificate</a>
+
+                        <div class="section-label">🪪 Cards</div>
+                        <a data-tab="idcards"><span class="emoji">🪪</span> ID Cards</a>
+                        <a data-tab="admitcard"><span class="emoji">🎫</span> Admit Card</a>
+
+                        <div class="section-label">👨‍💼 Staff</div>
+                        <a data-tab="employees"><span class="emoji">👨‍</span> Employees</a>
+                        <a data-tab="employeeidcard"><span class="emoji">🪪</span> Employee ID Card</a>
+                        <a data-tab="payslip"><span class="emoji">💳</span> Salary Detail Slip</a>
+                        <a data-tab="salarysummary"><span class="emoji">📊</span> Salary Summary</a>
+
+                        <div class="section-label">💰 Accounts</div>
+                        <a data-tab="expenditure"><span class="emoji">📊</span> Expenditure</a>
+                        <a data-tab="reports"><span class="emoji">📈</span> Reports</a>
+
+                        <div class="section-label">⚙️ Settings</div>
+                        <a data-tab="settings"><span class="emoji">⚙️</span> Settings</a>
+                    `;
+            } else if (currentUserRole === ROLES.TEACHER) {
+                // Teacher - Only Academics
+                roleMenus = `
+                        <div class="section-label">📝 Academics</div>
+                        <a data-tab="marksheet"><span class="emoji">📊</span> Marksheet Entry</a>
+                        <a data-tab="results"><span class="emoji">📈</span> Results</a>
+
+                        <div class="section-label">📜 Certificates</div>
+                        <a data-tab="leavingcert"><span class="emoji">📜</span> Leaving Certificate</a>
+                        <a data-tab="charactercert"><span class="emoji">⭐</span> Character Certificate</a>
+                        <a data-tab="birthcert"><span class="emoji">👶</span> Birth Certificate</a>
+
+                        <div class="section-label">🪪 Cards</div>
+                        <a data-tab="idcards"><span class="emoji">🪪</span> ID Cards</a>
+                        <a data-tab="admitcard"><span class="emoji">🎫</span> Admit Card</a>
+                    `;
+            }
+
+            html = commonMenus + roleMenus;
+            sidebar.innerHTML = html;
+
+            // Add click events
             document.querySelectorAll('.sidebar a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -2187,12 +2346,33 @@
                     showTab(this.dataset.tab);
                 });
             });
+
+            // Set active tab
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                if (link.dataset.tab === currentTab) {
+                    link.classList.add('active');
+                }
+            });
         }
 
         function showTab(tabName) {
             currentTab = tabName;
             const contentArea = document.getElementById('contentArea');
             contentArea.innerHTML = '';
+
+            // Check permission for teacher
+            if (currentUserRole === ROLES.TEACHER) {
+                const teacherAllowed = ['dashboard', 'marksheet', 'results', 'leavingcert', 'charactercert', 'birthcert',
+                    'idcards', 'admitcard'
+                ];
+                if (!teacherAllowed.includes(tabName)) {
+                    showToast('⚠️ You do not have permission to access this module!', 'error');
+                    tabName = 'dashboard';
+                    currentTab = 'dashboard';
+                    document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+                    document.querySelector('.sidebar a[data-tab="dashboard"]')?.classList.add('active');
+                }
+            }
 
             switch (tabName) {
                 case 'dashboard':
@@ -2364,6 +2544,89 @@
         function getYearOptions(selected) {
             return YEARS.map(y => `<option value="${y}" ${y === selected ? 'selected' : ''}>${y}</option>`).join('');
         }
+
+        // ================================================================
+        // STUDENT SEARCH SELECT COMPONENT
+        // ================================================================
+
+        function createStudentSearchSelect(containerId, selectedId, placeholder = 'Search student by name, admission no...') {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const students = AppData.students;
+
+            let html = `
+                    <div class="student-search-select">
+                        <input type="text" id="${selectedId}_search" placeholder="${placeholder}" autocomplete="off" onfocus="toggleStudentDropdown('${selectedId}', true)" oninput="filterStudentDropdown('${selectedId}')" />
+                        <input type="hidden" id="${selectedId}" value="" />
+                        <div class="dropdown" id="${selectedId}_dropdown">
+                            <div class="item" data-value="" onclick="selectStudent('${selectedId}', '', '')">-- Select Student --</div>
+                            ${students.map(s => `
+                                <div class="item" data-value="${s.id}" onclick="selectStudent('${selectedId}', '${s.id}', '${s.name} (${s.admissionNo})')">
+                                    <span class="adm-no">${s.admissionNo}</span> - ${s.name} (${s.fatherName})
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+            container.innerHTML = html;
+        }
+
+        function toggleStudentDropdown(id, show) {
+            const dropdown = document.getElementById(id + '_dropdown');
+            if (!dropdown) return;
+            if (show) {
+                dropdown.classList.add('show');
+            } else {
+                setTimeout(() => {
+                    dropdown.classList.remove('show');
+                }, 200);
+            }
+        }
+
+        function filterStudentDropdown(id) {
+            const search = document.getElementById(id + '_search');
+            const dropdown = document.getElementById(id + '_dropdown');
+            if (!search || !dropdown) return;
+
+            const query = search.value.toLowerCase();
+            const items = dropdown.querySelectorAll('.item');
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(query) || query === '') {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            dropdown.classList.add('show');
+        }
+
+        function selectStudent(id, value, label) {
+            const hidden = document.getElementById(id);
+            const search = document.getElementById(id + '_search');
+            const dropdown = document.getElementById(id + '_dropdown');
+
+            if (hidden) hidden.value = value;
+            if (search) search.value = label || '';
+            if (dropdown) dropdown.classList.remove('show');
+
+            // Trigger change event
+            const event = new Event('change', { bubbles: true });
+            if (hidden) hidden.dispatchEvent(event);
+        }
+
+        // Close dropdowns on click outside
+        document.addEventListener('click', function(e) {
+            document.querySelectorAll('.student-search-select .dropdown').forEach(d => {
+                if (!d.closest('.student-search-select').contains(e.target)) {
+                    d.classList.remove('show');
+                }
+            });
+        });
 
         // ================================================================
         // EXPORT FUNCTIONS (Excel, Word)
@@ -2543,6 +2806,7 @@
                     <div class="card">
                         <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Dashboard <span class="badge">live</span></div>
                         <div style="font-size:14px;color:var(--text-muted);">${getTodayWithMonthName()}</div>
+                        <div style="font-size:12px;color:var(--accent-gold);margin-top:4px;">👤 Logged in as: <strong>${currentUser}</strong> (${currentUserRole})</div>
                     </div>
                     
                     <div class="stats-grid">
@@ -3170,7 +3434,6 @@
             const family = AppData.familyGroups.find(g => g.id === familyId);
             if (!family) return;
 
-            // Check if student already in any family
             for (let g of AppData.familyGroups) {
                 if (g.members.includes(studentId)) {
                     showToast('⚠️ Student already in a family!', 'error');
@@ -3228,12 +3491,12 @@
         }
 
         // ================================================================
-        // FEE CHALLAN - 3 Copies
+        // FEE CHALLAN - With Automatic Receipt No
         // ================================================================
 
         function renderFeeChallan() {
             const container = document.getElementById('contentArea');
-            const students = AppData.students;
+            const student = AppData.students;
 
             let html = `
                     <div class="card">
@@ -3241,15 +3504,13 @@
                         
                         <div class="fee-challan-grid">
                             <div class="full-width"><label>Select Student</label>
-                                <select id="fcStudent" onchange="loadFeeChallanStudent()">
-                                    <option value="">-- Select Student --</option>
-                                    ${students.map(s => `<option value="${s.id}">${s.admissionNo} - ${s.name}</option>`).join('')}
-                                </select>
+                                <div id="fcStudentContainer"></div>
                             </div>
                             <div><label>Admission No</label><input id="fcAdmissionNo" readonly style="background:#f7fafc;" /></div>
                             <div><label>Class</label><input id="fcClass" readonly style="background:#f7fafc;" /></div>
                             <div><label>Student Name</label><input id="fcName" readonly style="background:#f7fafc;" /></div>
                             <div><label>Father Name</label><input id="fcFather" readonly style="background:#f7fafc;" /></div>
+                            <div><label>Receipt No</label><input id="fcReceiptNo" readonly style="background:#f7fafc;font-weight:900;color:var(--accent-gold);" /></div>
                             <div><label>Due Date</label><input id="fcDueDate" type="date" /></div>
                             <div><label>Month</label>
                                 <select id="fcMonth">
@@ -3284,6 +3545,30 @@
                 `;
 
             container.innerHTML = html;
+
+            // Create student search
+            const containerDiv = document.getElementById('fcStudentContainer');
+            const students = AppData.students;
+            let searchHtml = `
+                    <div class="student-search-select">
+                        <input type="text" id="fcStudent_search" placeholder="Search student by name, admission no..." autocomplete="off" onfocus="toggleStudentDropdown('fcStudent', true)" oninput="filterStudentDropdown('fcStudent')" />
+                        <input type="hidden" id="fcStudent" value="" onchange="loadFeeChallanStudent()" />
+                        <div class="dropdown" id="fcStudent_dropdown">
+                            <div class="item" data-value="" onclick="selectStudent('fcStudent', '', '')">-- Select Student --</div>
+                            ${students.map(s => `
+                                <div class="item" data-value="${s.id}" onclick="selectStudent('fcStudent', '${s.id}', '${s.name} (${s.admissionNo})')">
+                                    <span class="adm-no">${s.admissionNo}</span> - ${s.name} (${s.fatherName})
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            containerDiv.innerHTML = searchHtml;
+
+            // Set receipt number
+            AppData.receiptCounter = AppData.receiptCounter || 0;
+            AppData.receiptCounter++;
+            document.getElementById('fcReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
 
             const now = new Date();
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -3330,6 +3615,7 @@
 
         function clearFeeChallan() {
             document.getElementById('fcStudent').value = '';
+            document.getElementById('fcStudent_search').value = '';
             document.getElementById('fcAdmissionNo').value = '';
             document.getElementById('fcClass').value = '';
             document.getElementById('fcName').value = '';
@@ -3343,11 +3629,16 @@
             document.getElementById('feeChallanDisplay').innerHTML =
                 '<p style="color:var(--text-muted);text-align:center;padding:20px;">Select student, fill details and click Generate</p>';
             showToast('🔄 Cleared!', 'info');
+
+            AppData.receiptCounter = AppData.receiptCounter || 0;
+            AppData.receiptCounter++;
+            document.getElementById('fcReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
         }
 
         function generateFeeChallan() {
             const studentId = document.getElementById('fcStudent').value;
             const display = document.getElementById('feeChallanDisplay');
+            const receiptNo = document.getElementById('fcReceiptNo').value;
 
             if (!studentId) {
                 showToast('⚠️ Select a student!', 'error');
@@ -3382,6 +3673,7 @@
                 studentId: studentId,
                 studentName: studentName,
                 admissionNo: admissionNo,
+                receiptNo: receiptNo,
                 month: month,
                 year: year,
                 monthlyFee: monthlyFee,
@@ -3400,11 +3692,12 @@
                 studentName: studentName,
                 admissionNo: admissionNo,
                 amount: total,
-                type: 'Challan Generated - ' + month + ' ' + year,
+                type: 'Challan Generated - ' + month + ' ' + year + ' (Receipt: ' + receiptNo + ')',
                 date: getTodayDateFormatted(),
                 dueDate: formattedDate,
                 month: month,
-                year: year
+                year: year,
+                receiptNo: receiptNo
             });
             saveToStorage();
 
@@ -3422,6 +3715,7 @@
                             </div>
                             <div style="text-align:center;">
                                 <span class="v-copy-type">${copy}</span>
+                                <div style="font-size:9px;color:#131921;font-weight:900;margin-top:2px;">Receipt: ${receiptNo}</div>
                             </div>
                             <div class="v-details">
                                 <div class="row"><span class="label">Admission No</span><span class="value">${admissionNo}</span></div>
@@ -3448,7 +3742,7 @@
             vouchersHTML += '</div>';
             display.innerHTML = vouchersHTML;
 
-            showToast('✅ 3 Vouchers generated! (Student, School & Bank Copy)', 'success');
+            showToast(`✅ Vouchers generated! Receipt: ${receiptNo}`, 'success');
         }
 
         function printFeeChallan() {
@@ -3639,12 +3933,18 @@
             let allVouchers = '';
             let totalCount = 0;
 
+            // Increment receipt counter for bulk
+            AppData.receiptCounter = AppData.receiptCounter || 0;
+
             selected.forEach(cb => {
                 const studentId = cb.value;
                 const student = getStudent(studentId);
                 if (!student) return;
 
                 totalCount++;
+                AppData.receiptCounter++;
+                const receiptNo = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
+
                 const admissionNo = student.admissionNo;
                 const className = student.currentClass;
                 const studentName = student.name;
@@ -3674,6 +3974,7 @@
                     studentId: studentId,
                     studentName: studentName,
                     admissionNo: admissionNo,
+                    receiptNo: receiptNo,
                     month: month,
                     year: year,
                     monthlyFee: monthlyFee,
@@ -3693,11 +3994,12 @@
                     studentName: studentName,
                     admissionNo: admissionNo,
                     amount: total,
-                    type: 'Bulk Challan - ' + month + ' ' + year,
+                    type: 'Bulk Challan - ' + month + ' ' + year + ' (Receipt: ' + receiptNo + ')',
                     date: getTodayDateFormatted(),
                     dueDate: formattedDate,
                     month: month,
-                    year: year
+                    year: year,
+                    receiptNo: receiptNo
                 });
 
                 const copies = ['Student Copy', 'School Copy', 'Bank Copy'];
@@ -3711,6 +4013,7 @@
                                 </div>
                                 <div style="text-align:center;">
                                     <span class="v-copy-type">${copy}</span>
+                                    <div style="font-size:9px;color:#131921;font-weight:900;margin-top:2px;">Receipt: ${receiptNo}</div>
                                 </div>
                                 <div class="v-details">
                                     <div class="row"><span class="label">Admission No</span><span class="value">${admissionNo}</span></div>
@@ -3839,7 +4142,7 @@
         }
 
         // ================================================================
-        // FEE DEPOSIT - With Cash/Bank tracking
+        // FEE DEPOSIT - With Search and Cash/Bank tracking
         // ================================================================
 
         function renderFeeDeposit() {
@@ -3852,10 +4155,7 @@
                         
                         <div class="fee-challan-grid">
                             <div class="full-width"><label>Select Student</label>
-                                <select id="fdStudent" onchange="loadFeeDepositStudent()">
-                                    <option value="">-- Select Student --</option>
-                                    ${students.map(s => `<option value="${s.id}">${s.admissionNo} - ${s.name}</option>`).join('')}
-                                </select>
+                                <div id="fdStudentContainer"></div>
                             </div>
                             <div><label>Admission No</label><input id="fdAdmissionNo" readonly style="background:#f7fafc;" /></div>
                             <div><label>Student Name</label><input id="fdName" readonly style="background:#f7fafc;" /></div>
@@ -3876,7 +4176,7 @@
                             <div><label>Year</label>
                                 <select id="fdYear">${getYearOptions(new Date().getFullYear())}</select>
                             </div>
-                            <div><label>Receipt No</label><input id="fdReceiptNo" placeholder="Admission No as Receipt" /></div>
+                            <div><label>Receipt No</label><input id="fdReceiptNo" readonly style="background:#f7fafc;font-weight:900;color:var(--accent-gold);" /></div>
                             <div class="full-width">
                                 <div class="btn-group">
                                     <button class="btn btn-success" onclick="saveFeeDeposit()">💾 Save Deposit</button>
@@ -3887,7 +4187,7 @@
                         
                         <div class="table-wrap" style="margin-top:10px;">
                             <table>
-                                <thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt/Adm No</th><th>Action</th></tr></thead>
+                                <thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt</th><th>Action</th></tr></thead>
                                 <tbody id="fdTableBody"></tbody>
                             </table>
                         </div>
@@ -3895,6 +4195,30 @@
                 `;
 
             container.innerHTML = html;
+
+            // Create student search
+            const containerDiv = document.getElementById('fdStudentContainer');
+            let searchHtml = `
+                    <div class="student-search-select">
+                        <input type="text" id="fdStudent_search" placeholder="Search student by name, admission no..." autocomplete="off" onfocus="toggleStudentDropdown('fdStudent', true)" oninput="filterStudentDropdown('fdStudent')" />
+                        <input type="hidden" id="fdStudent" value="" onchange="loadFeeDepositStudent()" />
+                        <div class="dropdown" id="fdStudent_dropdown">
+                            <div class="item" data-value="" onclick="selectStudent('fdStudent', '', '')">-- Select Student --</div>
+                            ${students.map(s => `
+                                <div class="item" data-value="${s.id}" onclick="selectStudent('fdStudent', '${s.id}', '${s.name} (${s.admissionNo})')">
+                                    <span class="adm-no">${s.admissionNo}</span> - ${s.name} (${s.fatherName})
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            containerDiv.innerHTML = searchHtml;
+
+            // Set receipt number
+            AppData.receiptCounter = AppData.receiptCounter || 0;
+            AppData.receiptCounter++;
+            document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
+
             loadFeeDeposits();
         }
 
@@ -3908,7 +4232,6 @@
             document.getElementById('fdAdmissionNo').value = student.admissionNo;
             document.getElementById('fdName').value = student.name;
             document.getElementById('fdClass').value = student.currentClass;
-            document.getElementById('fdReceiptNo').value = student.admissionNo;
 
             const challans = AppData.feeChallans.filter(c => c.studentId === studentId);
             if (challans.length > 0) {
@@ -3933,6 +4256,8 @@
                 return;
             }
 
+            const receiptNo = document.getElementById('fdReceiptNo').value;
+
             const deposit = {
                 id: 'DEP' + String(AppData.feeDeposits.length + 1).padStart(4, '0'),
                 studentId: studentId,
@@ -3944,7 +4269,7 @@
                 paymentDate: document.getElementById('fdPaymentDate').value,
                 month: document.getElementById('fdMonth').value,
                 year: document.getElementById('fdYear').value,
-                receiptNo: document.getElementById('fdReceiptNo').value || student.admissionNo,
+                receiptNo: receiptNo,
                 depositDate: getTodayDateFormatted()
             };
 
@@ -3958,13 +4283,17 @@
                 type: 'Fee Deposit - ' + deposit.month + ' ' + deposit.year + ' (' + deposit.paymentMode + ')',
                 date: getTodayDateFormatted(),
                 method: deposit.paymentMode,
-                receiptNo: deposit.receiptNo
+                receiptNo: receiptNo
             });
 
             saveToStorage();
             loadFeeDeposits();
             clearFeeDeposit();
             showToast(`✅ Fee deposited: ${formatCurrency(amount)} for ${student.name} via ${deposit.paymentMode}`, 'success');
+
+            AppData.receiptCounter = AppData.receiptCounter || 0;
+            AppData.receiptCounter++;
+            document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
         }
 
         function loadFeeDeposits() {
@@ -4001,12 +4330,12 @@
 
         function clearFeeDeposit() {
             document.getElementById('fdStudent').value = '';
+            document.getElementById('fdStudent_search').value = '';
             document.getElementById('fdAdmissionNo').value = '';
             document.getElementById('fdName').value = '';
             document.getElementById('fdClass').value = '';
             document.getElementById('fdAmount').value = '0';
             document.getElementById('fdPaymentDate').value = getTodayDateInput();
-            document.getElementById('fdReceiptNo').value = '';
             showToast('🔄 Cleared!', 'info');
         }
 
@@ -4060,7 +4389,7 @@
                         
                         <div id="txTableWrap" class="table-wrap">
                             <table>
-                                <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th></tr></thead>
+                                <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
                                 <tbody id="txTableBody"></tbody>
                             </table>
                         </div>
@@ -4158,12 +4487,11 @@
             const total = filtered.reduce((sum, t) => sum + (t.amount || 0), 0);
             summary.textContent = `Total Transactions: ${filtered.length} | Total Amount: ${formatCurrency(total)}`;
 
-            // Store for search
             window._txFiltered = filtered;
 
             if (filtered.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="5" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found for this period</td></tr>`;
+                    `<tr><td colspan="6" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found for this period</td></tr>`;
                 return;
             }
 
@@ -4174,6 +4502,7 @@
                         <td>${t.admissionNo || 'N/A'}</td>
                         <td>${t.type || 'N/A'}</td>
                         <td style="color:var(--accent-green);font-weight:900;">${formatCurrency(t.amount || 0)}</td>
+                        <td>${t.receiptNo || 'N/A'}</td>
                     </tr>
                 `).join('');
         }
@@ -4201,7 +4530,7 @@
 
             if (filtered.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="5" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found</td></tr>`;
+                    `<tr><td colspan="6" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found</td></tr>`;
                 return;
             }
 
@@ -4212,6 +4541,7 @@
                         <td>${t.admissionNo || 'N/A'}</td>
                         <td>${t.type || 'N/A'}</td>
                         <td style="color:var(--accent-green);font-weight:900;">${formatCurrency(t.amount || 0)}</td>
+                        <td>${t.receiptNo || 'N/A'}</td>
                     </tr>
                 `).join('');
         }
@@ -4247,7 +4577,7 @@
                     <h1>📊 Transactions Report</h1>
                     <div class="summary">${summary}</div>
                     <table>
-                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <script>
@@ -4294,7 +4624,7 @@
                     <h1>📊 Transactions Report</h1>
                     <div class="summary">${summary}</div>
                     <table>
-                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <p style="margin-top:20px;color:#565959;">Generated on: ${getTodayWithMonthName()}</p>
@@ -4327,7 +4657,8 @@
                         'Student': cells[1]?.textContent || 'N/A',
                         'Admission No': cells[2]?.textContent || 'N/A',
                         'Type': cells[3]?.textContent || 'N/A',
-                        'Amount': cells[4]?.textContent || '0'
+                        'Amount': cells[4]?.textContent || '0',
+                        'Receipt': cells[5]?.textContent || 'N/A'
                     });
                 }
             });
@@ -4349,7 +4680,7 @@
             const htmlContent = `
                     <div class="summary">${summary}</div>
                     <table>
-                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <p style="margin-top:15px;color:#565959;">Generated on: ${getTodayWithMonthName()}</p>
@@ -4359,7 +4690,7 @@
         }
 
         // ================================================================
-        // MARKSHEET ENTRY
+        // MARKSHEET ENTRY - With Student Search
         // ================================================================
 
         function renderMarksheetEntry() {
@@ -4372,12 +4703,9 @@
                         
                         <div class="form-row">
                             <label>Student:</label>
-                            <select id="msStudent" onchange="loadMarksheetStudent()">
-                                <option value="">-- Select Student --</option>
-                                ${students.map(s => `<option value="${s.id}">${s.admissionNo} - ${s.name}</option>`).join('')}
-                            </select>
+                            <div id="msStudentContainer" style="flex:2;min-width:200px;"></div>
                             <label>Exam:</label>
-                            <select id="msExam">
+                            <select id="msExam" onchange="updateMarksheetBioExam()">
                                 <option value="Monthly">Monthly</option>
                                 <option value="Mid-Term">Mid-Term</option>
                                 <option value="Annual">Annual</option>
@@ -4431,6 +4759,28 @@
             container.innerHTML = html;
             subjectRows = [];
             updateMarksheetTotals();
+
+            // Create student search
+            const containerDiv = document.getElementById('msStudentContainer');
+            let searchHtml = `
+                    <div class="student-search-select">
+                        <input type="text" id="msStudent_search" placeholder="Search student by name, admission no..." autocomplete="off" onfocus="toggleStudentDropdown('msStudent', true)" oninput="filterStudentDropdown('msStudent')" />
+                        <input type="hidden" id="msStudent" value="" onchange="loadMarksheetStudent()" />
+                        <div class="dropdown" id="msStudent_dropdown">
+                            <div class="item" data-value="" onclick="selectStudent('msStudent', '', '')">-- Select Student --</div>
+                            ${students.map(s => `
+                                <div class="item" data-value="${s.id}" onclick="selectStudent('msStudent', '${s.id}', '${s.name} (${s.admissionNo})')">
+                                    <span class="adm-no">${s.admissionNo}</span> - ${s.name} (${s.fatherName})
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            containerDiv.innerHTML = searchHtml;
+        }
+
+        function updateMarksheetBioExam() {
+            document.getElementById('msBioExam').textContent = document.getElementById('msExam').value;
         }
 
         function loadMarksheetStudent() {
@@ -4451,10 +4801,6 @@
             document.getElementById('msBioClass').textContent = student.currentClass;
             document.getElementById('msBioExam').textContent = document.getElementById('msExam').value;
             bioData.style.display = 'block';
-
-            document.getElementById('msExam').addEventListener('change', function() {
-                document.getElementById('msBioExam').textContent = this.value;
-            });
         }
 
         function addMarksheetSubject() {
@@ -4767,6 +5113,7 @@
 
         function clearMarksheet() {
             document.getElementById('msStudent').value = '';
+            document.getElementById('msStudent_search').value = '';
             document.getElementById('msExam').value = 'Monthly';
             document.getElementById('msTotalMarks').value = '';
             document.getElementById('msObtainedMarks').value = '';
@@ -4930,443 +5277,7 @@
         }
 
         // ================================================================
-        // SALARY SUMMARY - All Employees (Month Wise)
-        // ================================================================
-
-        function renderSalarySummary() {
-            const container = document.getElementById('contentArea');
-            const employees = AppData.employees;
-            const currentMonth = MONTHS[new Date().getMonth()];
-            const currentYear = new Date().getFullYear();
-
-            let html = `
-                    <div class="card">
-                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Salary Summary Report <span class="badge">All Employees - Month Wise</span></div>
-                        
-                        <div class="form-row">
-                            <label>Month:</label>
-                            <select id="salarySummaryMonth">
-                                ${MONTHS.map(m => `<option value="${m}" ${m === currentMonth ? 'selected' : ''}>${m}</option>`).join('')}
-                            </select>
-                            <label>Year:</label>
-                            <select id="salarySummaryYear">
-                                ${YEARS.map(y => `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`).join('')}
-                            </select>
-                            <button class="btn btn-primary" onclick="generateSalarySummary()">📄 Generate</button>
-                            <button class="btn btn-success" onclick="printSalarySummary()">🖨️ Print</button>
-                            <button class="btn btn-info" onclick="exportSalarySummaryPDF()">📄 PDF</button>
-                            <button class="btn btn-warning" onclick="exportSalarySummaryExcel()">📊 Excel</button>
-                            <button class="btn btn-secondary" onclick="exportSalarySummaryWord()">📄 Word</button>
-                        </div>
-                        
-                        <div id="salarySummaryDisplay" style="min-height:100px;padding:10px;margin-top:10px;">
-                            <p style="color:var(--text-muted);text-align:center;padding:20px;">Select Month/Year and click Generate</p>
-                        </div>
-                    </div>
-                `;
-
-            container.innerHTML = html;
-        }
-
-        function generateSalarySummary() {
-            const month = document.getElementById('salarySummaryMonth').value;
-            const year = parseInt(document.getElementById('salarySummaryYear').value);
-            const display = document.getElementById('salarySummaryDisplay');
-
-            const employees = AppData.employees;
-            const settings = AppData.schoolSettings || {};
-            const logoHtml = getLogoHTML(40);
-
-            if (employees.length === 0) {
-                display.innerHTML =
-                    '<p style="color:var(--text-muted);text-align:center;padding:20px;">No employees added yet</p>';
-                return;
-            }
-
-            let totalBasic = 0,
-                totalAttendance = 0,
-                totalSpoken = 0,
-                totalProductivity = 0,
-                totalStayBack = 0;
-            let totalCredit = 0,
-                totalSecurity = 0,
-                totalAdvanced = 0,
-                totalAbsentee = 0,
-                totalDebit = 0,
-                totalNet = 0;
-
-            let tableRows = '';
-
-            employees.forEach((e, index) => {
-                const basic = e.salary || 0;
-                const attendance = e.allowances?.attendance || 0;
-                const spoken = e.allowances?.spoken || 0;
-                const productivity = e.allowances?.productivity || 0;
-                const stayBack = e.allowances?.stayBack || 0;
-                const security = e.allowances?.security || 0;
-                const advanced = e.allowances?.advanced || 0;
-                const absentee = e.allowances?.absentee || 0;
-
-                const totalCreditEmp = basic + attendance + spoken + productivity + stayBack;
-                const totalDebitEmp = security + advanced + absentee;
-                const netSalary = totalCreditEmp - totalDebitEmp;
-
-                totalBasic += basic;
-                totalAttendance += attendance;
-                totalSpoken += spoken;
-                totalProductivity += productivity;
-                totalStayBack += stayBack;
-                totalCredit += totalCreditEmp;
-                totalSecurity += security;
-                totalAdvanced += advanced;
-                totalAbsentee += absentee;
-                totalDebit += totalDebitEmp;
-                totalNet += netSalary;
-
-                tableRows += `
-                        <tr>
-                            <td>${e.empId}</td>
-                            <td><strong>${e.name}</strong></td>
-                            <td>${e.designation || 'N/A'}</td>
-                            <td style="color:#067d62;font-weight:600;">${formatCurrency(basic)}</td>
-                            <td style="color:#067d62;">${formatCurrency(attendance)}</td>
-                            <td style="color:#067d62;">${formatCurrency(spoken)}</td>
-                            <td style="color:#067d62;">${formatCurrency(productivity)}</td>
-                            <td style="color:#067d62;">${formatCurrency(stayBack)}</td>
-                            <td style="color:#067d62;font-weight:700;">${formatCurrency(totalCreditEmp)}</td>
-                            <td style="color:#b12704;">${formatCurrency(security)}</td>
-                            <td style="color:#b12704;">${formatCurrency(advanced)}</td>
-                            <td style="color:#b12704;">${formatCurrency(absentee)}</td>
-                            <td style="color:#b12704;font-weight:700;">${formatCurrency(totalDebitEmp)}</td>
-                            <td style="color:#131921;font-weight:900;font-size:13px;">${formatCurrency(netSalary)}</td>
-                        </tr>
-                    `;
-            });
-
-            // Grand Total Row
-            tableRows += `
-                    <tr style="background:#ebf4ff;font-weight:900;border-top:3px solid #131921;">
-                        <td colspan="3" style="text-align:right;font-size:13px;">GRAND TOTAL</td>
-                        <td style="color:#067d62;">${formatCurrency(totalBasic)}</td>
-                        <td style="color:#067d62;">${formatCurrency(totalAttendance)}</td>
-                        <td style="color:#067d62;">${formatCurrency(totalSpoken)}</td>
-                        <td style="color:#067d62;">${formatCurrency(totalProductivity)}</td>
-                        <td style="color:#067d62;">${formatCurrency(totalStayBack)}</td>
-                        <td style="color:#067d62;font-weight:900;">${formatCurrency(totalCredit)}</td>
-                        <td style="color:#b12704;">${formatCurrency(totalSecurity)}</td>
-                        <td style="color:#b12704;">${formatCurrency(totalAdvanced)}</td>
-                        <td style="color:#b12704;">${formatCurrency(totalAbsentee)}</td>
-                        <td style="color:#b12704;font-weight:900;">${formatCurrency(totalDebit)}</td>
-                        <td style="color:#131921;font-weight:900;font-size:15px;">${formatCurrency(totalNet)}</td>
-                    </tr>
-                `;
-
-            display.innerHTML = `
-                    <div id="salarySummaryArea">
-                        <div style="display:flex;align-items:center;gap:15px;padding:8px 12px;background:#f7fafc;border-radius:6px;margin-bottom:12px;border:1px solid #e2e8f0;">
-                            <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
-                            <div>
-                                <div style="font-size:18px;font-weight:900;color:#131921;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
-                                <div style="font-size:12px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'} — Salary Summary Report</div>
-                            </div>
-                        </div>
-                        
-                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
-                            <div style="font-size:16px;font-weight:900;color:#131921;">📊 Salary Summary — ${month} ${year}</div>
-                            <div style="font-size:12px;color:#565959;">Generated on: ${getTodayDateFormatted()} | Total Employees: ${employees.length}</div>
-                        </div>
-                        
-                        <div style="overflow-x:auto;">
-                            <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:1200px;">
-                                <thead>
-                                    <tr>
-                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:center;font-size:10px;">Emp ID</th>
-                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:left;font-size:10px;">Name</th>
-                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:left;font-size:10px;">Designation</th>
-                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Basic Salary</th>
-                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Attendance</th>
-                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Spoken</th>
-                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Productivity</th>
-                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Stay Back</th>
-                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Total Credit</th>
-                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Security</th>
-                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Advanced</th>
-                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Absentee</th>
-                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Total Debit</th>
-                                        <th style="background:#ff9900;color:#fff;padding:6px 8px;border:1px solid #ff9900;text-align:right;font-size:11px;font-weight:900;">Net Salary</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${tableRows}
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:12px;padding:10px;background:#f7fafc;border-radius:6px;border:1px solid #e2e8f0;">
-                            <div><strong>Total Employees:</strong> ${employees.length}</div>
-                            <div><strong>Total Credit:</strong> <span style="color:#067d62;">${formatCurrency(totalCredit)}</span></div>
-                            <div><strong>Total Debit:</strong> <span style="color:#b12704;">${formatCurrency(totalDebit)}</span></div>
-                            <div><strong>Total Net Salary:</strong> <span style="color:#131921;font-weight:900;">${formatCurrency(totalNet)}</span></div>
-                            <div><strong>Month:</strong> ${month} ${year}</div>
-                        </div>
-                        
-                        <div style="text-align:center;font-size:10px;color:#565959;margin-top:10px;border-top:1px solid #ddd;padding-top:6px;">
-                            ${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'} — Success with Wisdom
-                        </div>
-                    </div>
-                `;
-
-            // Store for export
-            window._salarySummaryData = {
-                employees: employees,
-                month: month,
-                year: year,
-                totalBasic: totalBasic,
-                totalAttendance: totalAttendance,
-                totalSpoken: totalSpoken,
-                totalProductivity: totalProductivity,
-                totalStayBack: totalStayBack,
-                totalCredit: totalCredit,
-                totalSecurity: totalSecurity,
-                totalAdvanced: totalAdvanced,
-                totalAbsentee: totalAbsentee,
-                totalDebit: totalDebit,
-                totalNet: totalNet
-            };
-        }
-
-        function printSalarySummary() {
-            const content = document.getElementById('salarySummaryDisplay').innerHTML;
-            if (!content || content.includes('No employees')) {
-                showToast('⚠️ Generate report first!', 'error');
-                return;
-            }
-
-            const win = window.open('', '_blank');
-            win.document.write(`
-                    <html><head><title>Salary Summary Report - ${getTodayDateFormatted()}</title>
-                    <style>
-                        body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; font-size: 11pt; }
-                        table { width: 100%; border-collapse: collapse; font-size: 9pt; }
-                        th { background: #131921; color: #fff; border: 1px solid #232f3e; padding: 4px 6px; text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 10pt; font-weight: 900; }
-                        td { border: 1px solid #ddd; padding: 4px 6px; text-align: right; }
-                        td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
-                        .grand-total { background: #ebf4ff; font-weight: 900; border-top: 3px solid #131921; }
-                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 3px; }
-                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 10px; }
-                        .report-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 5px; margin-bottom: 10px; }
-                        .footer { text-align: center; font-size: 9pt; color: #565959; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 6px; }
-                        .summary-box { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 6px; padding: 8px; background: #f7fafc; border: 1px solid #e2e8f0; margin-top: 10px; }
-                        @media print {
-                            body { padding: 10px; }
-                            .btn, .form-row, .no-print { display: none !important; }
-                        }
-                    </style>
-                    </head><body>
-                    ${content}
-                    <script>
-                        window.onload = function() {
-                            setTimeout(function() {
-                                window.print();
-                                setTimeout(function() { window.close(); }, 1000);
-                            }, 500);
-                        };
-                    <\/script>
-                    </body></html>
-                `);
-            win.document.close();
-        }
-
-        function exportSalarySummaryPDF() {
-            const content = document.getElementById('salarySummaryDisplay').innerHTML;
-            if (!content || content.includes('No employees')) {
-                showToast('⚠️ Generate report first!', 'error');
-                return;
-            }
-
-            const win = window.open('', '_blank');
-            win.document.write(`
-                    <html><head><title>Salary Summary PDF - ${getTodayDateFormatted()}</title>
-                    <style>
-                        body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; font-size: 11pt; }
-                        table { width: 100%; border-collapse: collapse; font-size: 9pt; }
-                        th { background: #131921; color: #fff; border: 1px solid #232f3e; padding: 4px 6px; text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 10pt; font-weight: 900; }
-                        td { border: 1px solid #ddd; padding: 4px 6px; text-align: right; }
-                        td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
-                        .grand-total { background: #ebf4ff; font-weight: 900; border-top: 3px solid #131921; }
-                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 3px; }
-                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 10px; }
-                        .report-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 5px; margin-bottom: 10px; }
-                        .footer { text-align: center; font-size: 9pt; color: #565959; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 6px; }
-                        .summary-box { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 6px; padding: 8px; background: #f7fafc; border: 1px solid #e2e8f0; margin-top: 10px; }
-                        .btn, .form-row, .no-print { display: none !important; }
-                    </style>
-                    </head><body>
-                    ${content}
-                    <script>
-                        window.onload = function() {
-                            setTimeout(function() {
-                                window.print();
-                                setTimeout(function() { window.close(); }, 1000);
-                            }, 500);
-                        };
-                    <\/script>
-                    </body></html>
-                `);
-            win.document.close();
-        }
-
-        function exportSalarySummaryExcel() {
-            const data = [];
-            const employees = AppData.employees;
-            const month = document.getElementById('salarySummaryMonth')?.value || MONTHS[new Date().getMonth()];
-            const year = document.getElementById('salarySummaryYear')?.value || new Date().getFullYear();
-
-            if (employees.length === 0) {
-                showToast('⚠️ No employees to export!', 'error');
-                return;
-            }
-
-            employees.forEach(e => {
-                const basic = e.salary || 0;
-                const attendance = e.allowances?.attendance || 0;
-                const spoken = e.allowances?.spoken || 0;
-                const productivity = e.allowances?.productivity || 0;
-                const stayBack = e.allowances?.stayBack || 0;
-                const security = e.allowances?.security || 0;
-                const advanced = e.allowances?.advanced || 0;
-                const absentee = e.allowances?.absentee || 0;
-
-                data.push({
-                    'Employee ID': e.empId,
-                    'Name': e.name,
-                    'Designation': e.designation || 'N/A',
-                    'Basic Salary': basic,
-                    'Attendance Allowance': attendance,
-                    'Spoken Allowance': spoken,
-                    'Productivity Allowance': productivity,
-                    'Stay Back Allowance': stayBack,
-                    'Total Credit': basic + attendance + spoken + productivity + stayBack,
-                    'Security Deduction': security,
-                    'Advanced Paid': advanced,
-                    'Absentee': absentee,
-                    'Total Debit': security + advanced + absentee,
-                    'Net Salary': (basic + attendance + spoken + productivity + stayBack) - (security + advanced +
-                        absentee),
-                    'Month': month,
-                    'Year': year
-                });
-            });
-
-            const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
-
-            const wsData = [
-                [`School: ${schoolName}`],
-                [`Salary Summary Report - ${month} ${year}`],
-                [`Generated on: ${getTodayDateFormatted()}`],
-                [`Total Employees: ${employees.length}`],
-                []
-            ];
-
-            const headers = Object.keys(data[0]);
-            wsData.push(headers);
-
-            data.forEach(row => {
-                wsData.push(headers.map(h => row[h] || ''));
-            });
-
-            // Add totals row
-            const totalBasic = data.reduce((sum, r) => sum + r['Basic Salary'], 0);
-            const totalCredit = data.reduce((sum, r) => sum + r['Total Credit'], 0);
-            const totalDebit = data.reduce((sum, r) => sum + r['Total Debit'], 0);
-            const totalNet = data.reduce((sum, r) => sum + r['Net Salary'], 0);
-
-            wsData.push([]);
-            wsData.push([
-                'TOTAL', '', '',
-                totalBasic,
-                data.reduce((sum, r) => sum + r['Attendance Allowance'], 0),
-                data.reduce((sum, r) => sum + r['Spoken Allowance'], 0),
-                data.reduce((sum, r) => sum + r['Productivity Allowance'], 0),
-                data.reduce((sum, r) => sum + r['Stay Back Allowance'], 0),
-                totalCredit,
-                data.reduce((sum, r) => sum + r['Security Deduction'], 0),
-                data.reduce((sum, r) => sum + r['Advanced Paid'], 0),
-                data.reduce((sum, r) => sum + r['Absentee'], 0),
-                totalDebit,
-                totalNet,
-                '', ''
-            ]);
-
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Salary Summary');
-            XLSX.writeFile(wb, 'Salary_Summary_Report_' + getTodayDateFormatted() + '.xlsx');
-            showToast('✅ Salary Summary Excel exported successfully!', 'success');
-        }
-
-        function exportSalarySummaryWord() {
-            const content = document.getElementById('salarySummaryDisplay').innerHTML;
-            if (!content || content.includes('No employees')) {
-                showToast('⚠️ Generate report first!', 'error');
-                return;
-            }
-
-            const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
-            const address = settings.schoolAddress || '';
-
-            const html = `
-                    <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-                          xmlns:w='urn:schemas-microsoft-com:office:word' 
-                          xmlns='http://www.w3.org/TR/REC-html40'>
-                    <head>
-                        <meta charset="utf-8">
-                        <title>Salary Summary Report</title>
-                        <!--[if gte mso 9]>
-                        <xml>
-                            <w:WordDocument>
-                                <w:View>Print</w:View>
-                                <w:Zoom>100</w:Zoom>
-                            </w:WordDocument>
-                        </xml>
-                        <![endif]-->
-                        <style>
-                            body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; padding: 20px; margin: 0; }
-                            .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 3px; }
-                            .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 10px; }
-                            .report-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 5px; margin-bottom: 10px; }
-                            table { width: 100%; border-collapse: collapse; font-size: 9pt; }
-                            th { background: #131921; color: #ffffff; border: 1px solid #232f3e; padding: 4px 6px; text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 10pt; font-weight: 900; }
-                            td { border: 1px solid #ddd; padding: 4px 6px; text-align: right; }
-                            td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
-                            .grand-total { background: #ebf4ff; font-weight: 900; border-top: 3px solid #131921; }
-                            .summary-box { display: flex; flex-wrap: wrap; gap: 15px; padding: 8px; background: #f7fafc; border: 1px solid #e2e8f0; margin-top: 10px; }
-                            .footer { text-align: center; font-size: 9pt; color: #565959; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 6px; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="school-header">${schoolName}</div>
-                        <div class="school-subheader">${address}</div>
-                        <div class="report-title">📊 Salary Summary Report — All Employees</div>
-                        ${content}
-                    </body>
-                    </html>
-                `;
-
-            const blob = new Blob([html], { type: 'application/msword' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'Salary_Summary_Report_' + getTodayDateFormatted() + '.doc';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast('✅ Word document exported successfully!', 'success');
-        }
-
-        // ================================================================
-        // CERTIFICATES - COMPLETE (Leaving, Character, Birth)
+        // CERTIFICATES - With Student Search (Leaving, Character, Birth)
         // ================================================================
 
         function renderLeavingCertificate() {
@@ -5379,10 +5290,7 @@
                         
                         <div class="form-row">
                             <label>Student:</label>
-                            <select id="lcStudent">
-                                <option value="">-- Select Student --</option>
-                                ${students.map(s => `<option value="${s.id}">${s.admissionNo} - ${s.name}</option>`).join('')}
-                            </select>
+                            <div id="lcStudentContainer" style="flex:2;min-width:200px;"></div>
                             <button class="btn btn-primary" onclick="generateLeavingCertificate()">📄 Generate</button>
                             <button class="btn btn-success" onclick="printLeavingCertificate()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportLeavingCertificatePDF()">📄 PDF</button>
@@ -5415,6 +5323,24 @@
                     </div>
                 `;
             container.innerHTML = html;
+
+            // Create student search
+            const containerDiv = document.getElementById('lcStudentContainer');
+            let searchHtml = `
+                    <div class="student-search-select">
+                        <input type="text" id="lcStudent_search" placeholder="Search student by name, admission no..." autocomplete="off" onfocus="toggleStudentDropdown('lcStudent', true)" oninput="filterStudentDropdown('lcStudent')" />
+                        <input type="hidden" id="lcStudent" value="" />
+                        <div class="dropdown" id="lcStudent_dropdown">
+                            <div class="item" data-value="" onclick="selectStudent('lcStudent', '', '')">-- Select Student --</div>
+                            ${students.map(s => `
+                                <div class="item" data-value="${s.id}" onclick="selectStudent('lcStudent', '${s.id}', '${s.name} (${s.admissionNo})')">
+                                    <span class="adm-no">${s.admissionNo}</span> - ${s.name} (${s.fatherName})
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            containerDiv.innerHTML = searchHtml;
         }
 
         function generateLeavingCertificate() {
@@ -5531,6 +5457,10 @@
             exportToWord(htmlContent, 'Leaving_Certificate_' + getTodayDateFormatted(), settings.schoolName);
         }
 
+        // ================================================================
+        // CHARACTER CERTIFICATE - With Student Search
+        // ================================================================
+
         function renderCharacterCertificate() {
             const container = document.getElementById('contentArea');
             const students = AppData.students;
@@ -5541,10 +5471,7 @@
                         
                         <div class="form-row">
                             <label>Student:</label>
-                            <select id="ccStudent">
-                                <option value="">-- Select Student --</option>
-                                ${students.map(s => `<option value="${s.id}">${s.admissionNo} - ${s.name}</option>`).join('')}
-                            </select>
+                            <div id="ccStudentContainer" style="flex:2;min-width:200px;"></div>
                             <button class="btn btn-primary" onclick="generateCharacterCertificate()">📄 Generate</button>
                             <button class="btn btn-success" onclick="printCharacterCertificate()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportCharacterCertificatePDF()">📄 PDF</button>
@@ -5586,6 +5513,24 @@
                     </div>
                 `;
             container.innerHTML = html;
+
+            // Create student search
+            const containerDiv = document.getElementById('ccStudentContainer');
+            let searchHtml = `
+                    <div class="student-search-select">
+                        <input type="text" id="ccStudent_search" placeholder="Search student by name, admission no..." autocomplete="off" onfocus="toggleStudentDropdown('ccStudent', true)" oninput="filterStudentDropdown('ccStudent')" />
+                        <input type="hidden" id="ccStudent" value="" />
+                        <div class="dropdown" id="ccStudent_dropdown">
+                            <div class="item" data-value="" onclick="selectStudent('ccStudent', '', '')">-- Select Student --</div>
+                            ${students.map(s => `
+                                <div class="item" data-value="${s.id}" onclick="selectStudent('ccStudent', '${s.id}', '${s.name} (${s.admissionNo})')">
+                                    <span class="adm-no">${s.admissionNo}</span> - ${s.name} (${s.fatherName})
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            containerDiv.innerHTML = searchHtml;
         }
 
         function generateCharacterCertificate() {
@@ -5699,6 +5644,10 @@
             exportToWord(htmlContent, 'Character_Certificate_' + getTodayDateFormatted(), settings.schoolName);
         }
 
+        // ================================================================
+        // BIRTH CERTIFICATE - With Student Search
+        // ================================================================
+
         function renderBirthCertificate() {
             const container = document.getElementById('contentArea');
             const students = AppData.students;
@@ -5709,10 +5658,7 @@
                         
                         <div class="form-row">
                             <label>Student:</label>
-                            <select id="bcStudent" onchange="loadBirthCertificateStudent()">
-                                <option value="">-- Select Student --</option>
-                                ${students.map(s => `<option value="${s.id}">${s.admissionNo} - ${s.name}</option>`).join('')}
-                            </select>
+                            <div id="bcStudentContainer" style="flex:2;min-width:200px;"></div>
                             <button class="btn btn-primary" onclick="generateBirthCertificate()">📄 Generate</button>
                             <button class="btn btn-success" onclick="printBirthCertificate()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportBirthCertificatePDF()">📄 PDF</button>
@@ -5746,6 +5692,24 @@
                     </div>
                 `;
             container.innerHTML = html;
+
+            // Create student search
+            const containerDiv = document.getElementById('bcStudentContainer');
+            let searchHtml = `
+                    <div class="student-search-select">
+                        <input type="text" id="bcStudent_search" placeholder="Search student by name, admission no..." autocomplete="off" onfocus="toggleStudentDropdown('bcStudent', true)" oninput="filterStudentDropdown('bcStudent')" />
+                        <input type="hidden" id="bcStudent" value="" onchange="loadBirthCertificateStudent()" />
+                        <div class="dropdown" id="bcStudent_dropdown">
+                            <div class="item" data-value="" onclick="selectStudent('bcStudent', '', '')">-- Select Student --</div>
+                            ${students.map(s => `
+                                <div class="item" data-value="${s.id}" onclick="selectStudent('bcStudent', '${s.id}', '${s.name} (${s.admissionNo})')">
+                                    <span class="adm-no">${s.admissionNo}</span> - ${s.name} (${s.fatherName})
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            containerDiv.innerHTML = searchHtml;
         }
 
         function loadBirthCertificateStudent() {
@@ -5877,7 +5841,7 @@
         }
 
         // ================================================================
-        // ID CARDS
+        // ID CARDS - With Student Search
         // ================================================================
 
         function renderIDCards() {
@@ -5889,10 +5853,7 @@
                         <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Student ID Card <span class="badge">Print Module</span></div>
                         <div class="form-row">
                             <label>Student:</label>
-                            <select id="idStudent">
-                                <option value="">-- Select Student --</option>
-                                ${students.map(s => `<option value="${s.id}">${s.admissionNo} - ${s.name}</option>`).join('')}
-                            </select>
+                            <div id="idStudentContainer" style="flex:2;min-width:200px;"></div>
                             <button class="btn btn-primary" onclick="generateIDCard()">📄 Generate</button>
                             <button class="btn btn-success" onclick="printIDCard()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportIDCardPDF()">📄 PDF</button>
@@ -5903,6 +5864,23 @@
                     </div>
                 `;
             container.innerHTML = html;
+
+            const containerDiv = document.getElementById('idStudentContainer');
+            let searchHtml = `
+                    <div class="student-search-select">
+                        <input type="text" id="idStudent_search" placeholder="Search student by name, admission no..." autocomplete="off" onfocus="toggleStudentDropdown('idStudent', true)" oninput="filterStudentDropdown('idStudent')" />
+                        <input type="hidden" id="idStudent" value="" />
+                        <div class="dropdown" id="idStudent_dropdown">
+                            <div class="item" data-value="" onclick="selectStudent('idStudent', '', '')">-- Select Student --</div>
+                            ${students.map(s => `
+                                <div class="item" data-value="${s.id}" onclick="selectStudent('idStudent', '${s.id}', '${s.name} (${s.admissionNo})')">
+                                    <span class="adm-no">${s.admissionNo}</span> - ${s.name} (${s.fatherName})
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            containerDiv.innerHTML = searchHtml;
         }
 
         function generateIDCard() {
@@ -5961,7 +5939,7 @@
         }
 
         // ================================================================
-        // ADMIT CARD
+        // ADMIT CARD - With Student Search
         // ================================================================
 
         function renderAdmitCard() {
@@ -5973,10 +5951,7 @@
                         <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Admit Card <span class="badge">Print Module</span></div>
                         <div class="form-row">
                             <label>Student:</label>
-                            <select id="admitStudent">
-                                <option value="">-- Select Student --</option>
-                                ${students.map(s => `<option value="${s.id}">${s.admissionNo} - ${s.name}</option>`).join('')}
-                            </select>
+                            <div id="admitStudentContainer" style="flex:2;min-width:200px;"></div>
                             <label>Exam:</label>
                             <select id="admitExam">
                                 <option value="Monthly">Monthly</option>
@@ -5995,6 +5970,23 @@
                     </div>
                 `;
             container.innerHTML = html;
+
+            const containerDiv = document.getElementById('admitStudentContainer');
+            let searchHtml = `
+                    <div class="student-search-select">
+                        <input type="text" id="admitStudent_search" placeholder="Search student by name, admission no..." autocomplete="off" onfocus="toggleStudentDropdown('admitStudent', true)" oninput="filterStudentDropdown('admitStudent')" />
+                        <input type="hidden" id="admitStudent" value="" />
+                        <div class="dropdown" id="admitStudent_dropdown">
+                            <div class="item" data-value="" onclick="selectStudent('admitStudent', '', '')">-- Select Student --</div>
+                            ${students.map(s => `
+                                <div class="item" data-value="${s.id}" onclick="selectStudent('admitStudent', '${s.id}', '${s.name} (${s.admissionNo})')">
+                                    <span class="adm-no">${s.admissionNo}</span> - ${s.name} (${s.fatherName})
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            containerDiv.innerHTML = searchHtml;
         }
 
         function generateAdmitCard() {
@@ -6708,6 +6700,440 @@
         }
 
         // ================================================================
+        // SALARY SUMMARY - All Employees (Month Wise)
+        // ================================================================
+
+        function renderSalarySummary() {
+            const container = document.getElementById('contentArea');
+            const employees = AppData.employees;
+            const currentMonth = MONTHS[new Date().getMonth()];
+            const currentYear = new Date().getFullYear();
+
+            let html = `
+                    <div class="card">
+                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Salary Summary Report <span class="badge">All Employees - Month Wise</span></div>
+                        
+                        <div class="form-row">
+                            <label>Month:</label>
+                            <select id="salarySummaryMonth">
+                                ${MONTHS.map(m => `<option value="${m}" ${m === currentMonth ? 'selected' : ''}>${m}</option>`).join('')}
+                            </select>
+                            <label>Year:</label>
+                            <select id="salarySummaryYear">
+                                ${YEARS.map(y => `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${y}</option>`).join('')}
+                            </select>
+                            <button class="btn btn-primary" onclick="generateSalarySummary()">📄 Generate</button>
+                            <button class="btn btn-success" onclick="printSalarySummary()">🖨️ Print</button>
+                            <button class="btn btn-info" onclick="exportSalarySummaryPDF()">📄 PDF</button>
+                            <button class="btn btn-warning" onclick="exportSalarySummaryExcel()">📊 Excel</button>
+                            <button class="btn btn-secondary" onclick="exportSalarySummaryWord()">📄 Word</button>
+                        </div>
+                        
+                        <div id="salarySummaryDisplay" style="min-height:100px;padding:10px;margin-top:10px;">
+                            <p style="color:var(--text-muted);text-align:center;padding:20px;">Select Month/Year and click Generate</p>
+                        </div>
+                    </div>
+                `;
+
+            container.innerHTML = html;
+        }
+
+        function generateSalarySummary() {
+            const month = document.getElementById('salarySummaryMonth').value;
+            const year = parseInt(document.getElementById('salarySummaryYear').value);
+            const display = document.getElementById('salarySummaryDisplay');
+
+            const employees = AppData.employees;
+            const settings = AppData.schoolSettings || {};
+            const logoHtml = getLogoHTML(40);
+
+            if (employees.length === 0) {
+                display.innerHTML =
+                    '<p style="color:var(--text-muted);text-align:center;padding:20px;">No employees added yet</p>';
+                return;
+            }
+
+            let totalBasic = 0,
+                totalAttendance = 0,
+                totalSpoken = 0,
+                totalProductivity = 0,
+                totalStayBack = 0;
+            let totalCredit = 0,
+                totalSecurity = 0,
+                totalAdvanced = 0,
+                totalAbsentee = 0,
+                totalDebit = 0,
+                totalNet = 0;
+
+            let tableRows = '';
+
+            employees.forEach((e) => {
+                const basic = e.salary || 0;
+                const attendance = e.allowances?.attendance || 0;
+                const spoken = e.allowances?.spoken || 0;
+                const productivity = e.allowances?.productivity || 0;
+                const stayBack = e.allowances?.stayBack || 0;
+                const security = e.allowances?.security || 0;
+                const advanced = e.allowances?.advanced || 0;
+                const absentee = e.allowances?.absentee || 0;
+
+                const totalCreditEmp = basic + attendance + spoken + productivity + stayBack;
+                const totalDebitEmp = security + advanced + absentee;
+                const netSalary = totalCreditEmp - totalDebitEmp;
+
+                totalBasic += basic;
+                totalAttendance += attendance;
+                totalSpoken += spoken;
+                totalProductivity += productivity;
+                totalStayBack += stayBack;
+                totalCredit += totalCreditEmp;
+                totalSecurity += security;
+                totalAdvanced += advanced;
+                totalAbsentee += absentee;
+                totalDebit += totalDebitEmp;
+                totalNet += netSalary;
+
+                tableRows += `
+                        <tr>
+                            <td>${e.empId}</td>
+                            <td><strong>${e.name}</strong></td>
+                            <td>${e.designation || 'N/A'}</td>
+                            <td style="color:#067d62;font-weight:600;">${formatCurrency(basic)}</td>
+                            <td style="color:#067d62;">${formatCurrency(attendance)}</td>
+                            <td style="color:#067d62;">${formatCurrency(spoken)}</td>
+                            <td style="color:#067d62;">${formatCurrency(productivity)}</td>
+                            <td style="color:#067d62;">${formatCurrency(stayBack)}</td>
+                            <td style="color:#067d62;font-weight:700;">${formatCurrency(totalCreditEmp)}</td>
+                            <td style="color:#b12704;">${formatCurrency(security)}</td>
+                            <td style="color:#b12704;">${formatCurrency(advanced)}</td>
+                            <td style="color:#b12704;">${formatCurrency(absentee)}</td>
+                            <td style="color:#b12704;font-weight:700;">${formatCurrency(totalDebitEmp)}</td>
+                            <td style="color:#131921;font-weight:900;font-size:13px;">${formatCurrency(netSalary)}</td>
+                        </tr>
+                    `;
+            });
+
+            // Grand Total Row
+            tableRows += `
+                    <tr style="background:#ebf4ff;font-weight:900;border-top:3px solid #131921;">
+                        <td colspan="3" style="text-align:right;font-size:13px;">GRAND TOTAL</td>
+                        <td style="color:#067d62;">${formatCurrency(totalBasic)}</td>
+                        <td style="color:#067d62;">${formatCurrency(totalAttendance)}</td>
+                        <td style="color:#067d62;">${formatCurrency(totalSpoken)}</td>
+                        <td style="color:#067d62;">${formatCurrency(totalProductivity)}</td>
+                        <td style="color:#067d62;">${formatCurrency(totalStayBack)}</td>
+                        <td style="color:#067d62;font-weight:900;">${formatCurrency(totalCredit)}</td>
+                        <td style="color:#b12704;">${formatCurrency(totalSecurity)}</td>
+                        <td style="color:#b12704;">${formatCurrency(totalAdvanced)}</td>
+                        <td style="color:#b12704;">${formatCurrency(totalAbsentee)}</td>
+                        <td style="color:#b12704;font-weight:900;">${formatCurrency(totalDebit)}</td>
+                        <td style="color:#131921;font-weight:900;font-size:15px;">${formatCurrency(totalNet)}</td>
+                    </tr>
+                `;
+
+            display.innerHTML = `
+                    <div id="salarySummaryArea">
+                        <div style="display:flex;align-items:center;gap:15px;padding:8px 12px;background:#f7fafc;border-radius:6px;margin-bottom:12px;border:1px solid #e2e8f0;">
+                            <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
+                            <div>
+                                <div style="font-size:18px;font-weight:900;color:#131921;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                                <div style="font-size:12px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'} — Salary Summary Report</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+                            <div style="font-size:16px;font-weight:900;color:#131921;">📊 Salary Summary — ${month} ${year}</div>
+                            <div style="font-size:12px;color:#565959;">Generated on: ${getTodayDateFormatted()} | Total Employees: ${employees.length}</div>
+                        </div>
+                        
+                        <div style="overflow-x:auto;">
+                            <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:1200px;">
+                                <thead>
+                                    <tr>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:center;font-size:10px;">Emp ID</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:left;font-size:10px;">Name</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:left;font-size:10px;">Designation</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Basic Salary</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Attendance</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Spoken</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Productivity</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Stay Back</th>
+                                        <th style="background:#131921;color:#fff;padding:6px 8px;border:1px solid #232f3e;text-align:right;font-size:10px;">Total Credit</th>
+                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Security</th>
+                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Advanced</th>
+                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Absentee</th>
+                                        <th style="background:#b12704;color:#fff;padding:6px 8px;border:1px solid #b12704;text-align:right;font-size:10px;">Total Debit</th>
+                                        <th style="background:#ff9900;color:#fff;padding:6px 8px;border:1px solid #ff9900;text-align:right;font-size:11px;font-weight:900;">Net Salary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:12px;padding:10px;background:#f7fafc;border-radius:6px;border:1px solid #e2e8f0;">
+                            <div><strong>Total Employees:</strong> ${employees.length}</div>
+                            <div><strong>Total Credit:</strong> <span style="color:#067d62;">${formatCurrency(totalCredit)}</span></div>
+                            <div><strong>Total Debit:</strong> <span style="color:#b12704;">${formatCurrency(totalDebit)}</span></div>
+                            <div><strong>Total Net Salary:</strong> <span style="color:#131921;font-weight:900;">${formatCurrency(totalNet)}</span></div>
+                            <div><strong>Month:</strong> ${month} ${year}</div>
+                        </div>
+                        
+                        <div style="text-align:center;font-size:10px;color:#565959;margin-top:10px;border-top:1px solid #ddd;padding-top:6px;">
+                            ${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'} — Success with Wisdom
+                        </div>
+                    </div>
+                `;
+
+            window._salarySummaryData = {
+                employees: employees,
+                month: month,
+                year: year,
+                totalBasic: totalBasic,
+                totalAttendance: totalAttendance,
+                totalSpoken: totalSpoken,
+                totalProductivity: totalProductivity,
+                totalStayBack: totalStayBack,
+                totalCredit: totalCredit,
+                totalSecurity: totalSecurity,
+                totalAdvanced: totalAdvanced,
+                totalAbsentee: totalAbsentee,
+                totalDebit: totalDebit,
+                totalNet: totalNet
+            };
+        }
+
+        function printSalarySummary() {
+            const content = document.getElementById('salarySummaryDisplay').innerHTML;
+            if (!content || content.includes('No employees')) {
+                showToast('⚠️ Generate report first!', 'error');
+                return;
+            }
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                    <html><head><title>Salary Summary Report - ${getTodayDateFormatted()}</title>
+                    <style>
+                        body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; font-size: 11pt; }
+                        table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+                        th { background: #131921; color: #fff; border: 1px solid #232f3e; padding: 4px 6px; text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 10pt; font-weight: 900; }
+                        td { border: 1px solid #ddd; padding: 4px 6px; text-align: right; }
+                        td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
+                        .grand-total { background: #ebf4ff; font-weight: 900; border-top: 3px solid #131921; }
+                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 3px; }
+                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 10px; }
+                        .report-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 5px; margin-bottom: 10px; }
+                        .footer { text-align: center; font-size: 9pt; color: #565959; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 6px; }
+                        .summary-box { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 6px; padding: 8px; background: #f7fafc; border: 1px solid #e2e8f0; margin-top: 10px; }
+                        @media print {
+                            body { padding: 10px; }
+                            .btn, .form-row, .no-print { display: none !important; }
+                        }
+                    </style>
+                    </head><body>
+                    ${content}
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() { window.close(); }, 1000);
+                            }, 500);
+                        };
+                    <\/script>
+                    </body></html>
+                `);
+            win.document.close();
+        }
+
+        function exportSalarySummaryPDF() {
+            const content = document.getElementById('salarySummaryDisplay').innerHTML;
+            if (!content || content.includes('No employees')) {
+                showToast('⚠️ Generate report first!', 'error');
+                return;
+            }
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                    <html><head><title>Salary Summary PDF - ${getTodayDateFormatted()}</title>
+                    <style>
+                        body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; font-size: 11pt; }
+                        table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+                        th { background: #131921; color: #fff; border: 1px solid #232f3e; padding: 4px 6px; text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 10pt; font-weight: 900; }
+                        td { border: 1px solid #ddd; padding: 4px 6px; text-align: right; }
+                        td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
+                        .grand-total { background: #ebf4ff; font-weight: 900; border-top: 3px solid #131921; }
+                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 3px; }
+                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 10px; }
+                        .report-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 5px; margin-bottom: 10px; }
+                        .footer { text-align: center; font-size: 9pt; color: #565959; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 6px; }
+                        .summary-box { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr)); gap: 6px; padding: 8px; background: #f7fafc; border: 1px solid #e2e8f0; margin-top: 10px; }
+                        .btn, .form-row, .no-print { display: none !important; }
+                    </style>
+                    </head><body>
+                    ${content}
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() { window.close(); }, 1000);
+                            }, 500);
+                        };
+                    <\/script>
+                    </body></html>
+                `);
+            win.document.close();
+        }
+
+        function exportSalarySummaryExcel() {
+            const data = [];
+            const employees = AppData.employees;
+            const month = document.getElementById('salarySummaryMonth')?.value || MONTHS[new Date().getMonth()];
+            const year = document.getElementById('salarySummaryYear')?.value || new Date().getFullYear();
+
+            if (employees.length === 0) {
+                showToast('⚠️ No employees to export!', 'error');
+                return;
+            }
+
+            employees.forEach(e => {
+                const basic = e.salary || 0;
+                const attendance = e.allowances?.attendance || 0;
+                const spoken = e.allowances?.spoken || 0;
+                const productivity = e.allowances?.productivity || 0;
+                const stayBack = e.allowances?.stayBack || 0;
+                const security = e.allowances?.security || 0;
+                const advanced = e.allowances?.advanced || 0;
+                const absentee = e.allowances?.absentee || 0;
+
+                data.push({
+                    'Employee ID': e.empId,
+                    'Name': e.name,
+                    'Designation': e.designation || 'N/A',
+                    'Basic Salary': basic,
+                    'Attendance Allowance': attendance,
+                    'Spoken Allowance': spoken,
+                    'Productivity Allowance': productivity,
+                    'Stay Back Allowance': stayBack,
+                    'Total Credit': basic + attendance + spoken + productivity + stayBack,
+                    'Security Deduction': security,
+                    'Advanced Paid': advanced,
+                    'Absentee': absentee,
+                    'Total Debit': security + advanced + absentee,
+                    'Net Salary': (basic + attendance + spoken + productivity + stayBack) - (security + advanced +
+                        absentee),
+                    'Month': month,
+                    'Year': year
+                });
+            });
+
+            const settings = AppData.schoolSettings || {};
+            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+
+            const wsData = [
+                [`School: ${schoolName}`],
+                [`Salary Summary Report - ${month} ${year}`],
+                [`Generated on: ${getTodayDateFormatted()}`],
+                [`Total Employees: ${employees.length}`],
+                []
+            ];
+
+            const headers = Object.keys(data[0]);
+            wsData.push(headers);
+
+            data.forEach(row => {
+                wsData.push(headers.map(h => row[h] || ''));
+            });
+
+            const totalBasic = data.reduce((sum, r) => sum + r['Basic Salary'], 0);
+            const totalCredit = data.reduce((sum, r) => sum + r['Total Credit'], 0);
+            const totalDebit = data.reduce((sum, r) => sum + r['Total Debit'], 0);
+            const totalNet = data.reduce((sum, r) => sum + r['Net Salary'], 0);
+
+            wsData.push([]);
+            wsData.push([
+                'TOTAL', '', '',
+                totalBasic,
+                data.reduce((sum, r) => sum + r['Attendance Allowance'], 0),
+                data.reduce((sum, r) => sum + r['Spoken Allowance'], 0),
+                data.reduce((sum, r) => sum + r['Productivity Allowance'], 0),
+                data.reduce((sum, r) => sum + r['Stay Back Allowance'], 0),
+                totalCredit,
+                data.reduce((sum, r) => sum + r['Security Deduction'], 0),
+                data.reduce((sum, r) => sum + r['Advanced Paid'], 0),
+                data.reduce((sum, r) => sum + r['Absentee'], 0),
+                totalDebit,
+                totalNet,
+                '', ''
+            ]);
+
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Salary Summary');
+            XLSX.writeFile(wb, 'Salary_Summary_Report_' + getTodayDateFormatted() + '.xlsx');
+            showToast('✅ Salary Summary Excel exported successfully!', 'success');
+        }
+
+        function exportSalarySummaryWord() {
+            const content = document.getElementById('salarySummaryDisplay').innerHTML;
+            if (!content || content.includes('No employees')) {
+                showToast('⚠️ Generate report first!', 'error');
+                return;
+            }
+
+            const settings = AppData.schoolSettings || {};
+            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const address = settings.schoolAddress || '';
+
+            const html = `
+                    <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                          xmlns:w='urn:schemas-microsoft-com:office:word' 
+                          xmlns='http://www.w3.org/TR/REC-html40'>
+                    <head>
+                        <meta charset="utf-8">
+                        <title>Salary Summary Report</title>
+                        <!--[if gte mso 9]>
+                        <xml>
+                            <w:WordDocument>
+                                <w:View>Print</w:View>
+                                <w:Zoom>100</w:Zoom>
+                            </w:WordDocument>
+                        </xml>
+                        <![endif]-->
+                        <style>
+                            body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; padding: 20px; margin: 0; }
+                            .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 3px; }
+                            .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 10px; }
+                            .report-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 5px; margin-bottom: 10px; }
+                            table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+                            th { background: #131921; color: #ffffff; border: 1px solid #232f3e; padding: 4px 6px; text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 10pt; font-weight: 900; }
+                            td { border: 1px solid #ddd; padding: 4px 6px; text-align: right; }
+                            td:first-child, td:nth-child(2), td:nth-child(3) { text-align: left; }
+                            .grand-total { background: #ebf4ff; font-weight: 900; border-top: 3px solid #131921; }
+                            .summary-box { display: flex; flex-wrap: wrap; gap: 15px; padding: 8px; background: #f7fafc; border: 1px solid #e2e8f0; margin-top: 10px; }
+                            .footer { text-align: center; font-size: 9pt; color: #565959; margin-top: 10px; border-top: 1px solid #ddd; padding-top: 6px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="school-header">${schoolName}</div>
+                        <div class="school-subheader">${address}</div>
+                        <div class="report-title">📊 Salary Summary Report — All Employees</div>
+                        ${content}
+                    </body>
+                    </html>
+                `;
+
+            const blob = new Blob([html], { type: 'application/msword' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Salary_Summary_Report_' + getTodayDateFormatted() + '.doc';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('✅ Word document exported successfully!', 'success');
+        }
+
+        // ================================================================
         // EXPENDITURE
         // ================================================================
 
@@ -7256,7 +7682,6 @@
                     const totalYearly = classYearly.reduce((sum, c) => sum + (c.monthlyFee || 0), 0);
                     text += `Total Yearly Tuition Fees: ${formatCurrency(totalYearly)}\n`;
                     text += `Total Students: ${classYearly.length}\n\n`;
-                    // Group by student
                     const studentMap = {};
                     classYearly.forEach(c => {
                         const s = getStudent(c.studentId);
@@ -7454,8 +7879,9 @@
                             <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Transactions:</strong> ${AppData.transactions.length}</div>
                             <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Fee Deposits:</strong> ${AppData.feeDeposits.length}</div>
                             <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Family Groups:</strong> ${AppData.familyGroups.length}</div>
+                            <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Receipt Counter:</strong> ${AppData.receiptCounter}</div>
                             <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Storage Used:</strong> ${(new Blob([JSON.stringify(AppData)]).size / 1024).toFixed(2)} KB</div>
-                            <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Version:</strong> 4.0.0</div>
+                            <div style="padding:6px 10px;background:var(--bg-primary);border-radius:4px;"><strong>Version:</strong> 5.0.0</div>
                         </div>
                     </div>
                 `;
