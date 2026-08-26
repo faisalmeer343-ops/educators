@@ -1991,7 +1991,8 @@
         let employeePhotoData = null;
         let expenseCounter = 0;
         let subjectRows = [];
-        let editingStudentId = null; // For edit mode in admission
+        let editingStudentId = null;
+        let editingDepositId = null;
 
         // ===== CONSTANTS =====
         const CLASS_OPTIONS = ['Playgroup', 'Nursery', 'Prep', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th',
@@ -2842,7 +2843,7 @@
         }
 
         // ================================================================
-        // STUDENTS - With Enhanced Search (Name, Father, Adm No, Address)
+        // STUDENTS - With Enhanced Search + Print Admission Form with Photo
         // ================================================================
 
         function renderStudents() {
@@ -2889,6 +2890,7 @@
                                 <button class="btn btn-info btn-xs" onclick="viewStudent('${s.id}')">📄</button>
                                 <button class="btn btn-primary btn-xs" onclick="editStudent('${s.id}')">✏️</button>
                                 <button class="btn btn-danger btn-xs" onclick="deleteStudent('${s.id}')">🗑️</button>
+                                <button class="btn btn-warning btn-xs" onclick="printAdmissionFormWithPhoto('${s.id}')">🖨️ Form</button>
                             </td>
                         </tr>`;
                 });
@@ -2937,6 +2939,7 @@
                             <button class="btn btn-info btn-xs" onclick="viewStudent('${s.id}')">📄</button>
                             <button class="btn btn-primary btn-xs" onclick="editStudent('${s.id}')">✏️</button>
                             <button class="btn btn-danger btn-xs" onclick="deleteStudent('${s.id}')">🗑️</button>
+                            <button class="btn btn-warning btn-xs" onclick="printAdmissionFormWithPhoto('${s.id}')">🖨️ Form</button>
                         </td>
                     </tr>`;
             }).join('');
@@ -2957,10 +2960,8 @@
         function editStudent(id) {
             const student = getStudent(id);
             if (!student) return;
-            // Populate admission form with student data for editing
             editingStudentId = id;
             showTab('admission');
-            // Fill form after render
             setTimeout(() => {
                 const s = getStudent(id);
                 if (!s) return;
@@ -2997,7 +2998,6 @@
                 document.getElementById('admAcademicFee').value = s.academicFee || 0;
                 document.getElementById('admRegistrationFee').value = s.registrationFee || 0;
                 document.getElementById('admTuitionFee').value = s.tuitionFee || 0;
-                // Trigger total calculation
                 const event = new Event('input', { bubbles: true });
                 document.getElementById('admAdmissionFee').dispatchEvent(event);
                 if (s.photo) {
@@ -3016,6 +3016,127 @@
             saveToStorage();
             renderStudents();
             showToast(`🗑️ Student ${student.name} deleted!`, 'info');
+        }
+
+        // ===== NEW: Print Admission Form with Photo for a specific student =====
+        function printAdmissionFormWithPhoto(studentId) {
+            const student = getStudent(studentId);
+            if (!student) { showToast('⚠️ Student not found!', 'error'); return; }
+
+            const settings = AppData.schoolSettings || {};
+            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const logoHtml = getLogoHTML(60);
+            const studentPhoto = student.photo ?
+                `<img src="${student.photo}" style="width:100px;height:110px;object-fit:cover;border-radius:6px;border:3px solid #131921;" />` :
+                '<span style="font-size:32px;">👤</span>';
+
+            const formattedAdmissionDate = student.admissionDate ? formatDate(student.admissionDate) : 'N/A';
+            const formattedDob = student.dob ? formatDate(student.dob) : 'N/A';
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Admission Form - ${student.name}</title>
+                <style>
+                    body { font-family: Arial, Helvetica, sans-serif; padding: 20px; background: #fff; color: #333; font-size: 11pt; }
+                    .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 5px; }
+                    .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
+                    .form-title { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; border-bottom: 2px solid #131921; padding-bottom: 8px; margin-bottom: 15px; }
+                    .form-section { background: #f7fafc; padding: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 4px; }
+                    .form-section-title { font-weight: 900; color: #131921; font-family: 'Times New Roman', Times, serif; font-size: 13pt; margin-bottom: 8px; }
+                    .form-row { display: flex; padding: 4px 0; border-bottom: 1px dashed #e2e8f0; }
+                    .form-row .label { font-weight: 600; color: #131921; min-width: 180px; }
+                    .form-row .value { color: #333; flex: 1; }
+                    .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 16px; }
+                    .signature-area { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 12px; border-top: 3px double #131921; }
+                    .signature { text-align: center; flex: 1; }
+                    .signature .line { width: 130px; border-top: 3px solid #333; margin: 4px auto; }
+                    .signature .label { font-weight: 900; color: #131921; font-size: 11pt; text-transform: uppercase; letter-spacing: 0.5px; }
+                    .photo-container { text-align: right; margin-bottom: 10px; }
+                    .logo-img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #ff9900; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; }
+                    .logo-img img { width: 100%; height: 100%; object-fit: cover; }
+                    @media print {
+                        body { padding: 10px; }
+                        .form-section { background: #fff; border: 1px solid #ddd; }
+                    }
+                </style>
+                </head><body>
+                <div class="school-header">${schoolName}</div>
+                <div class="school-subheader">${settings.schoolAddress || ''}</div>
+                <div class="form-title">📝 STUDENT ADMISSION FORM</div>
+                <div style="margin-bottom:10px;font-size:11pt;color:#565959;">Date: ${getTodayDateFormatted()}</div>
+                <div class="photo-container">
+                    <div style="display:inline-block;background:#f7fafc;border:3px solid #131921;border-radius:6px;padding:4px;width:110px;height:120px;text-align:center;">
+                        ${studentPhoto}
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="form-section-title">📋 Personal Information</div>
+                    <div class="form-grid">
+                        <div class="form-row"><span class="label">Admission No:</span><span class="value">${student.admissionNo}</span></div>
+                        <div class="form-row"><span class="label">Roll No:</span><span class="value">${student.rollNo || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Admission Date:</span><span class="value">${formattedAdmissionDate}</span></div>
+                        <div class="form-row"><span class="label">Student Name:</span><span class="value">${student.name}</span></div>
+                        <div class="form-row"><span class="label">Father Name:</span><span class="value">${student.fatherName}</span></div>
+                        <div class="form-row"><span class="label">Date of Birth:</span><span class="value">${formattedDob}</span></div>
+                        <div class="form-row"><span class="label">Gender:</span><span class="value">${student.gender || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Free:</span><span class="value">${student.free || 'No'}</span></div>
+                        <div class="form-row"><span class="label">Mother's Name:</span><span class="value">${student.motherName || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Father CNIC:</span><span class="value">${student.fatherNic || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Address:</span><span class="value">${student.address || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Remarks:</span><span class="value">${student.remarks || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Blood Group:</span><span class="value">${student.bloodGroup || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Previous School:</span><span class="value">${student.prevSchool || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Admitted in Class:</span><span class="value">${student.admittedClass || student.currentClass}</span></div>
+                        <div class="form-row"><span class="label">Current in Class:</span><span class="value">${student.currentClass}</span></div>
+                        <div class="form-row"><span class="label">Group:</span><span class="value">${student.group || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Session:</span><span class="value">${student.session || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Status:</span><span class="value">${student.status}</span></div>
+                        <div class="form-row"><span class="label">Father's Occupation:</span><span class="value">${student.occupation || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Nationality:</span><span class="value">${student.nationality || 'Pakistani'}</span></div>
+                        <div class="form-row"><span class="label">Religion:</span><span class="value">${student.religion || 'Islam'}</span></div>
+                        <div class="form-row"><span class="label">Cast:</span><span class="value">${student.cast || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Contact Number:</span><span class="value">${student.contactNumber || 'N/A'}</span></div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <div class="form-section-title">👨‍👩‍👦 Guardian Information</div>
+                    <div class="form-grid">
+                        <div class="form-row"><span class="label">Guardian Name:</span><span class="value">${student.guardianName || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Relation:</span><span class="value">${student.guardianRelation || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Contact:</span><span class="value">${student.guardianContact || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Address:</span><span class="value">${student.guardianAddress || 'N/A'}</span></div>
+                        <div class="form-row"><span class="label">Phone Number:</span><span class="value">${student.guardianPhone || 'N/A'}</span></div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <div class="form-section-title">💰 Admission Charges</div>
+                    <div class="form-grid">
+                        <div class="form-row"><span class="label">Admission Fee:</span><span class="value">${formatCurrency(student.admissionFee || 0)}</span></div>
+                        <div class="form-row"><span class="label">Academic Activities Fee:</span><span class="value">${formatCurrency(student.academicFee || 0)}</span></div>
+                        <div class="form-row"><span class="label">Registration Charges:</span><span class="value">${formatCurrency(student.registrationFee || 0)}</span></div>
+                        <div class="form-row"><span class="label">Tuition Fee:</span><span class="value">${formatCurrency(student.tuitionFee || 0)}</span></div>
+                        <div class="form-row"><span class="label">Total:</span><span class="value" style="font-weight:900;color:#b12704;">${formatCurrency(student.totalFee || 0)}</span></div>
+                    </div>
+                </div>
+                
+                <div class="signature-area">
+                    <div class="signature"><div class="line"></div><div class="label">Sign. of Student</div></div>
+                    <div class="signature"><div class="line"></div><div class="label">Sign. of Father/Guardian</div></div>
+                    <div class="signature"><div class="line"></div><div class="label">Sign. of Principal</div></div>
+                </div>
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            setTimeout(function() { window.close(); }, 1000);
+                        }, 500);
+                    };
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
         }
 
         // ================================================================
@@ -3119,7 +3240,6 @@
 
             container.innerHTML = html;
 
-            // If editing, fill data after render
             if (editingStudentId) {
                 const s = getStudent(editingStudentId);
                 if (s) {
@@ -3240,7 +3360,6 @@
                 return;
             }
 
-            // Check duplicate admission no only if new student
             if (!editingStudentId) {
                 const exists = AppData.students.find(s => s.admissionNo === admissionNo);
                 if (exists) {
@@ -3248,7 +3367,6 @@
                     return;
                 }
             } else {
-                // For edit, allow same admission no
                 const exists = AppData.students.find(s => s.admissionNo === admissionNo && s.id !== editingStudentId);
                 if (exists) {
                     showToast('⚠️ Admission Number already exists for another student!', 'error');
@@ -3304,7 +3422,6 @@
             };
 
             if (editingStudentId) {
-                // Update existing student
                 const idx = AppData.students.findIndex(s => s.id === editingStudentId);
                 if (idx !== -1) {
                     AppData.students[idx] = { ...AppData.students[idx], ...studentData };
@@ -3312,7 +3429,6 @@
                 }
                 editingStudentId = null;
             } else {
-                // New student
                 studentData.id = generateStudentId();
                 AppData.students.push(studentData);
                 showToast(`✅ Student ${name} admitted! Admission No: ${studentData.admissionNo}`, 'success');
@@ -3606,7 +3722,7 @@
         }
 
         // ================================================================
-        // FEE CHALLAN - With Automatic Receipt No
+        // FEE CHALLAN - With Save Button
         // ================================================================
 
         function renderFeeChallan() {
@@ -3646,6 +3762,7 @@
                             <div class="full-width">
                                 <div class="btn-group">
                                     <button class="btn btn-primary" onclick="generateFeeChallan()">📄 Generate Vouchers</button>
+                                    <button class="btn btn-success" onclick="saveFeeChallan()">💾 Save</button>
                                     <button class="btn btn-success" onclick="printFeeChallan()">🖨️ Print</button>
                                     <button class="btn btn-info" onclick="exportFeeChallanPDF()">📄 PDF</button>
                                     <button class="btn btn-warning" onclick="clearFeeChallan()">🔄 Clear</button>
@@ -3858,6 +3975,19 @@
             showToast(`✅ Vouchers generated! Receipt: ${receiptNo}`, 'success');
         }
 
+        // ===== NEW: Save Fee Challan without generating display =====
+        function saveFeeChallan() {
+            const studentId = document.getElementById('fcStudent').value;
+            if (!studentId) {
+                showToast('⚠️ Select a student!', 'error');
+                return;
+            }
+            // Just generate and save, but don't show display
+            generateFeeChallan();
+            // Keep the display as is (already generated)
+            showToast('✅ Fee Challan saved successfully!', 'success');
+        }
+
         function printFeeChallan() {
             const content = document.getElementById('feeChallanDisplay').innerHTML;
             if (!content || content.includes('Select student')) {
@@ -3933,328 +4063,7 @@
         }
 
         // ================================================================
-        // BULK FEE VOUCHER - With Family Discount
-        // ================================================================
-
-        function renderBulkFeeVoucher() {
-            const container = document.getElementById('contentArea');
-            const students = AppData.students;
-            const classList = [...new Set(students.map(s => s.currentClass))].sort();
-
-            let html = `
-                    <div class="card">
-                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Bulk Fee Voucher <span class="badge">with Family Discount</span></div>
-                        
-                        <div class="form-row">
-                            <label>Select Class:</label>
-                            <select id="bulkClass" onchange="loadBulkStudents()">
-                                <option value="">-- Select Class --</option>
-                                ${classList.map(c => `<option value="${c}">${c}</option>`).join('')}
-                            </select>
-                            <label>Month:</label>
-                            <select id="bulkMonth">
-                                ${MONTHS.map(m => `<option value="${m}" ${m === MONTHS[new Date().getMonth()] ? 'selected' : ''}>${m}</option>`).join('')}
-                            </select>
-                            <label>Year:</label>
-                            <select id="bulkYear">
-                                ${YEARS.map(y => `<option value="${y}" ${y === new Date().getFullYear() ? 'selected' : ''}>${y}</option>`).join('')}
-                            </select>
-                            <label>Apply Family Discount:</label>
-                            <select id="bulkApplyDiscount" style="max-width:150px;">
-                                <option value="yes">✅ Yes</option>
-                                <option value="no">❌ No</option>
-                            </select>
-                            <button class="btn btn-primary" onclick="selectAllBulkStudents()">☑️ Select All</button>
-                            <button class="btn btn-secondary" onclick="deselectAllBulkStudents()">☐ Deselect All</button>
-                            <button class="btn btn-success" onclick="generateBulkVouchers()">📄 Generate Vouchers</button>
-                            <button class="btn btn-info" onclick="printBulkVouchers()">🖨️ Print All</button>
-                            <button class="btn btn-warning" onclick="exportBulkVouchersPDF()">📄 PDF</button>
-                        </div>
-                        
-                        <div id="bulkStudentList" class="bulk-student-list">
-                            <p style="color:var(--text-muted);text-align:center;padding:20px;">Select a class to load students</p>
-                        </div>
-                        
-                        <div id="bulkVoucherDisplay" style="min-height:100px;padding:10px;margin-top:10px;">
-                            <p style="color:var(--text-muted);text-align:center;padding:20px;">Select students and click Generate Vouchers</p>
-                        </div>
-                    </div>
-                `;
-
-            container.innerHTML = html;
-        }
-
-        function loadBulkStudents() {
-            const className = document.getElementById('bulkClass').value;
-            const container = document.getElementById('bulkStudentList');
-
-            if (!className) {
-                container.innerHTML =
-                    '<p style="color:var(--text-muted);text-align:center;padding:20px;">Select a class to load students</p>';
-                return;
-            }
-
-            const students = AppData.students.filter(s => s.currentClass === className && s.status === 'Currently-in');
-
-            if (students.length === 0) {
-                container.innerHTML =
-                    `<p style="color:var(--text-muted);text-align:center;padding:20px;">No active students in ${className}</p>`;
-                return;
-            }
-
-            let html =
-                `<div style="font-weight:900;color:var(--accent-blue);padding:8px;border-bottom:2px solid var(--accent-blue);">Total Students: ${students.length}</div>`;
-            students.forEach(s => {
-                const discount = s.discount || 0;
-                html += `
-                        <div class="student-item">
-                            <input type="checkbox" id="bulk_${s.id}" value="${s.id}" />
-                            <label for="bulk_${s.id}"><strong>${s.admissionNo}</strong> - ${s.name} ${discount > 0 ? `🏷️ (${discount}% off)` : ''}</label>
-                        </div>
-                    `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function selectAllBulkStudents() {
-            document.querySelectorAll('#bulkStudentList input[type="checkbox"]').forEach(cb => cb.checked = true);
-            showToast('☑️ All students selected!', 'info');
-        }
-
-        function deselectAllBulkStudents() {
-            document.querySelectorAll('#bulkStudentList input[type="checkbox"]').forEach(cb => cb.checked = false);
-            showToast('☐ All students deselected!', 'info');
-        }
-
-        function generateBulkVouchers() {
-            const selected = document.querySelectorAll('#bulkStudentList input[type="checkbox"]:checked');
-
-            if (selected.length === 0) {
-                showToast('⚠️ Select at least one student!', 'error');
-                return;
-            }
-
-            const month = document.getElementById('bulkMonth').value;
-            const year = document.getElementById('bulkYear').value;
-            const applyDiscount = document.getElementById('bulkApplyDiscount').value === 'yes';
-            const display = document.getElementById('bulkVoucherDisplay');
-
-            const settings = AppData.schoolSettings || {};
-            const logoHtml = getLogoHTML(30);
-
-            let allVouchers = '';
-            let totalCount = 0;
-
-            AppData.receiptCounter = AppData.receiptCounter || 0;
-
-            selected.forEach(cb => {
-                const studentId = cb.value;
-                const student = getStudent(studentId);
-                if (!student) return;
-
-                totalCount++;
-                AppData.receiptCounter++;
-                const receiptNo = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
-
-                const admissionNo = student.admissionNo;
-                const className = student.currentClass;
-                const studentName = student.name;
-                const fatherName = student.fatherName;
-                const dueDate = getTodayDateInput();
-
-                const existing = AppData.feeChallans.filter(c => c.studentId === studentId);
-                let monthlyFee = 0;
-                let previousArears = 0;
-                let activityCharges = 0;
-                let booksCharges = 0;
-                if (existing.length > 0) {
-                    const last = existing[existing.length - 1];
-                    monthlyFee = last.monthlyFee || 0;
-                    previousArears = last.previousArears || 0;
-                    activityCharges = last.activityCharges || 0;
-                    booksCharges = last.booksCharges || 0;
-                }
-
-                const discount = applyDiscount ? (student.discount || 0) : 0;
-                const subtotal = monthlyFee + previousArears + activityCharges + booksCharges;
-                const discountAmount = (subtotal * discount) / 100;
-                const total = subtotal - discountAmount;
-                const formattedDate = dueDate ? formatDate(dueDate) : 'N/A';
-
-                AppData.feeChallans.push({
-                    studentId: studentId,
-                    studentName: studentName,
-                    admissionNo: admissionNo,
-                    receiptNo: receiptNo,
-                    month: month,
-                    year: year,
-                    monthlyFee: monthlyFee,
-                    previousArears: previousArears,
-                    activityCharges: activityCharges,
-                    booksCharges: booksCharges,
-                    discount: discount,
-                    discountAmount: discountAmount,
-                    total: total,
-                    dueDate: dueDate,
-                    generatedDate: getTodayDateFormatted(),
-                    bulk: true
-                });
-
-                AppData.transactions.push({
-                    studentId: studentId,
-                    studentName: studentName,
-                    admissionNo: admissionNo,
-                    amount: total,
-                    type: 'Bulk Challan - ' + month + ' ' + year + ' (Receipt: ' + receiptNo + ')',
-                    date: getTodayDateFormatted(),
-                    dueDate: formattedDate,
-                    month: month,
-                    year: year,
-                    receiptNo: receiptNo
-                });
-
-                const copies = ['Student Copy', 'School Copy', 'Bank Copy'];
-                copies.forEach(copy => {
-                    allVouchers += `
-                            <div class="voucher-box" style="page-break-inside:avoid;">
-                                <div class="v-header">
-                                    <div class="v-logo">${logoHtml}</div>
-                                    <div class="v-school">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
-                                    <div class="v-sub">${settings.schoolAddress || 'NOWSHERA'}</div>
-                                </div>
-                                <div style="text-align:center;">
-                                    <span class="v-copy-type">${copy}</span>
-                                    <div style="font-size:9px;color:#131921;font-weight:900;margin-top:2px;">Receipt: ${receiptNo}</div>
-                                </div>
-                                <div class="v-details">
-                                    <div class="row"><span class="label">Admission No</span><span class="value">${admissionNo}</span></div>
-                                    <div class="row"><span class="label">Class</span><span class="value">${className}</span></div>
-                                    <div class="row"><span class="label">Student Name</span><span class="value">${studentName}</span></div>
-                                    <div class="row"><span class="label">Father Name</span><span class="value">${fatherName}</span></div>
-                                    <div class="row"><span class="label">Due Date</span><span class="value">${formattedDate}</span></div>
-                                    <div class="row"><span class="label">Month</span><span class="value">${month} ${year}</span></div>
-                                    <div class="row"><span class="label">Monthly Fee</span><span class="value">${formatCurrency(monthlyFee)}</span></div>
-                                    <div class="row"><span class="label">Previous Arears</span><span class="value">${formatCurrency(previousArears)}</span></div>
-                                    <div class="row"><span class="label">Activity Charges</span><span class="value">${formatCurrency(activityCharges)}</span></div>
-                                    <div class="row"><span class="label">Books Charges</span><span class="value">${formatCurrency(booksCharges)}</span></div>
-                                    ${discount > 0 ? `<div class="row"><span class="label" style="color:#067d62;">Family Discount (${discount}%)</span><span class="value" style="color:#067d62;">-${formatCurrency(discountAmount)}</span></div>` : ''}
-                                </div>
-                                <div class="v-total">
-                                    <span>Total</span>
-                                    <span>${formatCurrency(total)}</span>
-                                </div>
-                                <div class="v-footer">${settings.schoolName || 'THE EDUCATORS'} — Success with Wisdom</div>
-                            </div>
-                        `;
-                });
-            });
-
-            saveToStorage();
-
-            if (totalCount === 0) {
-                display.innerHTML =
-                    '<p style="color:var(--text-muted);text-align:center;padding:20px;">No valid students selected</p>';
-                return;
-            }
-
-            display.innerHTML = `
-                    <div style="background:var(--bg-primary);padding:10px;border-radius:4px;margin-bottom:10px;font-weight:900;color:var(--accent-blue);">
-                        Total Vouchers Generated: ${totalCount * 3} (${totalCount} Students × 3 Copies)
-                        ${document.getElementById('bulkApplyDiscount').value === 'yes' ? ' | ✅ Family Discount Applied' : ''}
-                    </div>
-                    <div class="voucher-print-area" id="bulkVoucherPrintArea">
-                        ${allVouchers}
-                    </div>
-                `;
-
-            showToast(`✅ ${totalCount} students vouchers generated! (${totalCount * 3} total copies)`, 'success');
-        }
-
-        function printBulkVouchers() {
-            const content = document.getElementById('bulkVoucherDisplay').innerHTML;
-            if (!content || content.includes('Select students')) {
-                showToast('⚠️ Generate vouchers first!', 'error');
-                return;
-            }
-
-            const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
-
-            const win = window.open('', '_blank');
-            win.document.write(`
-                    <html><head><title>Bulk Fee Vouchers - ${getTodayDateFormatted()}</title>
-                    <style>
-                        body { font-family: Arial, Helvetica, sans-serif; padding: 8px; background: #fff; margin: 0; font-size: 11pt; }
-                        ${document.querySelector('style').textContent}
-                        .voucher-print-area { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 10px !important; }
-                        .voucher-box { page-break-inside: avoid; border: 2px solid #000 !important; font-size: 10pt; }
-                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 5px; }
-                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
-                        @media print {
-                            body { padding: 4px; background: #ffffff !important; }
-                            .voucher-print-area { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; }
-                            .voucher-box { border: 2px solid #131921 !important; }
-                        }
-                    </style>
-                    </head><body>
-                    <div class="school-header">${schoolName}</div>
-                    <div class="school-subheader">${settings.schoolAddress || ''}</div>
-                    ${content}
-                    <script>
-                        window.onload = function() {
-                            setTimeout(function() {
-                                window.print();
-                                setTimeout(function() { window.close(); }, 1000);
-                            }, 500);
-                        };
-                    <\/script>
-                    </body></html>
-                `);
-            win.document.close();
-        }
-
-        function exportBulkVouchersPDF() {
-            const content = document.getElementById('bulkVoucherDisplay').innerHTML;
-            if (!content || content.includes('Select students')) {
-                showToast('⚠️ Generate vouchers first!', 'error');
-                return;
-            }
-
-            const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
-
-            const win = window.open('', '_blank');
-            win.document.write(`
-                    <html><head><title>Bulk Fee Vouchers PDF - ${getTodayDateFormatted()}</title>
-                    <style>
-                        body { font-family: Arial, Helvetica, sans-serif; padding: 8px; background: #fff; margin: 0; font-size: 11pt; }
-                        ${document.querySelector('style').textContent}
-                        .voucher-print-area { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 10px !important; }
-                        .voucher-box { page-break-inside: avoid; border: 2px solid #131921 !important; font-size: 10pt; }
-                        .btn, .btn-group, .form-row, .no-print { display: none !important; }
-                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 5px; }
-                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
-                    </style>
-                    </head><body>
-                    <div class="school-header">${schoolName}</div>
-                    <div class="school-subheader">${settings.schoolAddress || ''}</div>
-                    ${content}
-                    <script>
-                        window.onload = function() {
-                            setTimeout(function() {
-                                window.print();
-                                setTimeout(function() { window.close(); }, 1000);
-                            }, 500);
-                        };
-                    <\/script>
-                    </body></html>
-                `);
-            win.document.close();
-        }
-
-        // ================================================================
-        // FEE DEPOSIT - With Search and Cash/Bank tracking
+        // FEE DEPOSIT - With Indl Print and Edit
         // ================================================================
 
         function renderFeeDeposit() {
@@ -4299,7 +4108,7 @@
                         
                         <div class="table-wrap" style="margin-top:10px;">
                             <table>
-                                <thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt</th><th>Action</th></tr></thead>
+                                <thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt</th><th>Actions</th></tr></thead>
                                 <tbody id="fdTableBody"></tbody>
                             </table>
                         </div>
@@ -4348,6 +4157,20 @@
                 const last = challans[challans.length - 1];
                 document.getElementById('fdAmount').value = last.total || 0;
             }
+
+            // If editing, populate data
+            if (editingDepositId) {
+                const deposit = AppData.feeDeposits.find(d => d.id === editingDepositId);
+                if (deposit) {
+                    document.getElementById('fdAmount').value = deposit.amount;
+                    document.getElementById('fdPaymentMode').value = deposit.paymentMode;
+                    document.getElementById('fdPaymentDate').value = deposit.paymentDate || '';
+                    document.getElementById('fdMonth').value = deposit.month;
+                    document.getElementById('fdYear').value = deposit.year;
+                    document.getElementById('fdReceiptNo').value = deposit.receiptNo;
+                    showToast('✏️ Editing deposit. Click Save to update.', 'info');
+                }
+            }
         }
 
         function saveFeeDeposit() {
@@ -4368,8 +4191,7 @@
 
             const receiptNo = document.getElementById('fdReceiptNo').value;
 
-            const deposit = {
-                id: 'DEP' + String(AppData.feeDeposits.length + 1).padStart(4, '0'),
+            const depositData = {
                 studentId: studentId,
                 admissionNo: student.admissionNo,
                 studentName: student.name,
@@ -4383,23 +4205,44 @@
                 depositDate: getTodayDateFormatted()
             };
 
-            AppData.feeDeposits.push(deposit);
+            if (editingDepositId) {
+                // Update existing deposit
+                const idx = AppData.feeDeposits.findIndex(d => d.id === editingDepositId);
+                if (idx !== -1) {
+                    AppData.feeDeposits[idx] = { ...AppData.feeDeposits[idx], ...depositData };
+                    // Update transaction
+                    const txIdx = AppData.transactions.findIndex(t => t.receiptNo === receiptNo);
+                    if (txIdx !== -1) {
+                        AppData.transactions[txIdx].amount = amount;
+                        AppData.transactions[txIdx].type = 'Fee Deposit - ' + depositData.month + ' ' + depositData.year +
+                            ' (' + depositData.paymentMode + ')';
+                    }
+                    showToast(`✅ Fee deposit updated: ${formatCurrency(amount)} for ${student.name}`, 'success');
+                }
+                editingDepositId = null;
+            } else {
+                const deposit = {
+                    id: 'DEP' + String(AppData.feeDeposits.length + 1).padStart(4, '0'),
+                    ...depositData
+                };
+                AppData.feeDeposits.push(deposit);
 
-            AppData.transactions.push({
-                studentId: studentId,
-                studentName: student.name,
-                admissionNo: student.admissionNo,
-                amount: amount,
-                type: 'Fee Deposit - ' + deposit.month + ' ' + deposit.year + ' (' + deposit.paymentMode + ')',
-                date: getTodayDateFormatted(),
-                method: deposit.paymentMode,
-                receiptNo: receiptNo
-            });
+                AppData.transactions.push({
+                    studentId: studentId,
+                    studentName: student.name,
+                    admissionNo: student.admissionNo,
+                    amount: amount,
+                    type: 'Fee Deposit - ' + deposit.month + ' ' + deposit.year + ' (' + deposit.paymentMode + ')',
+                    date: getTodayDateFormatted(),
+                    method: deposit.paymentMode,
+                    receiptNo: receiptNo
+                });
+                showToast(`✅ Fee deposited: ${formatCurrency(amount)} for ${student.name} via ${deposit.paymentMode}`, 'success');
+            }
 
             saveToStorage();
             loadFeeDeposits();
             clearFeeDeposit();
-            showToast(`✅ Fee deposited: ${formatCurrency(amount)} for ${student.name} via ${deposit.paymentMode}`, 'success');
 
             AppData.receiptCounter = AppData.receiptCounter || 0;
             AppData.receiptCounter++;
@@ -4425,20 +4268,107 @@
                         <td>${d.paymentMode}</td>
                         <td>${d.month} ${d.year}</td>
                         <td>${d.receiptNo || 'N/A'}</td>
-                        <td><button class="btn btn-danger btn-xs" onclick="deleteFeeDeposit('${d.id}')">🗑️</button></td>
+                        <td>
+                            <button class="btn btn-info btn-xs" onclick="printFeeDeposit('${d.id}')">🖨️</button>
+                            <button class="btn btn-primary btn-xs" onclick="editFeeDeposit('${d.id}')">✏️</button>
+                            <button class="btn btn-danger btn-xs" onclick="deleteFeeDeposit('${d.id}')">🗑️</button>
+                        </td>
                     </tr>
                 `).join('');
         }
 
+        // ===== NEW: Individual Print Fee Deposit =====
+        function printFeeDeposit(id) {
+            const deposit = AppData.feeDeposits.find(d => d.id === id);
+            if (!deposit) { showToast('⚠️ Deposit not found!', 'error'); return; }
+
+            const settings = AppData.schoolSettings || {};
+            const logoHtml = getLogoHTML(40);
+
+            const content = `
+                    <div style="background:#fff;border:2px solid #131921;border-radius:8px;padding:16px 20px;max-width:400px;margin:10px auto;font-family:Arial,Helvetica,sans-serif;">
+                        <div style="text-align:center;border-bottom:2px solid #131921;padding-bottom:8px;margin-bottom:8px;">
+                            <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
+                            <div style="font-size:16px;font-weight:900;color:#131921;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                            <div style="font-size:11px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'}</div>
+                        </div>
+                        <div style="text-align:center;background:#131921;color:#ff9900;padding:4px;border-radius:4px;font-weight:900;font-size:14px;letter-spacing:2px;margin-bottom:8px;">FEE DEPOSIT SLIP</div>
+                        <div style="font-size:11px;line-height:1.6;">
+                            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Receipt No</span><span>${deposit.receiptNo}</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Date</span><span>${deposit.depositDate}</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Student</span><span>${deposit.studentName}</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Admission No</span><span>${deposit.admissionNo}</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Class</span><span>${deposit.className || 'N/A'}</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Month</span><span>${deposit.month} ${deposit.year}</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Payment Mode</span><span>${deposit.paymentMode}</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;font-weight:900;color:#067d62;"><span>Amount</span><span>${formatCurrency(deposit.amount)}</span></div>
+                        </div>
+                        <div style="text-align:center;font-size:9px;color:#565959;border-top:1px solid #131921;padding-top:4px;margin-top:4px;">${settings.schoolName || 'THE EDUCATORS'} — Success with Wisdom</div>
+                    </div>
+                `;
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                    <html><head><title>Fee Deposit Slip - ${deposit.receiptNo}</title>
+                    <style>body{font-family:Arial;padding:20px;font-size:11pt;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f0;}${document.querySelector('style').textContent}</style>
+                    </head><body>${content}
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() { window.close(); }, 1000);
+                            }, 500);
+                        };
+                    <\/script>
+                    </body></html>
+                `);
+            win.document.close();
+        }
+
+        // ===== NEW: Edit Fee Deposit =====
+        function editFeeDeposit(id) {
+            const deposit = AppData.feeDeposits.find(d => d.id === id);
+            if (!deposit) { showToast('⚠️ Deposit not found!', 'error'); return; }
+
+            editingDepositId = id;
+            // Navigate to fee deposit tab and populate
+            showTab('feedeposit');
+            setTimeout(() => {
+                // Select student
+                const studentId = deposit.studentId;
+                if (studentId) {
+                    const student = getStudent(studentId);
+                    if (student) {
+                        selectStudent('fdStudent', studentId, student.name + ' (' + student.admissionNo + ')');
+                        // Trigger load
+                        loadFeeDepositStudent();
+                    }
+                }
+                document.getElementById('fdAmount').value = deposit.amount;
+                document.getElementById('fdPaymentMode').value = deposit.paymentMode;
+                document.getElementById('fdPaymentDate').value = deposit.paymentDate || '';
+                document.getElementById('fdMonth').value = deposit.month;
+                document.getElementById('fdYear').value = deposit.year;
+                document.getElementById('fdReceiptNo').value = deposit.receiptNo;
+                showToast('✏️ Edit deposit details and click Save.', 'info');
+            }, 200);
+        }
+
         function deleteFeeDeposit(id) {
             if (!confirm('Delete this fee deposit record?')) return;
+            const deposit = AppData.feeDeposits.find(d => d.id === id);
             AppData.feeDeposits = AppData.feeDeposits.filter(d => d.id !== id);
+            // Also remove from transactions
+            if (deposit) {
+                AppData.transactions = AppData.transactions.filter(t => t.receiptNo !== deposit.receiptNo);
+            }
             saveToStorage();
             loadFeeDeposits();
             showToast('🗑️ Fee deposit deleted!', 'info');
         }
 
         function clearFeeDeposit() {
+            editingDepositId = null;
             document.getElementById('fdStudent').value = '';
             document.getElementById('fdStudent_search').value = '';
             document.getElementById('fdAdmissionNo').value = '';
@@ -4797,6 +4727,327 @@
                 `;
 
             exportToWord(htmlContent, 'Transactions_Report_' + getTodayDateFormatted(), settings.schoolName);
+        }
+
+        // ================================================================
+        // BULK FEE VOUCHER - With Family Discount
+        // ================================================================
+
+        function renderBulkFeeVoucher() {
+            const container = document.getElementById('contentArea');
+            const students = AppData.students;
+            const classList = [...new Set(students.map(s => s.currentClass))].sort();
+
+            let html = `
+                    <div class="card">
+                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Bulk Fee Voucher <span class="badge">with Family Discount</span></div>
+                        
+                        <div class="form-row">
+                            <label>Select Class:</label>
+                            <select id="bulkClass" onchange="loadBulkStudents()">
+                                <option value="">-- Select Class --</option>
+                                ${classList.map(c => `<option value="${c}">${c}</option>`).join('')}
+                            </select>
+                            <label>Month:</label>
+                            <select id="bulkMonth">
+                                ${MONTHS.map(m => `<option value="${m}" ${m === MONTHS[new Date().getMonth()] ? 'selected' : ''}>${m}</option>`).join('')}
+                            </select>
+                            <label>Year:</label>
+                            <select id="bulkYear">
+                                ${YEARS.map(y => `<option value="${y}" ${y === new Date().getFullYear() ? 'selected' : ''}>${y}</option>`).join('')}
+                            </select>
+                            <label>Apply Family Discount:</label>
+                            <select id="bulkApplyDiscount" style="max-width:150px;">
+                                <option value="yes">✅ Yes</option>
+                                <option value="no">❌ No</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="selectAllBulkStudents()">☑️ Select All</button>
+                            <button class="btn btn-secondary" onclick="deselectAllBulkStudents()">☐ Deselect All</button>
+                            <button class="btn btn-success" onclick="generateBulkVouchers()">📄 Generate Vouchers</button>
+                            <button class="btn btn-info" onclick="printBulkVouchers()">🖨️ Print All</button>
+                            <button class="btn btn-warning" onclick="exportBulkVouchersPDF()">📄 PDF</button>
+                        </div>
+                        
+                        <div id="bulkStudentList" class="bulk-student-list">
+                            <p style="color:var(--text-muted);text-align:center;padding:20px;">Select a class to load students</p>
+                        </div>
+                        
+                        <div id="bulkVoucherDisplay" style="min-height:100px;padding:10px;margin-top:10px;">
+                            <p style="color:var(--text-muted);text-align:center;padding:20px;">Select students and click Generate Vouchers</p>
+                        </div>
+                    </div>
+                `;
+
+            container.innerHTML = html;
+        }
+
+        function loadBulkStudents() {
+            const className = document.getElementById('bulkClass').value;
+            const container = document.getElementById('bulkStudentList');
+
+            if (!className) {
+                container.innerHTML =
+                    '<p style="color:var(--text-muted);text-align:center;padding:20px;">Select a class to load students</p>';
+                return;
+            }
+
+            const students = AppData.students.filter(s => s.currentClass === className && s.status === 'Currently-in');
+
+            if (students.length === 0) {
+                container.innerHTML =
+                    `<p style="color:var(--text-muted);text-align:center;padding:20px;">No active students in ${className}</p>`;
+                return;
+            }
+
+            let html =
+                `<div style="font-weight:900;color:var(--accent-blue);padding:8px;border-bottom:2px solid var(--accent-blue);">Total Students: ${students.length}</div>`;
+            students.forEach(s => {
+                const discount = s.discount || 0;
+                html += `
+                        <div class="student-item">
+                            <input type="checkbox" id="bulk_${s.id}" value="${s.id}" />
+                            <label for="bulk_${s.id}"><strong>${s.admissionNo}</strong> - ${s.name} ${discount > 0 ? `🏷️ (${discount}% off)` : ''}</label>
+                        </div>
+                    `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function selectAllBulkStudents() {
+            document.querySelectorAll('#bulkStudentList input[type="checkbox"]').forEach(cb => cb.checked = true);
+            showToast('☑️ All students selected!', 'info');
+        }
+
+        function deselectAllBulkStudents() {
+            document.querySelectorAll('#bulkStudentList input[type="checkbox"]').forEach(cb => cb.checked = false);
+            showToast('☐ All students deselected!', 'info');
+        }
+
+        function generateBulkVouchers() {
+            const selected = document.querySelectorAll('#bulkStudentList input[type="checkbox"]:checked');
+
+            if (selected.length === 0) {
+                showToast('⚠️ Select at least one student!', 'error');
+                return;
+            }
+
+            const month = document.getElementById('bulkMonth').value;
+            const year = document.getElementById('bulkYear').value;
+            const applyDiscount = document.getElementById('bulkApplyDiscount').value === 'yes';
+            const display = document.getElementById('bulkVoucherDisplay');
+
+            const settings = AppData.schoolSettings || {};
+            const logoHtml = getLogoHTML(30);
+
+            let allVouchers = '';
+            let totalCount = 0;
+
+            AppData.receiptCounter = AppData.receiptCounter || 0;
+
+            selected.forEach(cb => {
+                const studentId = cb.value;
+                const student = getStudent(studentId);
+                if (!student) return;
+
+                totalCount++;
+                AppData.receiptCounter++;
+                const receiptNo = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
+
+                const admissionNo = student.admissionNo;
+                const className = student.currentClass;
+                const studentName = student.name;
+                const fatherName = student.fatherName;
+                const dueDate = getTodayDateInput();
+
+                const existing = AppData.feeChallans.filter(c => c.studentId === studentId);
+                let monthlyFee = 0;
+                let previousArears = 0;
+                let activityCharges = 0;
+                let booksCharges = 0;
+                if (existing.length > 0) {
+                    const last = existing[existing.length - 1];
+                    monthlyFee = last.monthlyFee || 0;
+                    previousArears = last.previousArears || 0;
+                    activityCharges = last.activityCharges || 0;
+                    booksCharges = last.booksCharges || 0;
+                }
+
+                const discount = applyDiscount ? (student.discount || 0) : 0;
+                const subtotal = monthlyFee + previousArears + activityCharges + booksCharges;
+                const discountAmount = (subtotal * discount) / 100;
+                const total = subtotal - discountAmount;
+                const formattedDate = dueDate ? formatDate(dueDate) : 'N/A';
+
+                AppData.feeChallans.push({
+                    studentId: studentId,
+                    studentName: studentName,
+                    admissionNo: admissionNo,
+                    receiptNo: receiptNo,
+                    month: month,
+                    year: year,
+                    monthlyFee: monthlyFee,
+                    previousArears: previousArears,
+                    activityCharges: activityCharges,
+                    booksCharges: booksCharges,
+                    discount: discount,
+                    discountAmount: discountAmount,
+                    total: total,
+                    dueDate: dueDate,
+                    generatedDate: getTodayDateFormatted(),
+                    bulk: true
+                });
+
+                AppData.transactions.push({
+                    studentId: studentId,
+                    studentName: studentName,
+                    admissionNo: admissionNo,
+                    amount: total,
+                    type: 'Bulk Challan - ' + month + ' ' + year + ' (Receipt: ' + receiptNo + ')',
+                    date: getTodayDateFormatted(),
+                    dueDate: formattedDate,
+                    month: month,
+                    year: year,
+                    receiptNo: receiptNo
+                });
+
+                const copies = ['Student Copy', 'School Copy', 'Bank Copy'];
+                copies.forEach(copy => {
+                    allVouchers += `
+                            <div class="voucher-box" style="page-break-inside:avoid;">
+                                <div class="v-header">
+                                    <div class="v-logo">${logoHtml}</div>
+                                    <div class="v-school">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                                    <div class="v-sub">${settings.schoolAddress || 'NOWSHERA'}</div>
+                                </div>
+                                <div style="text-align:center;">
+                                    <span class="v-copy-type">${copy}</span>
+                                    <div style="font-size:9px;color:#131921;font-weight:900;margin-top:2px;">Receipt: ${receiptNo}</div>
+                                </div>
+                                <div class="v-details">
+                                    <div class="row"><span class="label">Admission No</span><span class="value">${admissionNo}</span></div>
+                                    <div class="row"><span class="label">Class</span><span class="value">${className}</span></div>
+                                    <div class="row"><span class="label">Student Name</span><span class="value">${studentName}</span></div>
+                                    <div class="row"><span class="label">Father Name</span><span class="value">${fatherName}</span></div>
+                                    <div class="row"><span class="label">Due Date</span><span class="value">${formattedDate}</span></div>
+                                    <div class="row"><span class="label">Month</span><span class="value">${month} ${year}</span></div>
+                                    <div class="row"><span class="label">Monthly Fee</span><span class="value">${formatCurrency(monthlyFee)}</span></div>
+                                    <div class="row"><span class="label">Previous Arears</span><span class="value">${formatCurrency(previousArears)}</span></div>
+                                    <div class="row"><span class="label">Activity Charges</span><span class="value">${formatCurrency(activityCharges)}</span></div>
+                                    <div class="row"><span class="label">Books Charges</span><span class="value">${formatCurrency(booksCharges)}</span></div>
+                                    ${discount > 0 ? `<div class="row"><span class="label" style="color:#067d62;">Family Discount (${discount}%)</span><span class="value" style="color:#067d62;">-${formatCurrency(discountAmount)}</span></div>` : ''}
+                                </div>
+                                <div class="v-total">
+                                    <span>Total</span>
+                                    <span>${formatCurrency(total)}</span>
+                                </div>
+                                <div class="v-footer">${settings.schoolName || 'THE EDUCATORS'} — Success with Wisdom</div>
+                            </div>
+                        `;
+                });
+            });
+
+            saveToStorage();
+
+            if (totalCount === 0) {
+                display.innerHTML =
+                    '<p style="color:var(--text-muted);text-align:center;padding:20px;">No valid students selected</p>';
+                return;
+            }
+
+            display.innerHTML = `
+                    <div style="background:var(--bg-primary);padding:10px;border-radius:4px;margin-bottom:10px;font-weight:900;color:var(--accent-blue);">
+                        Total Vouchers Generated: ${totalCount * 3} (${totalCount} Students × 3 Copies)
+                        ${document.getElementById('bulkApplyDiscount').value === 'yes' ? ' | ✅ Family Discount Applied' : ''}
+                    </div>
+                    <div class="voucher-print-area" id="bulkVoucherPrintArea">
+                        ${allVouchers}
+                    </div>
+                `;
+
+            showToast(`✅ ${totalCount} students vouchers generated! (${totalCount * 3} total copies)`, 'success');
+        }
+
+        function printBulkVouchers() {
+            const content = document.getElementById('bulkVoucherDisplay').innerHTML;
+            if (!content || content.includes('Select students')) {
+                showToast('⚠️ Generate vouchers first!', 'error');
+                return;
+            }
+
+            const settings = AppData.schoolSettings || {};
+            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                    <html><head><title>Bulk Fee Vouchers - ${getTodayDateFormatted()}</title>
+                    <style>
+                        body { font-family: Arial, Helvetica, sans-serif; padding: 8px; background: #fff; margin: 0; font-size: 11pt; }
+                        ${document.querySelector('style').textContent}
+                        .voucher-print-area { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 10px !important; }
+                        .voucher-box { page-break-inside: avoid; border: 2px solid #000 !important; font-size: 10pt; }
+                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 5px; }
+                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
+                        @media print {
+                            body { padding: 4px; background: #ffffff !important; }
+                            .voucher-print-area { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 8px !important; }
+                            .voucher-box { border: 2px solid #131921 !important; }
+                        }
+                    </style>
+                    </head><body>
+                    <div class="school-header">${schoolName}</div>
+                    <div class="school-subheader">${settings.schoolAddress || ''}</div>
+                    ${content}
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() { window.close(); }, 1000);
+                            }, 500);
+                        };
+                    <\/script>
+                    </body></html>
+                `);
+            win.document.close();
+        }
+
+        function exportBulkVouchersPDF() {
+            const content = document.getElementById('bulkVoucherDisplay').innerHTML;
+            if (!content || content.includes('Select students')) {
+                showToast('⚠️ Generate vouchers first!', 'error');
+                return;
+            }
+
+            const settings = AppData.schoolSettings || {};
+            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                    <html><head><title>Bulk Fee Vouchers PDF - ${getTodayDateFormatted()}</title>
+                    <style>
+                        body { font-family: Arial, Helvetica, sans-serif; padding: 8px; background: #fff; margin: 0; font-size: 11pt; }
+                        ${document.querySelector('style').textContent}
+                        .voucher-print-area { display: grid !important; grid-template-columns: 1fr 1fr 1fr !important; gap: 10px !important; }
+                        .voucher-box { page-break-inside: avoid; border: 2px solid #131921 !important; font-size: 10pt; }
+                        .btn, .btn-group, .form-row, .no-print { display: none !important; }
+                        .school-header { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 14pt; font-weight: 900; color: #131921; margin-bottom: 5px; }
+                        .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
+                    </style>
+                    </head><body>
+                    <div class="school-header">${schoolName}</div>
+                    <div class="school-subheader">${settings.schoolAddress || ''}</div>
+                    ${content}
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() { window.close(); }, 1000);
+                            }, 500);
+                        };
+                    <\/script>
+                    </body></html>
+                `);
+            win.document.close();
         }
 
         // ================================================================
