@@ -474,7 +474,7 @@
             resize: vertical;
         }
 
-        /* ===== STUDENT SELECT WITH SEARCH ===== */
+        /* ===== STUDENT SEARCH SELECT ===== */
         .student-search-select {
             position: relative;
             flex: 1;
@@ -1222,6 +1222,9 @@
         .payslip-wrapper .ps-details .label {
             font-weight: 900;
             color: #131921;
+        }
+        .payslip-wrapper .ps-details .value {
+            color: #333;
         }
         .payslip-wrapper .ps-table {
             width: 100%;
@@ -1988,6 +1991,7 @@
         let employeePhotoData = null;
         let expenseCounter = 0;
         let subjectRows = [];
+        let editingStudentId = null; // For edit mode in admission
 
         // ===== CONSTANTS =====
         const CLASS_OPTIONS = ['Playgroup', 'Nursery', 'Prep', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th',
@@ -2069,7 +2073,6 @@
 
         function init() {
             loadFromStorage();
-            // Check if user is already logged in
             const savedUser = sessionStorage.getItem('educatorsUser');
             if (savedUser) {
                 const user = JSON.parse(savedUser);
@@ -2229,7 +2232,6 @@
             const sidebar = document.getElementById('sidebar');
             let html = '';
 
-            // Common menus for all users
             const commonMenus = `
                     <div class="section-label">📊 Dashboard</div>
                     <a data-tab="dashboard"><span class="emoji">📊</span> Dashboard</a>
@@ -2239,11 +2241,9 @@
                     <a data-tab="admission"><span class="emoji">📝</span> Admission</a>
                 `;
 
-            // Menus based on role
             let roleMenus = '';
 
             if (currentUserRole === ROLES.ADMIN) {
-                // Admin/Accountant - Full Access
                 roleMenus = `
                         <a data-tab="familydiscount"><span class="emoji">👨‍👩‍👧‍👦</span> Family Discount</a>
 
@@ -2280,7 +2280,6 @@
                         <a data-tab="settings"><span class="emoji">⚙️</span> Settings</a>
                     `;
             } else if (currentUserRole === ROLES.PRINCIPAL) {
-                // Principal - Can view all, add students, generate reports, limited financial
                 roleMenus = `
                         <a data-tab="familydiscount"><span class="emoji">👨‍👩‍👧‍👦</span> Family Discount</a>
 
@@ -2317,7 +2316,6 @@
                         <a data-tab="settings"><span class="emoji">⚙️</span> Settings</a>
                     `;
             } else if (currentUserRole === ROLES.TEACHER) {
-                // Teacher - Only Academics
                 roleMenus = `
                         <div class="section-label">📝 Academics</div>
                         <a data-tab="marksheet"><span class="emoji">📊</span> Marksheet Entry</a>
@@ -2337,7 +2335,6 @@
             html = commonMenus + roleMenus;
             sidebar.innerHTML = html;
 
-            // Add click events
             document.querySelectorAll('.sidebar a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -2347,7 +2344,6 @@
                 });
             });
 
-            // Set active tab
             document.querySelectorAll('.sidebar a').forEach(link => {
                 if (link.dataset.tab === currentTab) {
                     link.classList.add('active');
@@ -2360,7 +2356,6 @@
             const contentArea = document.getElementById('contentArea');
             contentArea.innerHTML = '';
 
-            // Check permission for teacher
             if (currentUserRole === ROLES.TEACHER) {
                 const teacherAllowed = ['dashboard', 'marksheet', 'results', 'leavingcert', 'charactercert', 'birthcert',
                     'idcards', 'admitcard'
@@ -2614,12 +2609,10 @@
             if (search) search.value = label || '';
             if (dropdown) dropdown.classList.remove('show');
 
-            // Trigger change event
             const event = new Event('change', { bubbles: true });
             if (hidden) hidden.dispatchEvent(event);
         }
 
-        // Close dropdowns on click outside
         document.addEventListener('click', function(e) {
             document.querySelectorAll('.student-search-select .dropdown').forEach(d => {
                 if (!d.closest('.student-search-select').contains(e.target)) {
@@ -2849,7 +2842,7 @@
         }
 
         // ================================================================
-        // STUDENTS - With Search
+        // STUDENTS - With Enhanced Search (Name, Father, Adm No, Address)
         // ================================================================
 
         function renderStudents() {
@@ -2862,7 +2855,7 @@
                         
                         <div class="search-bar">
                             <label>🔍 Search:</label>
-                            <input id="studentSearchInput" placeholder="Name, Father Name, Admission No..." oninput="filterStudentsWithSearch()" />
+                            <input id="studentSearchInput" placeholder="Name, Father Name, Admission No, Address..." oninput="filterStudentsWithSearch()" />
                             <label>Class:</label>
                             <select id="studentClassFilter" onchange="filterStudentsWithSearch()">
                                 <option value="All">All</option>
@@ -2905,6 +2898,7 @@
             container.innerHTML = html;
         }
 
+        // Enhanced search: name, father, admission no, address
         function filterStudentsWithSearch() {
             const search = document.getElementById('studentSearchInput').value.toLowerCase();
             const classFilter = document.getElementById('studentClassFilter').value;
@@ -2914,8 +2908,9 @@
             if (search) {
                 filtered = filtered.filter(s =>
                     s.name.toLowerCase().includes(search) ||
+                    s.fatherName.toLowerCase().includes(search) ||
                     s.admissionNo.toLowerCase().includes(search) ||
-                    s.fatherName.toLowerCase().includes(search)
+                    (s.address || '').toLowerCase().includes(search)
                 );
             }
             if (classFilter !== 'All') {
@@ -2950,16 +2945,68 @@
         function viewStudent(id) {
             const student = getStudent(id);
             if (!student) return;
-            alert(
-                `Student: ${student.name}\nAdmission No: ${student.admissionNo}\nFather: ${student.fatherName}\nClass: ${student.currentClass}\nStatus: ${student.status}`
-                );
+            const details = `Student: ${student.name}
+            Admission No: ${student.admissionNo}
+            Father: ${student.fatherName}
+            Class: ${student.currentClass}
+            Status: ${student.status}
+            Address: ${student.address || 'N/A'}`;
+            alert(details);
         }
 
         function editStudent(id) {
             const student = getStudent(id);
             if (!student) return;
+            // Populate admission form with student data for editing
+            editingStudentId = id;
             showTab('admission');
-            showToast('✏️ Edit student in Admission form', 'info');
+            // Fill form after render
+            setTimeout(() => {
+                const s = getStudent(id);
+                if (!s) return;
+                document.getElementById('admAdmissionNo').value = s.admissionNo;
+                document.getElementById('admRollNo').value = s.rollNo || '';
+                document.getElementById('admAdmissionDate').value = s.admissionDate || '';
+                document.getElementById('admName').value = s.name;
+                document.getElementById('admFather').value = s.fatherName;
+                document.getElementById('admDob').value = s.dob || '';
+                document.getElementById('admGender').value = s.gender || 'Male';
+                document.getElementById('admFree').value = s.free || 'No';
+                document.getElementById('admMother').value = s.motherName || '';
+                document.getElementById('admFatherNic').value = s.fatherNic || '';
+                document.getElementById('admAddress').value = s.address || '';
+                document.getElementById('admRemarks').value = s.remarks || '';
+                document.getElementById('admBloodGroup').value = s.bloodGroup || '';
+                document.getElementById('admPrevSchool').value = s.prevSchool || '';
+                document.getElementById('admAdmittedClass').value = s.admittedClass || s.currentClass;
+                document.getElementById('admCurrentClass').value = s.currentClass;
+                document.getElementById('admGroup').value = s.group || '';
+                document.getElementById('admSession').value = s.session || '';
+                document.getElementById('admStatus').value = s.status || 'Currently-in';
+                document.getElementById('admOccupation').value = s.occupation || '';
+                document.getElementById('admNationality').value = s.nationality || 'Pakistani';
+                document.getElementById('admReligion').value = s.religion || 'Islam';
+                document.getElementById('admCast').value = s.cast || '';
+                document.getElementById('admContact').value = s.contactNumber || '';
+                document.getElementById('admGuardianName').value = s.guardianName || '';
+                document.getElementById('admGuardianRelation').value = s.guardianRelation || '';
+                document.getElementById('admGuardianContact').value = s.guardianContact || '';
+                document.getElementById('admGuardianAddress').value = s.guardianAddress || '';
+                document.getElementById('admGuardianPhone').value = s.guardianPhone || '';
+                document.getElementById('admAdmissionFee').value = s.admissionFee || 0;
+                document.getElementById('admAcademicFee').value = s.academicFee || 0;
+                document.getElementById('admRegistrationFee').value = s.registrationFee || 0;
+                document.getElementById('admTuitionFee').value = s.tuitionFee || 0;
+                // Trigger total calculation
+                const event = new Event('input', { bubbles: true });
+                document.getElementById('admAdmissionFee').dispatchEvent(event);
+                if (s.photo) {
+                    admissionPhotoData = s.photo;
+                    document.getElementById('admPhotoImg').src = s.photo;
+                    document.getElementById('admPhotoPreview').style.display = 'block';
+                }
+                showToast('✏️ Editing student. Click Save to update.', 'info');
+            }, 100);
         }
 
         function deleteStudent(id) {
@@ -2972,7 +3019,7 @@
         }
 
         // ================================================================
-        // ADMISSION
+        // ADMISSION (Save, Print, Edit)
         // ================================================================
 
         function renderAdmission() {
@@ -3072,8 +3119,54 @@
 
             container.innerHTML = html;
 
-            const nextNum = AppData.students.length + 1;
-            document.getElementById('admAdmissionNo').value = 'ADM' + String(nextNum).padStart(4, '0');
+            // If editing, fill data after render
+            if (editingStudentId) {
+                const s = getStudent(editingStudentId);
+                if (s) {
+                    setTimeout(() => {
+                        document.getElementById('admAdmissionNo').value = s.admissionNo;
+                        document.getElementById('admRollNo').value = s.rollNo || '';
+                        document.getElementById('admAdmissionDate').value = s.admissionDate || '';
+                        document.getElementById('admName').value = s.name;
+                        document.getElementById('admFather').value = s.fatherName;
+                        document.getElementById('admDob').value = s.dob || '';
+                        document.getElementById('admGender').value = s.gender || 'Male';
+                        document.getElementById('admFree').value = s.free || 'No';
+                        document.getElementById('admMother').value = s.motherName || '';
+                        document.getElementById('admFatherNic').value = s.fatherNic || '';
+                        document.getElementById('admAddress').value = s.address || '';
+                        document.getElementById('admRemarks').value = s.remarks || '';
+                        document.getElementById('admBloodGroup').value = s.bloodGroup || '';
+                        document.getElementById('admPrevSchool').value = s.prevSchool || '';
+                        document.getElementById('admAdmittedClass').value = s.admittedClass || s.currentClass;
+                        document.getElementById('admCurrentClass').value = s.currentClass;
+                        document.getElementById('admGroup').value = s.group || '';
+                        document.getElementById('admSession').value = s.session || '';
+                        document.getElementById('admStatus').value = s.status || 'Currently-in';
+                        document.getElementById('admOccupation').value = s.occupation || '';
+                        document.getElementById('admNationality').value = s.nationality || 'Pakistani';
+                        document.getElementById('admReligion').value = s.religion || 'Islam';
+                        document.getElementById('admCast').value = s.cast || '';
+                        document.getElementById('admContact').value = s.contactNumber || '';
+                        document.getElementById('admGuardianName').value = s.guardianName || '';
+                        document.getElementById('admGuardianRelation').value = s.guardianRelation || '';
+                        document.getElementById('admGuardianContact').value = s.guardianContact || '';
+                        document.getElementById('admGuardianAddress').value = s.guardianAddress || '';
+                        document.getElementById('admGuardianPhone').value = s.guardianPhone || '';
+                        document.getElementById('admAdmissionFee').value = s.admissionFee || 0;
+                        document.getElementById('admAcademicFee').value = s.academicFee || 0;
+                        document.getElementById('admRegistrationFee').value = s.registrationFee || 0;
+                        document.getElementById('admTuitionFee').value = s.tuitionFee || 0;
+                        const event = new Event('input', { bubbles: true });
+                        document.getElementById('admAdmissionFee').dispatchEvent(event);
+                        if (s.photo) {
+                            admissionPhotoData = s.photo;
+                            document.getElementById('admPhotoImg').src = s.photo;
+                            document.getElementById('admPhotoPreview').style.display = 'block';
+                        }
+                    }, 50);
+                }
+            }
 
             document.querySelectorAll('#admAdmissionFee, #admAcademicFee, #admRegistrationFee, #admTuitionFee').forEach(el => {
                 el.addEventListener('input', function() {
@@ -3101,6 +3194,7 @@
         }
 
         function clearAdmissionForm() {
+            editingStudentId = null;
             const fields = ['admAdmissionNo', 'admRollNo', 'admName', 'admFather', 'admDob', 'admMother', 'admFatherNic',
                 'admAddress',
                 'admRemarks', 'admPrevSchool', 'admGroup', 'admSession', 'admOccupation', 'admCast', 'admContact',
@@ -3146,10 +3240,20 @@
                 return;
             }
 
-            const exists = AppData.students.find(s => s.admissionNo === admissionNo);
-            if (exists) {
-                showToast('⚠️ Admission Number already exists!', 'error');
-                return;
+            // Check duplicate admission no only if new student
+            if (!editingStudentId) {
+                const exists = AppData.students.find(s => s.admissionNo === admissionNo);
+                if (exists) {
+                    showToast('⚠️ Admission Number already exists!', 'error');
+                    return;
+                }
+            } else {
+                // For edit, allow same admission no
+                const exists = AppData.students.find(s => s.admissionNo === admissionNo && s.id !== editingStudentId);
+                if (exists) {
+                    showToast('⚠️ Admission Number already exists for another student!', 'error');
+                    return;
+                }
             }
 
             const admissionFee = parseFloat(document.getElementById('admAdmissionFee').value) || 0;
@@ -3158,8 +3262,7 @@
             const tuitionFee = parseFloat(document.getElementById('admTuitionFee').value) || 0;
             const totalFee = admissionFee + academicFee + registrationFee + tuitionFee;
 
-            const student = {
-                id: generateStudentId(),
+            const studentData = {
                 admissionNo: admissionNo,
                 rollNo: document.getElementById('admRollNo').value.trim(),
                 admissionDate: document.getElementById('admAdmissionDate').value,
@@ -3200,10 +3303,22 @@
                 createdAt: new Date().toISOString()
             };
 
-            AppData.students.push(student);
-            saveToStorage();
+            if (editingStudentId) {
+                // Update existing student
+                const idx = AppData.students.findIndex(s => s.id === editingStudentId);
+                if (idx !== -1) {
+                    AppData.students[idx] = { ...AppData.students[idx], ...studentData };
+                    showToast(`✅ Student ${name} updated!`, 'success');
+                }
+                editingStudentId = null;
+            } else {
+                // New student
+                studentData.id = generateStudentId();
+                AppData.students.push(studentData);
+                showToast(`✅ Student ${name} admitted! Admission No: ${studentData.admissionNo}`, 'success');
+            }
 
-            showToast(`✅ Student ${name} admitted! Admission No: ${student.admissionNo}`, 'success');
+            saveToStorage();
             clearAdmissionForm();
             renderStudents();
         }
@@ -3546,7 +3661,6 @@
 
             container.innerHTML = html;
 
-            // Create student search
             const containerDiv = document.getElementById('fcStudentContainer');
             const students = AppData.students;
             let searchHtml = `
@@ -3565,7 +3679,6 @@
                 `;
             containerDiv.innerHTML = searchHtml;
 
-            // Set receipt number
             AppData.receiptCounter = AppData.receiptCounter || 0;
             AppData.receiptCounter++;
             document.getElementById('fcReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
@@ -3933,7 +4046,6 @@
             let allVouchers = '';
             let totalCount = 0;
 
-            // Increment receipt counter for bulk
             AppData.receiptCounter = AppData.receiptCounter || 0;
 
             selected.forEach(cb => {
@@ -4196,7 +4308,6 @@
 
             container.innerHTML = html;
 
-            // Create student search
             const containerDiv = document.getElementById('fdStudentContainer');
             let searchHtml = `
                     <div class="student-search-select">
@@ -4214,7 +4325,6 @@
                 `;
             containerDiv.innerHTML = searchHtml;
 
-            // Set receipt number
             AppData.receiptCounter = AppData.receiptCounter || 0;
             AppData.receiptCounter++;
             document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
@@ -4760,7 +4870,6 @@
             subjectRows = [];
             updateMarksheetTotals();
 
-            // Create student search
             const containerDiv = document.getElementById('msStudentContainer');
             let searchHtml = `
                     <div class="student-search-select">
@@ -5324,7 +5433,6 @@
                 `;
             container.innerHTML = html;
 
-            // Create student search
             const containerDiv = document.getElementById('lcStudentContainer');
             let searchHtml = `
                     <div class="student-search-select">
@@ -5514,7 +5622,6 @@
                 `;
             container.innerHTML = html;
 
-            // Create student search
             const containerDiv = document.getElementById('ccStudentContainer');
             let searchHtml = `
                     <div class="student-search-select">
@@ -5693,7 +5800,6 @@
                 `;
             container.innerHTML = html;
 
-            // Create student search
             const containerDiv = document.getElementById('bcStudentContainer');
             let searchHtml = `
                     <div class="student-search-select">
@@ -6498,7 +6604,6 @@
             const year = document.getElementById('psYear').value;
             const paymentMode = document.getElementById('psPaymentMode').value;
 
-            // Save allowances to employee
             employee.allowances = {
                 attendance: parseFloat(document.getElementById('psAttendanceAllowance').value) || 0,
                 spoken: parseFloat(document.getElementById('psSpokenAllowance').value) || 0,
@@ -6813,7 +6918,6 @@
                     `;
             });
 
-            // Grand Total Row
             tableRows += `
                     <tr style="background:#ebf4ff;font-weight:900;border-top:3px solid #131921;">
                         <td colspan="3" style="text-align:right;font-size:13px;">GRAND TOTAL</td>
