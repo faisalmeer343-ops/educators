@@ -424,6 +424,71 @@
             color: var(--accent-gold);
         }
 
+        /* ===== DASHBOARD SEARCH ===== */
+        .dashboard-search {
+            background: var(--bg-card);
+            border: 2px solid var(--accent-gold);
+            border-radius: var(--radius);
+            padding: 14px 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .dashboard-search .search-title {
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+        }
+        .dashboard-search .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            align-items: center;
+        }
+        .dashboard-search .search-row input,
+        .dashboard-search .search-row select {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            background: var(--bg-card);
+            font-family: var(--font-family);
+            flex: 1;
+            min-width: 150px;
+        }
+        .dashboard-search .search-row input:focus,
+        .dashboard-search .search-row select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.15);
+        }
+        .dashboard-search .search-row label {
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .dashboard-search .search-results {
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .dashboard-search .search-results table {
+            font-size: 12px;
+        }
+        .dashboard-search .search-results table th {
+            font-size: 10px;
+            padding: 4px 8px;
+        }
+        .dashboard-search .search-results table td {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+        .dashboard-search .search-results .no-results {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
         /* ===== FORM ROWS ===== */
         .form-row {
             display: flex;
@@ -996,6 +1061,17 @@
             padding-top: 4px;
             margin-top: 4px;
         }
+        .voucher-box .v-arrears {
+            background: #fef2f2;
+            color: var(--accent-red);
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 900;
+            margin-top: 2px;
+            text-align: center;
+            border: 1px solid rgba(177, 39, 4, 0.2);
+        }
 
         /* ===== CERTIFICATE STYLES ===== */
         .certificate-wrapper {
@@ -1480,6 +1556,29 @@
             font-size: 13px;
         }
 
+        /* ===== PASSWORD MODAL ===== */
+        .password-modal .modal-box {
+            max-width: 400px;
+        }
+        .password-modal .modal-box input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .password-modal .modal-box input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.15);
+        }
+        .password-error {
+            color: var(--accent-red);
+            font-size: 12px;
+            display: none;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 992px) {
             .sidebar {
@@ -1540,6 +1639,14 @@
             }
             .expense-row {
                 grid-template-columns: 1fr 1fr 1fr 1fr;
+            }
+            .dashboard-search .search-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .dashboard-search .search-row input,
+            .dashboard-search .search-row select {
+                min-width: auto;
             }
         }
         @media (max-width: 576px) {
@@ -1679,6 +1786,11 @@
             .voucher-box .v-copy-type {
                 background: #131921 !important;
                 color: #ffffff !important;
+            }
+            .voucher-box .v-arrears {
+                background: #fef2f2 !important;
+                color: #b12704 !important;
+                border: 1px solid rgba(177, 39, 4, 0.2) !important;
             }
 
             .certificate-wrapper {
@@ -1935,6 +2047,25 @@
         </div>
     </div>
 
+    <!-- ===== PASSWORD MODAL ===== -->
+    <div class="modal-overlay password-modal" id="passwordModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>🔐 Password Required</h2>
+                <button class="modal-close" onclick="closePasswordModal()">✕</button>
+            </div>
+            <div id="passwordModalBody">
+                <p style="color:var(--text-muted);margin-bottom:10px;">Please enter the admin password to edit fee details:</p>
+                <input type="password" id="passwordInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter') verifyPassword()" />
+                <div class="password-error" id="passwordError">❌ Incorrect password!</div>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="verifyPassword()">✅ Verify</button>
+                    <button class="btn btn-secondary" onclick="closePasswordModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
@@ -1993,6 +2124,7 @@
         let subjectRows = [];
         let editingStudentId = null;
         let editingDepositId = null;
+        let pendingPasswordAction = null;
 
         // ===== CONSTANTS =====
         const CLASS_OPTIONS = ['Playgroup', 'Nursery', 'Prep', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th',
@@ -2222,6 +2354,40 @@
                 showLogin();
                 document.getElementById('loginPassword').value = '';
                 showToast('👋 Logged out', 'info');
+            }
+        }
+
+        // ================================================================
+        // PASSWORD MODAL FUNCTIONS
+        // ================================================================
+
+        function showPasswordModal(action) {
+            pendingPasswordAction = action;
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('passwordModal').classList.add('show');
+            setTimeout(() => document.getElementById('passwordInput').focus(), 100);
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('show');
+            pendingPasswordAction = null;
+        }
+
+        function verifyPassword() {
+            const entered = document.getElementById('passwordInput').value.trim();
+            const adminPassword = AppData.schoolSettings.adminPassword || 'admin123';
+
+            if (entered === adminPassword) {
+                closePasswordModal();
+                if (pendingPasswordAction) {
+                    pendingPasswordAction();
+                    pendingPasswordAction = null;
+                }
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
             }
         }
 
@@ -2781,7 +2947,7 @@
         }
 
         // ================================================================
-        // DASHBOARD
+        // DASHBOARD - With Enhanced Search Bar
         // ================================================================
 
         function renderDashboard() {
@@ -2801,6 +2967,25 @@
                         <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Dashboard <span class="badge">live</span></div>
                         <div style="font-size:14px;color:var(--text-muted);">${getTodayWithMonthName()}</div>
                         <div style="font-size:12px;color:var(--accent-gold);margin-top:4px;">👤 Logged in as: <strong>${currentUser}</strong> (${currentUserRole})</div>
+                    </div>
+                    
+                    <!-- ===== GENERAL SEARCH BAR ===== -->
+                    <div class="dashboard-search">
+                        <div class="search-title">🔍 Quick Search</div>
+                        <div class="search-row">
+                            <label>Search:</label>
+                            <input id="dashboardSearchInput" placeholder="Search Students (Name, Father, Roll No, DOB) or Employees (Name, ID, NIC)..." oninput="performDashboardSearch()" />
+                            <label>Type:</label>
+                            <select id="dashboardSearchType" onchange="performDashboardSearch()">
+                                <option value="all">All</option>
+                                <option value="students">Students Only</option>
+                                <option value="employees">Employees Only</option>
+                            </select>
+                            <button class="btn btn-secondary btn-sm" onclick="clearDashboardSearch()">Clear</button>
+                        </div>
+                        <div class="search-results" id="dashboardSearchResults">
+                            <div class="no-results">Enter search criteria above</div>
+                        </div>
                     </div>
                     
                     <div class="stats-grid">
@@ -2840,6 +3025,103 @@
 
             html += `</tbody></table></div></div>`;
             container.innerHTML = html;
+        }
+
+        // ===== DASHBOARD SEARCH FUNCTION =====
+        function performDashboardSearch() {
+            const query = document.getElementById('dashboardSearchInput').value.toLowerCase().trim();
+            const type = document.getElementById('dashboardSearchType').value;
+            const resultsDiv = document.getElementById('dashboardSearchResults');
+
+            if (!query) {
+                resultsDiv.innerHTML = '<div class="no-results">Enter search criteria above</div>';
+                return;
+            }
+
+            let studentResults = [];
+            let employeeResults = [];
+
+            // Search Students
+            if (type === 'all' || type === 'students') {
+                studentResults = AppData.students.filter(s =>
+                    s.name.toLowerCase().includes(query) ||
+                    (s.fatherName || '').toLowerCase().includes(query) ||
+                    (s.rollNo || '').toLowerCase().includes(query) ||
+                    (s.admissionNo || '').toLowerCase().includes(query) ||
+                    (s.dob || '').includes(query) ||
+                    (s.address || '').toLowerCase().includes(query) ||
+                    (s.contactNumber || '').includes(query)
+                );
+            }
+
+            // Search Employees
+            if (type === 'all' || type === 'employees') {
+                employeeResults = AppData.employees.filter(e =>
+                    e.name.toLowerCase().includes(query) ||
+                    (e.empId || '').toLowerCase().includes(query) ||
+                    (e.fatherNic || '').toLowerCase().includes(query) ||
+                    (e.cnic || '').toLowerCase().includes(query) ||
+                    (e.mobile || '').includes(query)
+                );
+            }
+
+            let html = '';
+
+            if (studentResults.length === 0 && employeeResults.length === 0) {
+                html = '<div class="no-results">❌ No results found for "' + query + '"</div>';
+            } else {
+                if (studentResults.length > 0) {
+                    html += `<div style="font-weight:900;color:var(--accent-blue);padding:4px 0;border-bottom:1px solid var(--border-color);">
+                            👨‍🎓 Students (${studentResults.length})
+                        </div>
+                        <table>
+                            <thead><tr><th>Admission No</th><th>Name</th><th>Father</th><th>Roll No</th><th>Class</th><th>Status</th></tr></thead>
+                            <tbody>
+                                ${studentResults.slice(0, 20).map(s => `
+                                    <tr>
+                                        <td><strong>${s.admissionNo}</strong></td>
+                                        <td>${s.name}</td>
+                                        <td>${s.fatherName}</td>
+                                        <td>${s.rollNo || 'N/A'}</td>
+                                        <td>${s.currentClass}</td>
+                                        <td><span class="badge-status ${s.status === 'Currently-in' ? 'badge-paid' : 'badge-pending'}">${s.status}</span></td>
+                                    </tr>
+                                `).join('')}
+                                ${studentResults.length > 20 ? `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);font-size:11px;">Showing 20 of ${studentResults.length} results</td></tr>` : ''}
+                            </tbody>
+                        </table>`;
+                }
+
+                if (employeeResults.length > 0) {
+                    if (studentResults.length > 0) html += '<div style="margin-top:10px;"></div>';
+                    html += `<div style="font-weight:900;color:var(--accent-blue);padding:4px 0;border-bottom:1px solid var(--border-color);">
+                            👨‍💼 Employees (${employeeResults.length})
+                        </div>
+                        <table>
+                            <thead><tr><th>Employee ID</th><th>Name</th><th>Designation</th><th>Department</th><th>Status</th></tr></thead>
+                            <tbody>
+                                ${employeeResults.slice(0, 20).map(e => `
+                                    <tr>
+                                        <td><strong>${e.empId}</strong></td>
+                                        <td>${e.name}</td>
+                                        <td>${e.designation || 'N/A'}</td>
+                                        <td>${e.department || 'N/A'}</td>
+                                        <td><span class="badge-status ${e.status === 'Active' ? 'badge-active' : 'badge-inactive'}">${e.status || 'Active'}</span></td>
+                                    </tr>
+                                `).join('')}
+                                ${employeeResults.length > 20 ? `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);font-size:11px;">Showing 20 of ${employeeResults.length} results</td></tr>` : ''}
+                            </tbody>
+                        </table>`;
+                }
+            }
+
+            resultsDiv.innerHTML = html;
+        }
+
+        function clearDashboardSearch() {
+            document.getElementById('dashboardSearchInput').value = '';
+            document.getElementById('dashboardSearchType').value = 'all';
+            document.getElementById('dashboardSearchResults').innerHTML = '<div class="no-results">Enter search criteria above</div>';
         }
 
         // ================================================================
@@ -3799,9 +4081,6 @@
                 `;
             containerDiv.innerHTML = searchHtml;
 
-            // Receipt No counter removed - no longer needed for Fee Challan
-            // But we keep it for other modules
-
             const now = new Date();
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
             document.getElementById('fcDueDate').value = lastDay.toISOString().split('T')[0];
@@ -3896,7 +4175,6 @@
 
             const formattedDate = dueDate ? formatDate(dueDate) : 'N/A';
 
-            // Generate a unique ID for tracking, but no receipt number displayed
             const challanId = 'CHL' + String(AppData.feeChallans.length + 1).padStart(4, '0');
 
             AppData.feeChallans.push({
@@ -3973,16 +4251,13 @@
             showToast(`✅ Vouchers generated!`, 'success');
         }
 
-        // ===== NEW: Save Fee Challan without generating display =====
         function saveFeeChallan() {
             const studentId = document.getElementById('fcStudent').value;
             if (!studentId) {
                 showToast('⚠️ Select a student!', 'error');
                 return;
             }
-            // Just generate and save, but don't show display
             generateFeeChallan();
-            // Keep the display as is (already generated)
             showToast('✅ Fee Challan saved successfully!', 'success');
         }
 
@@ -4061,7 +4336,7 @@
         }
 
         // ================================================================
-        // FEE DEPOSIT - With Customizable Receipt No (editable field)
+        // FEE DEPOSIT - With Arrears Display on Slip & Password Protected Edit
         // ================================================================
 
         function renderFeeDeposit() {
@@ -4132,7 +4407,6 @@
                 `;
             containerDiv.innerHTML = searchHtml;
 
-            // Auto-generate a default receipt number but make it editable
             AppData.receiptCounter = AppData.receiptCounter || 0;
             AppData.receiptCounter++;
             document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
@@ -4157,7 +4431,6 @@
                 document.getElementById('fdAmount').value = last.total || 0;
             }
 
-            // If editing, populate data
             if (editingDepositId) {
                 const deposit = AppData.feeDeposits.find(d => d.id === editingDepositId);
                 if (deposit) {
@@ -4194,7 +4467,6 @@
                 return;
             }
 
-            // Check if receipt number already exists (for non-editing case)
             if (!editingDepositId) {
                 const exists = AppData.feeDeposits.find(d => d.receiptNo === receiptNo);
                 if (exists) {
@@ -4224,11 +4496,9 @@
             };
 
             if (editingDepositId) {
-                // Update existing deposit
                 const idx = AppData.feeDeposits.findIndex(d => d.id === editingDepositId);
                 if (idx !== -1) {
                     AppData.feeDeposits[idx] = { ...AppData.feeDeposits[idx], ...depositData };
-                    // Update transaction
                     const txIdx = AppData.transactions.findIndex(t => t.receiptNo === receiptNo);
                     if (txIdx !== -1) {
                         AppData.transactions[txIdx].amount = amount;
@@ -4262,7 +4532,6 @@
             loadFeeDeposits();
             clearFeeDeposit();
 
-            // Auto-generate next receipt number
             AppData.receiptCounter = AppData.receiptCounter || 0;
             AppData.receiptCounter++;
             document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
@@ -4289,20 +4558,103 @@
                         <td>${d.receiptNo || 'N/A'}</td>
                         <td>
                             <button class="btn btn-info btn-xs" onclick="printFeeDeposit('${d.id}')">🖨️</button>
-                            <button class="btn btn-primary btn-xs" onclick="editFeeDeposit('${d.id}')">✏️</button>
+                            <button class="btn btn-primary btn-xs" onclick="editFeeDepositWithPassword('${d.id}')">✏️</button>
                             <button class="btn btn-danger btn-xs" onclick="deleteFeeDeposit('${d.id}')">🗑️</button>
                         </td>
                     </tr>
                 `).join('');
         }
 
-        // ===== NEW: Individual Print Fee Deposit =====
+        // ===== Edit Fee Deposit with Password Protection =====
+        function editFeeDepositWithPassword(id) {
+            showPasswordModal(() => {
+                editFeeDeposit(id);
+            });
+        }
+
+        function editFeeDeposit(id) {
+            const deposit = AppData.feeDeposits.find(d => d.id === id);
+            if (!deposit) { showToast('⚠️ Deposit not found!', 'error'); return; }
+
+            editingDepositId = id;
+            showTab('feedeposit');
+            setTimeout(() => {
+                const studentId = deposit.studentId;
+                if (studentId) {
+                    const student = getStudent(studentId);
+                    if (student) {
+                        selectStudent('fdStudent', studentId, student.name + ' (' + student.admissionNo + ')');
+                        loadFeeDepositStudent();
+                    }
+                }
+                document.getElementById('fdAmount').value = deposit.amount;
+                document.getElementById('fdPaymentMode').value = deposit.paymentMode;
+                document.getElementById('fdPaymentDate').value = deposit.paymentDate || '';
+                document.getElementById('fdMonth').value = deposit.month;
+                document.getElementById('fdYear').value = deposit.year;
+                document.getElementById('fdReceiptNo').value = deposit.receiptNo;
+                showToast('✏️ Edit deposit details and click Save.', 'info');
+            }, 200);
+        }
+
+        function deleteFeeDeposit(id) {
+            if (!confirm('Delete this fee deposit record?')) return;
+            const deposit = AppData.feeDeposits.find(d => d.id === id);
+            AppData.feeDeposits = AppData.feeDeposits.filter(d => d.id !== id);
+            if (deposit) {
+                AppData.transactions = AppData.transactions.filter(t => t.receiptNo !== deposit.receiptNo);
+            }
+            saveToStorage();
+            loadFeeDeposits();
+            showToast('🗑️ Fee deposit deleted!', 'info');
+        }
+
+        function clearFeeDeposit() {
+            editingDepositId = null;
+            document.getElementById('fdStudent').value = '';
+            document.getElementById('fdStudent_search').value = '';
+            document.getElementById('fdAdmissionNo').value = '';
+            document.getElementById('fdName').value = '';
+            document.getElementById('fdClass').value = '';
+            document.getElementById('fdAmount').value = '0';
+            document.getElementById('fdPaymentDate').value = getTodayDateInput();
+            AppData.receiptCounter = AppData.receiptCounter || 0;
+            AppData.receiptCounter++;
+            document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
+            showToast('🔄 Cleared!', 'info');
+        }
+
+        // ===== NEW: Print Fee Deposit with Arrears Amount =====
         function printFeeDeposit(id) {
             const deposit = AppData.feeDeposits.find(d => d.id === id);
             if (!deposit) { showToast('⚠️ Deposit not found!', 'error'); return; }
 
             const settings = AppData.schoolSettings || {};
             const logoHtml = getLogoHTML(40);
+
+            // Calculate arrears for this student
+            const studentId = deposit.studentId;
+            const student = getStudent(studentId);
+            let arrears = 0;
+            if (student) {
+                // Get total challan amount for this student for this month/year
+                const challans = AppData.feeChallans.filter(c => 
+                    c.studentId === studentId && 
+                    c.month === deposit.month && 
+                    c.year == deposit.year
+                );
+                const totalDue = challans.reduce((sum, c) => sum + (c.total || 0), 0);
+                // Get total paid for this student for this month/year
+                const paid = AppData.feeDeposits.filter(d => 
+                    d.studentId === studentId && 
+                    d.month === deposit.month && 
+                    d.year == deposit.year
+                ).reduce((sum, d) => sum + d.amount, 0);
+                arrears = totalDue - paid;
+                // Add previous arrears from challans
+                const previousArrears = challans.reduce((sum, c) => sum + (c.previousArears || 0), 0);
+                arrears += previousArrears;
+            }
 
             const content = `
                     <div style="background:#fff;border:2px solid #131921;border-radius:8px;padding:16px 20px;max-width:400px;margin:10px auto;font-family:Arial,Helvetica,sans-serif;">
@@ -4320,7 +4672,8 @@
                             <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Class</span><span>${deposit.className || 'N/A'}</span></div>
                             <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Month</span><span>${deposit.month} ${deposit.year}</span></div>
                             <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Payment Mode</span><span>${deposit.paymentMode}</span></div>
-                            <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;font-weight:900;color:#067d62;"><span>Amount</span><span>${formatCurrency(deposit.amount)}</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;font-weight:900;color:#067d62;"><span>Amount Paid</span><span>${formatCurrency(deposit.amount)}</span></div>
+                            ${arrears > 0 ? `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;font-weight:900;color:#b12704;background:#fef2f2;padding:4px 8px;border-radius:4px;margin-top:4px;border:1px solid rgba(177,39,4,0.2);"><span>⚠️ Remaining Arrears</span><span>${formatCurrency(arrears)}</span></div>` : '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;font-weight:900;color:#067d62;background:#f0fdf4;padding:4px 8px;border-radius:4px;margin-top:4px;border:1px solid rgba(6,125,98,0.2);"><span>✅ No Arrears</span><span>${formatCurrency(0)}</span></div>'}
                         </div>
                         <div style="text-align:center;font-size:9px;color:#565959;border-top:1px solid #131921;padding-top:4px;margin-top:4px;">${settings.schoolName || 'THE EDUCATORS'} — Success with Wisdom</div>
                     </div>
@@ -4342,64 +4695,6 @@
                     </body></html>
                 `);
             win.document.close();
-        }
-
-        // ===== NEW: Edit Fee Deposit =====
-        function editFeeDeposit(id) {
-            const deposit = AppData.feeDeposits.find(d => d.id === id);
-            if (!deposit) { showToast('⚠️ Deposit not found!', 'error'); return; }
-
-            editingDepositId = id;
-            // Navigate to fee deposit tab and populate
-            showTab('feedeposit');
-            setTimeout(() => {
-                // Select student
-                const studentId = deposit.studentId;
-                if (studentId) {
-                    const student = getStudent(studentId);
-                    if (student) {
-                        selectStudent('fdStudent', studentId, student.name + ' (' + student.admissionNo + ')');
-                        // Trigger load
-                        loadFeeDepositStudent();
-                    }
-                }
-                document.getElementById('fdAmount').value = deposit.amount;
-                document.getElementById('fdPaymentMode').value = deposit.paymentMode;
-                document.getElementById('fdPaymentDate').value = deposit.paymentDate || '';
-                document.getElementById('fdMonth').value = deposit.month;
-                document.getElementById('fdYear').value = deposit.year;
-                document.getElementById('fdReceiptNo').value = deposit.receiptNo;
-                showToast('✏️ Edit deposit details and click Save.', 'info');
-            }, 200);
-        }
-
-        function deleteFeeDeposit(id) {
-            if (!confirm('Delete this fee deposit record?')) return;
-            const deposit = AppData.feeDeposits.find(d => d.id === id);
-            AppData.feeDeposits = AppData.feeDeposits.filter(d => d.id !== id);
-            // Also remove from transactions
-            if (deposit) {
-                AppData.transactions = AppData.transactions.filter(t => t.receiptNo !== deposit.receiptNo);
-            }
-            saveToStorage();
-            loadFeeDeposits();
-            showToast('🗑️ Fee deposit deleted!', 'info');
-        }
-
-        function clearFeeDeposit() {
-            editingDepositId = null;
-            document.getElementById('fdStudent').value = '';
-            document.getElementById('fdStudent_search').value = '';
-            document.getElementById('fdAdmissionNo').value = '';
-            document.getElementById('fdName').value = '';
-            document.getElementById('fdClass').value = '';
-            document.getElementById('fdAmount').value = '0';
-            document.getElementById('fdPaymentDate').value = getTodayDateInput();
-            // Auto-generate next receipt number
-            AppData.receiptCounter = AppData.receiptCounter || 0;
-            AppData.receiptCounter++;
-            document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
-            showToast('🔄 Cleared!', 'info');
         }
 
         // ================================================================
@@ -8328,6 +8623,14 @@
             updateTopBar();
             renderSettings();
             showToast('🔄 Settings reset to default!', 'info');
+        }
+
+        // ================================================================
+        // MODAL FUNCTIONS
+        // ================================================================
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
         }
 
         // ================================================================
