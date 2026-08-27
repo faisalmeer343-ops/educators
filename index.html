@@ -3146,6 +3146,10 @@
         function renderAdmission() {
             const container = document.getElementById('contentArea');
 
+            // Auto-generate admission number if no student exists yet
+            const nextNum = AppData.students.length + 1;
+            const defaultAdmNo = 'ADM' + String(nextNum).padStart(4, '0');
+
             let html = `
                     <div class="card">
                         <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Student Admission Form <span class="badge">Print</span></div>
@@ -3153,7 +3157,7 @@
                         <div class="admission-form-grid" id="admissionForm">
                             <div class="full-width" style="background:var(--bg-primary);padding:8px 12px;border-radius:4px;font-weight:900;color:var(--accent-blue);">📋 Personal Information</div>
                             
-                            <div><label>Admission No *</label><input id="admAdmissionNo" style="font-weight:900;" placeholder="Enter Admission No" /></div>
+                            <div><label>Admission No *</label><input id="admAdmissionNo" style="font-weight:900;" placeholder="Enter Admission No" value="${defaultAdmNo}" /></div>
                             <div><label>Roll No</label><input id="admRollNo" placeholder="Roll Number" /></div>
                             <div><label>Admission Date</label><input id="admAdmissionDate" type="date" value="${getTodayDateInput()}" /></div>
                             <div><label>Student Name *</label><input id="admName" placeholder="Full name" /></div>
@@ -3722,7 +3726,7 @@
         }
 
         // ================================================================
-        // FEE CHALLAN - With Save Button
+        // FEE CHALLAN - With Save Button (Receipt No REMOVED)
         // ================================================================
 
         function renderFeeChallan() {
@@ -3741,7 +3745,6 @@
                             <div><label>Class</label><input id="fcClass" readonly style="background:#f7fafc;" /></div>
                             <div><label>Student Name</label><input id="fcName" readonly style="background:#f7fafc;" /></div>
                             <div><label>Father Name</label><input id="fcFather" readonly style="background:#f7fafc;" /></div>
-                            <div><label>Receipt No</label><input id="fcReceiptNo" readonly style="background:#f7fafc;font-weight:900;color:var(--accent-gold);" /></div>
                             <div><label>Due Date</label><input id="fcDueDate" type="date" /></div>
                             <div><label>Month</label>
                                 <select id="fcMonth">
@@ -3796,9 +3799,8 @@
                 `;
             containerDiv.innerHTML = searchHtml;
 
-            AppData.receiptCounter = AppData.receiptCounter || 0;
-            AppData.receiptCounter++;
-            document.getElementById('fcReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
+            // Receipt No counter removed - no longer needed for Fee Challan
+            // But we keep it for other modules
 
             const now = new Date();
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -3859,16 +3861,11 @@
             document.getElementById('feeChallanDisplay').innerHTML =
                 '<p style="color:var(--text-muted);text-align:center;padding:20px;">Select student, fill details and click Generate</p>';
             showToast('🔄 Cleared!', 'info');
-
-            AppData.receiptCounter = AppData.receiptCounter || 0;
-            AppData.receiptCounter++;
-            document.getElementById('fcReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
         }
 
         function generateFeeChallan() {
             const studentId = document.getElementById('fcStudent').value;
             const display = document.getElementById('feeChallanDisplay');
-            const receiptNo = document.getElementById('fcReceiptNo').value;
 
             if (!studentId) {
                 showToast('⚠️ Select a student!', 'error');
@@ -3899,11 +3896,14 @@
 
             const formattedDate = dueDate ? formatDate(dueDate) : 'N/A';
 
+            // Generate a unique ID for tracking, but no receipt number displayed
+            const challanId = 'CHL' + String(AppData.feeChallans.length + 1).padStart(4, '0');
+
             AppData.feeChallans.push({
+                id: challanId,
                 studentId: studentId,
                 studentName: studentName,
                 admissionNo: admissionNo,
-                receiptNo: receiptNo,
                 month: month,
                 year: year,
                 monthlyFee: monthlyFee,
@@ -3922,12 +3922,11 @@
                 studentName: studentName,
                 admissionNo: admissionNo,
                 amount: total,
-                type: 'Challan Generated - ' + month + ' ' + year + ' (Receipt: ' + receiptNo + ')',
+                type: 'Challan Generated - ' + month + ' ' + year,
                 date: getTodayDateFormatted(),
                 dueDate: formattedDate,
                 month: month,
-                year: year,
-                receiptNo: receiptNo
+                year: year
             });
             saveToStorage();
 
@@ -3945,7 +3944,6 @@
                             </div>
                             <div style="text-align:center;">
                                 <span class="v-copy-type">${copy}</span>
-                                <div style="font-size:9px;color:#131921;font-weight:900;margin-top:2px;">Receipt: ${receiptNo}</div>
                             </div>
                             <div class="v-details">
                                 <div class="row"><span class="label">Admission No</span><span class="value">${admissionNo}</span></div>
@@ -3972,7 +3970,7 @@
             vouchersHTML += '</div>';
             display.innerHTML = vouchersHTML;
 
-            showToast(`✅ Vouchers generated! Receipt: ${receiptNo}`, 'success');
+            showToast(`✅ Vouchers generated!`, 'success');
         }
 
         // ===== NEW: Save Fee Challan without generating display =====
@@ -4063,7 +4061,7 @@
         }
 
         // ================================================================
-        // FEE DEPOSIT - With Indl Print and Edit
+        // FEE DEPOSIT - With Customizable Receipt No (editable field)
         // ================================================================
 
         function renderFeeDeposit() {
@@ -4097,7 +4095,7 @@
                             <div><label>Year</label>
                                 <select id="fdYear">${getYearOptions(new Date().getFullYear())}</select>
                             </div>
-                            <div><label>Receipt No</label><input id="fdReceiptNo" readonly style="background:#f7fafc;font-weight:900;color:var(--accent-gold);" /></div>
+                            <div><label>Receipt No</label><input id="fdReceiptNo" style="font-weight:900;color:var(--accent-gold);" placeholder="Enter Receipt Number" /></div>
                             <div class="full-width">
                                 <div class="btn-group">
                                     <button class="btn btn-success" onclick="saveFeeDeposit()">💾 Save Deposit</button>
@@ -4134,6 +4132,7 @@
                 `;
             containerDiv.innerHTML = searchHtml;
 
+            // Auto-generate a default receipt number but make it editable
             AppData.receiptCounter = AppData.receiptCounter || 0;
             AppData.receiptCounter++;
             document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
@@ -4189,7 +4188,26 @@
                 return;
             }
 
-            const receiptNo = document.getElementById('fdReceiptNo').value;
+            const receiptNo = document.getElementById('fdReceiptNo').value.trim();
+            if (!receiptNo) {
+                showToast('⚠️ Please enter a Receipt Number!', 'error');
+                return;
+            }
+
+            // Check if receipt number already exists (for non-editing case)
+            if (!editingDepositId) {
+                const exists = AppData.feeDeposits.find(d => d.receiptNo === receiptNo);
+                if (exists) {
+                    showToast('⚠️ Receipt Number already exists! Please use a unique number.', 'error');
+                    return;
+                }
+            } else {
+                const exists = AppData.feeDeposits.find(d => d.receiptNo === receiptNo && d.id !== editingDepositId);
+                if (exists) {
+                    showToast('⚠️ Receipt Number already exists! Please use a unique number.', 'error');
+                    return;
+                }
+            }
 
             const depositData = {
                 studentId: studentId,
@@ -4244,6 +4262,7 @@
             loadFeeDeposits();
             clearFeeDeposit();
 
+            // Auto-generate next receipt number
             AppData.receiptCounter = AppData.receiptCounter || 0;
             AppData.receiptCounter++;
             document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
@@ -4376,6 +4395,10 @@
             document.getElementById('fdClass').value = '';
             document.getElementById('fdAmount').value = '0';
             document.getElementById('fdPaymentDate').value = getTodayDateInput();
+            // Auto-generate next receipt number
+            AppData.receiptCounter = AppData.receiptCounter || 0;
+            AppData.receiptCounter++;
+            document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
             showToast('🔄 Cleared!', 'info');
         }
 
@@ -4843,16 +4866,12 @@
             let allVouchers = '';
             let totalCount = 0;
 
-            AppData.receiptCounter = AppData.receiptCounter || 0;
-
             selected.forEach(cb => {
                 const studentId = cb.value;
                 const student = getStudent(studentId);
                 if (!student) return;
 
                 totalCount++;
-                AppData.receiptCounter++;
-                const receiptNo = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
 
                 const admissionNo = student.admissionNo;
                 const className = student.currentClass;
@@ -4879,11 +4898,13 @@
                 const total = subtotal - discountAmount;
                 const formattedDate = dueDate ? formatDate(dueDate) : 'N/A';
 
+                const challanId = 'CHL' + String(AppData.feeChallans.length + 1).padStart(4, '0');
+
                 AppData.feeChallans.push({
+                    id: challanId,
                     studentId: studentId,
                     studentName: studentName,
                     admissionNo: admissionNo,
-                    receiptNo: receiptNo,
                     month: month,
                     year: year,
                     monthlyFee: monthlyFee,
@@ -4903,12 +4924,11 @@
                     studentName: studentName,
                     admissionNo: admissionNo,
                     amount: total,
-                    type: 'Bulk Challan - ' + month + ' ' + year + ' (Receipt: ' + receiptNo + ')',
+                    type: 'Bulk Challan - ' + month + ' ' + year,
                     date: getTodayDateFormatted(),
                     dueDate: formattedDate,
                     month: month,
-                    year: year,
-                    receiptNo: receiptNo
+                    year: year
                 });
 
                 const copies = ['Student Copy', 'School Copy', 'Bank Copy'];
@@ -4922,7 +4942,6 @@
                                 </div>
                                 <div style="text-align:center;">
                                     <span class="v-copy-type">${copy}</span>
-                                    <div style="font-size:9px;color:#131921;font-weight:900;margin-top:2px;">Receipt: ${receiptNo}</div>
                                 </div>
                                 <div class="v-details">
                                     <div class="row"><span class="label">Admission No</span><span class="value">${admissionNo}</span></div>
