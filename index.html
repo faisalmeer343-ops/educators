@@ -1579,6 +1579,24 @@
             display: none;
         }
 
+        /* ===== SETTINGS PASSWORD MODAL ===== */
+        .settings-password-modal .modal-box {
+            max-width: 400px;
+        }
+        .settings-password-modal .modal-box input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .settings-password-modal .modal-box input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.15);
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 992px) {
             .sidebar {
@@ -1964,9 +1982,9 @@
     <div id="loginScreen">
         <div class="login-box">
             <div class="login-logo" id="loginLogo">
-                <span class="no-logo">🏫</span>
+                <span class="no-logo"></span>
             </div>
-            <h1>🏫 THE EDUCATORS</h1>
+            <h1>THE EDUCATORS</h1>
             <div class="subtitle">PABBI CAMPUS - NOWSHERA</div>
             <div class="tagline">School Management System</div>
 
@@ -2001,7 +2019,7 @@
             <div class="logo-area">
                 <div class="logo-box">
                     <div class="logo-img" id="topLogoImg">
-                        <span class="no-logo">🏫</span>
+                        <span class="no-logo"></span>
                     </div>
                     <div class="logo-text">
                         <div class="line1" id="topSchoolName">THE EDUCATORS PABBI</div>
@@ -2066,6 +2084,25 @@
         </div>
     </div>
 
+    <!-- ===== SETTINGS PASSWORD MODAL ===== -->
+    <div class="modal-overlay settings-password-modal" id="settingsPasswordModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>🔐 Settings Password Required</h2>
+                <button class="modal-close" onclick="closeSettingsPasswordModal()">✕</button>
+            </div>
+            <div id="settingsPasswordModalBody">
+                <p style="color:var(--text-muted);margin-bottom:10px;">Please enter the current settings password to save changes:</p>
+                <input type="password" id="settingsPasswordInput" placeholder="Enter settings password" onkeydown="if(event.key==='Enter') verifySettingsPassword()" />
+                <div class="password-error" id="settingsPasswordError">❌ Incorrect password!</div>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="verifySettingsPassword()">✅ Verify</button>
+                    <button class="btn btn-secondary" onclick="closeSettingsPasswordModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
@@ -2111,7 +2148,8 @@
                 schoolEmail: 'info@educators.com',
                 logo: '',
                 logoSize: 60,
-                adminPassword: 'admin123'
+                adminPassword: 'admin123',
+                settingsPassword: 'admin123'
             }
         };
 
@@ -2150,6 +2188,7 @@
         ];
         const CONDUCT_OPTIONS = ['Excellent', 'Good', 'Fair'];
         const PAYMENT_MODE_OPTIONS = ['Cash', 'Bank Transfer', 'Cheque', 'Online'];
+        const SEARCH_CATEGORIES = ['Name', 'Father Name', 'NIC No', 'Mobile No', 'Roll No'];
 
         // ================================================================
         // DATE FORMAT FUNCTIONS - DD/MM/YYYY
@@ -2178,21 +2217,6 @@
             return d.getFullYear() + '-' +
                 String(d.getMonth() + 1).padStart(2, '0') + '-' +
                 String(d.getDate()).padStart(2, '0');
-        }
-
-        function parseDateInput(dateStr) {
-            if (!dateStr) return '';
-            if (dateStr.includes('/')) {
-                const parts = dateStr.split('/');
-                if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 2 && parts[2].length === 4) {
-                    return parts[2] + '-' + parts[1] + '-' + parts[0];
-                }
-            }
-            const parts = dateStr.split('-');
-            if (parts.length === 3 && parts[0].length === 4) {
-                return dateStr;
-            }
-            return dateStr;
         }
 
         function getTodayWithMonthName() {
@@ -2239,7 +2263,7 @@
             if (settings.logo) {
                 logoContainer.innerHTML = `<img src="${settings.logo}" alt="Logo" />`;
             } else {
-                logoContainer.innerHTML = `<span class="no-logo">🏫</span>`;
+                logoContainer.innerHTML = `<span class="no-logo"></span>`;
             }
         }
 
@@ -2249,7 +2273,7 @@
 
         function loadFromStorage() {
             try {
-                const data = localStorage.getItem('educatorsDataV5');
+                const data = localStorage.getItem('educatorsDataV6');
                 if (data) {
                     AppData = JSON.parse(data);
                     if (!AppData.students) AppData.students = [];
@@ -2270,7 +2294,8 @@
                             schoolEmail: 'info@educators.com',
                             logo: '',
                             logoSize: 60,
-                            adminPassword: 'admin123'
+                            adminPassword: 'admin123',
+                            settingsPassword: 'admin123'
                         };
                     }
                     if (!AppData.receiptCounter) AppData.receiptCounter = 0;
@@ -2286,7 +2311,7 @@
 
         function saveToStorage() {
             try {
-                localStorage.setItem('educatorsDataV5', JSON.stringify(AppData));
+                localStorage.setItem('educatorsDataV6', JSON.stringify(AppData));
                 localStorage.setItem('educatorsLastBackup', new Date().toLocaleString());
             } catch (e) { console.warn('Error saving data:', e); }
         }
@@ -2302,7 +2327,7 @@
                 logoImg.innerHTML =
                     `<img src="${settings.logo}" alt="Logo" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;" />`;
             } else {
-                logoImg.innerHTML = `<span class="no-logo">🏫</span>`;
+                logoImg.innerHTML = `<span class="no-logo"></span>`;
             }
             updateLoginLogo();
 
@@ -2319,7 +2344,7 @@
             if (settings.logo) {
                 return `<img src="${settings.logo}" alt="Logo" style="width:${s}px;height:${s}px;border-radius:50%;object-fit:cover;" />`;
             }
-            return `<span class="no-logo" style="font-size:24px;">🏫</span>`;
+            return `<span class="no-logo" style="font-size:24px;"></span>`;
         }
 
         // ================================================================
@@ -2388,6 +2413,37 @@
                 document.getElementById('passwordError').style.display = 'block';
                 document.getElementById('passwordInput').value = '';
                 document.getElementById('passwordInput').focus();
+            }
+        }
+
+        // ===== SETTINGS PASSWORD FUNCTIONS =====
+        function showSettingsPasswordModal(action) {
+            pendingPasswordAction = action;
+            document.getElementById('settingsPasswordInput').value = '';
+            document.getElementById('settingsPasswordError').style.display = 'none';
+            document.getElementById('settingsPasswordModal').classList.add('show');
+            setTimeout(() => document.getElementById('settingsPasswordInput').focus(), 100);
+        }
+
+        function closeSettingsPasswordModal() {
+            document.getElementById('settingsPasswordModal').classList.remove('show');
+            pendingPasswordAction = null;
+        }
+
+        function verifySettingsPassword() {
+            const entered = document.getElementById('settingsPasswordInput').value.trim();
+            const settingsPassword = AppData.schoolSettings.settingsPassword || 'admin123';
+
+            if (entered === settingsPassword) {
+                closeSettingsPasswordModal();
+                if (pendingPasswordAction) {
+                    pendingPasswordAction();
+                    pendingPasswordAction = null;
+                }
+            } else {
+                document.getElementById('settingsPasswordError').style.display = 'block';
+                document.getElementById('settingsPasswordInput').value = '';
+                document.getElementById('settingsPasswordInput').focus();
             }
         }
 
@@ -2688,6 +2744,10 @@
             return CONDUCT_OPTIONS.map(c => `<option value="${c}" ${c === selected ? 'selected' : ''}>${c}</option>`).join('');
         }
 
+        function getSearchCategoryOptions(selected) {
+            return SEARCH_CATEGORIES.map(c => `<option value="${c}" ${c === selected ? 'selected' : ''}>${c}</option>`).join('');
+        }
+
         function getGrade(percentage) {
             if (percentage >= 91) return 'A+';
             if (percentage >= 81) return 'A';
@@ -2705,6 +2765,16 @@
 
         function getYearOptions(selected) {
             return YEARS.map(y => `<option value="${y}" ${y === selected ? 'selected' : ''}>${y}</option>`).join('');
+        }
+
+        function formatReceiptNumber(num) {
+            return String(num).padStart(5, '0');
+        }
+
+        function getNextReceiptNumber() {
+            AppData.receiptCounter = (AppData.receiptCounter || 0) + 1;
+            if (AppData.receiptCounter > 100000) AppData.receiptCounter = 1;
+            return formatReceiptNumber(AppData.receiptCounter);
         }
 
         // ================================================================
@@ -2974,7 +3044,15 @@
                         <div class="search-title">🔍 Quick Search</div>
                         <div class="search-row">
                             <label>Search:</label>
-                            <input id="dashboardSearchInput" placeholder="Search Students (Name, Father, Roll No, DOB) or Employees (Name, ID, NIC)..." oninput="performDashboardSearch()" />
+                            <input id="dashboardSearchInput" placeholder="Enter search term..." oninput="performDashboardSearch()" />
+                            <label>Category:</label>
+                            <select id="dashboardSearchCategory" onchange="performDashboardSearch()">
+                                <option value="Name">Name</option>
+                                <option value="Father Name">Father Name</option>
+                                <option value="NIC No">NIC No</option>
+                                <option value="Mobile No">Mobile No</option>
+                                <option value="Roll No">Roll No</option>
+                            </select>
                             <label>Type:</label>
                             <select id="dashboardSearchType" onchange="performDashboardSearch()">
                                 <option value="all">All</option>
@@ -3030,6 +3108,7 @@
         // ===== DASHBOARD SEARCH FUNCTION =====
         function performDashboardSearch() {
             const query = document.getElementById('dashboardSearchInput').value.toLowerCase().trim();
+            const category = document.getElementById('dashboardSearchCategory').value;
             const type = document.getElementById('dashboardSearchType').value;
             const resultsDiv = document.getElementById('dashboardSearchResults');
 
@@ -3043,32 +3122,55 @@
 
             // Search Students
             if (type === 'all' || type === 'students') {
-                studentResults = AppData.students.filter(s =>
-                    s.name.toLowerCase().includes(query) ||
-                    (s.fatherName || '').toLowerCase().includes(query) ||
-                    (s.rollNo || '').toLowerCase().includes(query) ||
-                    (s.admissionNo || '').toLowerCase().includes(query) ||
-                    (s.dob || '').includes(query) ||
-                    (s.address || '').toLowerCase().includes(query) ||
-                    (s.contactNumber || '').includes(query)
-                );
+                studentResults = AppData.students.filter(s => {
+                    switch (category) {
+                        case 'Name':
+                            return s.name.toLowerCase().includes(query);
+                        case 'Father Name':
+                            return (s.fatherName || '').toLowerCase().includes(query);
+                        case 'NIC No':
+                            return (s.fatherNic || '').toLowerCase().includes(query);
+                        case 'Mobile No':
+                            return (s.contactNumber || '').includes(query);
+                        case 'Roll No':
+                            return (s.rollNo || '').toLowerCase().includes(query);
+                        default:
+                            return s.name.toLowerCase().includes(query) ||
+                                (s.fatherName || '').toLowerCase().includes(query) ||
+                                (s.fatherNic || '').toLowerCase().includes(query) ||
+                                (s.contactNumber || '').includes(query) ||
+                                (s.rollNo || '').toLowerCase().includes(query);
+                    }
+                });
             }
 
             // Search Employees
             if (type === 'all' || type === 'employees') {
-                employeeResults = AppData.employees.filter(e =>
-                    e.name.toLowerCase().includes(query) ||
-                    (e.empId || '').toLowerCase().includes(query) ||
-                    (e.fatherNic || '').toLowerCase().includes(query) ||
-                    (e.cnic || '').toLowerCase().includes(query) ||
-                    (e.mobile || '').includes(query)
-                );
+                employeeResults = AppData.employees.filter(e => {
+                    switch (category) {
+                        case 'Name':
+                            return e.name.toLowerCase().includes(query);
+                        case 'Father Name':
+                            return (e.fatherNic || '').toLowerCase().includes(query);
+                        case 'NIC No':
+                            return (e.cnic || '').toLowerCase().includes(query);
+                        case 'Mobile No':
+                            return (e.mobile || '').includes(query);
+                        case 'Roll No':
+                            return (e.empId || '').toLowerCase().includes(query);
+                        default:
+                            return e.name.toLowerCase().includes(query) ||
+                                (e.empId || '').toLowerCase().includes(query) ||
+                                (e.mobile || '').includes(query) ||
+                                (e.cnic || '').toLowerCase().includes(query);
+                    }
+                });
             }
 
             let html = '';
 
             if (studentResults.length === 0 && employeeResults.length === 0) {
-                html = '<div class="no-results">❌ No results found for "' + query + '"</div>';
+                html = '<div class="no-results">❌ No results found for "' + query + '" in category: ' + category + '</div>';
             } else {
                 if (studentResults.length > 0) {
                     html += `<div style="font-weight:900;color:var(--accent-blue);padding:4px 0;border-bottom:1px solid var(--border-color);">
@@ -3120,12 +3222,13 @@
 
         function clearDashboardSearch() {
             document.getElementById('dashboardSearchInput').value = '';
+            document.getElementById('dashboardSearchCategory').value = 'Name';
             document.getElementById('dashboardSearchType').value = 'all';
             document.getElementById('dashboardSearchResults').innerHTML = '<div class="no-results">Enter search criteria above</div>';
         }
 
         // ================================================================
-        // STUDENTS - With Enhanced Search + Print Admission Form with Photo
+        // STUDENTS - With Enhanced Search
         // ================================================================
 
         function renderStudents() {
@@ -3182,7 +3285,6 @@
             container.innerHTML = html;
         }
 
-        // Enhanced search: name, father, admission no, address
         function filterStudentsWithSearch() {
             const search = document.getElementById('studentSearchInput').value.toLowerCase();
             const classFilter = document.getElementById('studentClassFilter').value;
@@ -3194,7 +3296,8 @@
                     s.name.toLowerCase().includes(search) ||
                     s.fatherName.toLowerCase().includes(search) ||
                     s.admissionNo.toLowerCase().includes(search) ||
-                    (s.address || '').toLowerCase().includes(search)
+                    (s.address || '').toLowerCase().includes(search) ||
+                    (s.contactNumber || '').includes(search)
                 );
             }
             if (classFilter !== 'All') {
@@ -3300,7 +3403,6 @@
             showToast(`🗑️ Student ${student.name} deleted!`, 'info');
         }
 
-        // ===== NEW: Print Admission Form with Photo for a specific student =====
         function printAdmissionFormWithPhoto(studentId) {
             const student = getStudent(studentId);
             if (!student) { showToast('⚠️ Student not found!', 'error'); return; }
@@ -3428,9 +3530,8 @@
         function renderAdmission() {
             const container = document.getElementById('contentArea');
 
-            // Auto-generate admission number if no student exists yet
             const nextNum = AppData.students.length + 1;
-            const defaultAdmNo = 'ADM' + String(nextNum).padStart(4, '0');
+            const defaultAdmNo =  + String(nextNum).padStart(4, '0');
 
             let html = `
                     <div class="card">
@@ -4008,7 +4109,7 @@
         }
 
         // ================================================================
-        // FEE CHALLAN - With Save Button (Receipt No REMOVED)
+        // FEE CHALLAN
         // ================================================================
 
         function renderFeeChallan() {
@@ -4017,7 +4118,7 @@
 
             let html = `
                     <div class="card">
-                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Fee Challan / Voucher <span class="badge">3 Copies per Page</span></div>
+                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Fee Challan / Voucher <span class="badge"></span></div>
                         
                         <div class="fee-challan-grid">
                             <div class="full-width"><label>Select Student</label>
@@ -4336,7 +4437,7 @@
         }
 
         // ================================================================
-        // FEE DEPOSIT - With Arrears Display on Slip & Password Protected Edit
+        // FEE DEPOSIT
         // ================================================================
 
         function renderFeeDeposit() {
@@ -4370,7 +4471,7 @@
                             <div><label>Year</label>
                                 <select id="fdYear">${getYearOptions(new Date().getFullYear())}</select>
                             </div>
-                            <div><label>Receipt No</label><input id="fdReceiptNo" style="font-weight:900;color:var(--accent-gold);" placeholder="Enter Receipt Number" /></div>
+                            <div><label>Receipt No</label><input id="fdReceiptNo" style="font-weight:900;color:var(--accent-gold);" placeholder="Enter Receipt Number" value="${getNextReceiptNumber()}" /></div>
                             <div class="full-width">
                                 <div class="btn-group">
                                     <button class="btn btn-success" onclick="saveFeeDeposit()">💾 Save Deposit</button>
@@ -4406,10 +4507,6 @@
                     </div>
                 `;
             containerDiv.innerHTML = searchHtml;
-
-            AppData.receiptCounter = AppData.receiptCounter || 0;
-            AppData.receiptCounter++;
-            document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
 
             loadFeeDeposits();
         }
@@ -4532,9 +4629,7 @@
             loadFeeDeposits();
             clearFeeDeposit();
 
-            AppData.receiptCounter = AppData.receiptCounter || 0;
-            AppData.receiptCounter++;
-            document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
+            document.getElementById('fdReceiptNo').value = getNextReceiptNumber();
         }
 
         function loadFeeDeposits() {
@@ -4565,7 +4660,6 @@
                 `).join('');
         }
 
-        // ===== Edit Fee Deposit with Password Protection =====
         function editFeeDepositWithPassword(id) {
             showPasswordModal(() => {
                 editFeeDeposit(id);
@@ -4618,13 +4712,10 @@
             document.getElementById('fdClass').value = '';
             document.getElementById('fdAmount').value = '0';
             document.getElementById('fdPaymentDate').value = getTodayDateInput();
-            AppData.receiptCounter = AppData.receiptCounter || 0;
-            AppData.receiptCounter++;
-            document.getElementById('fdReceiptNo').value = 'RCP-' + String(AppData.receiptCounter).padStart(4, '0');
+            document.getElementById('fdReceiptNo').value = getNextReceiptNumber();
             showToast('🔄 Cleared!', 'info');
         }
 
-        // ===== NEW: Print Fee Deposit with Arrears Amount =====
         function printFeeDeposit(id) {
             const deposit = AppData.feeDeposits.find(d => d.id === id);
             if (!deposit) { showToast('⚠️ Deposit not found!', 'error'); return; }
@@ -4632,26 +4723,22 @@
             const settings = AppData.schoolSettings || {};
             const logoHtml = getLogoHTML(40);
 
-            // Calculate arrears for this student
             const studentId = deposit.studentId;
             const student = getStudent(studentId);
             let arrears = 0;
             if (student) {
-                // Get total challan amount for this student for this month/year
                 const challans = AppData.feeChallans.filter(c => 
                     c.studentId === studentId && 
                     c.month === deposit.month && 
                     c.year == deposit.year
                 );
                 const totalDue = challans.reduce((sum, c) => sum + (c.total || 0), 0);
-                // Get total paid for this student for this month/year
                 const paid = AppData.feeDeposits.filter(d => 
                     d.studentId === studentId && 
                     d.month === deposit.month && 
                     d.year == deposit.year
                 ).reduce((sum, d) => sum + d.amount, 0);
                 arrears = totalDue - paid;
-                // Add previous arrears from challans
                 const previousArrears = challans.reduce((sum, c) => sum + (c.previousArears || 0), 0);
                 arrears += previousArrears;
             }
@@ -4698,7 +4785,7 @@
         }
 
         // ================================================================
-        // TRANSACTIONS - With Search
+        // TRANSACTIONS
         // ================================================================
 
         function renderTransactions() {
@@ -5048,7 +5135,7 @@
         }
 
         // ================================================================
-        // BULK FEE VOUCHER - With Family Discount
+        // BULK FEE VOUCHER
         // ================================================================
 
         function renderBulkFeeVoucher() {
@@ -5270,10 +5357,7 @@
             }
 
             display.innerHTML = `
-                    <div style="background:var(--bg-primary);padding:10px;border-radius:4px;margin-bottom:10px;font-weight:900;color:var(--accent-blue);">
-                        Total Vouchers Generated: ${totalCount * 3} (${totalCount} Students × 3 Copies)
-                        ${document.getElementById('bulkApplyDiscount').value === 'yes' ? ' | ✅ Family Discount Applied' : ''}
-                    </div>
+                    
                     <div class="voucher-print-area" id="bulkVoucherPrintArea">
                         ${allVouchers}
                     </div>
@@ -5365,7 +5449,7 @@
         }
 
         // ================================================================
-        // MARKSHEET ENTRY - With Student Search
+        // MARKSHEET ENTRY
         // ================================================================
 
         function renderMarksheetEntry() {
@@ -5951,7 +6035,7 @@
         }
 
         // ================================================================
-        // CERTIFICATES - With Student Search (Leaving, Character, Birth)
+        // LEAVING CERTIFICATE (Print Date Removed)
         // ================================================================
 
         function renderLeavingCertificate() {
@@ -5974,8 +6058,6 @@
                         <div class="admission-form-grid" style="margin-top:10px;">
                             <div><label>Certificate No</label><input id="lcCertNo" value="SLC-${String(AppData.certificates.length + 1).padStart(4, '0')}" /></div>
                             <div><label>Issue Date</label><input id="lcIssueDate" type="date" value="${getTodayDateInput()}" /></div>
-                            <div><label>Print Date</label><input id="lcPrintDate" type="date" value="${getTodayDateInput()}" /></div>
-                            <div><label>Print Time</label><input id="lcPrintTime" value="${new Date().toLocaleTimeString()}" /></div>
                             <div><label>Reason</label>
                                 <select id="lcReason">${getReasonOptions('Parents Request')}</select>
                             </div>
@@ -6032,15 +6114,12 @@
 
             const certNo = document.getElementById('lcCertNo').value || 'SLC-0001';
             const issueDate = document.getElementById('lcIssueDate').value || getTodayDateInput();
-            const printDate = document.getElementById('lcPrintDate').value || getTodayDateInput();
-            const printTime = document.getElementById('lcPrintTime').value || new Date().toLocaleTimeString();
             const reason = document.getElementById('lcReason').value || 'Parents Request';
             const promoted = document.getElementById('lcPromoted').value || 'Yes';
             const promotedClass = document.getElementById('lcPromotedClass').value || '';
             const remarks = document.getElementById('lcRemarks').value || '';
 
             const formattedIssueDate = issueDate ? formatDate(issueDate) : 'N/A';
-            const formattedPrintDate = printDate ? formatDate(printDate) : 'N/A';
             const formattedAdmissionDate = student.admissionDate ? formatDate(student.admissionDate) : 'N/A';
             const formattedDob = student.dob ? formatDate(student.dob) : 'N/A';
             const promotedDisplay = promotedClass ? `${promoted} - ${promotedClass}` : promoted;
@@ -6070,8 +6149,6 @@
                                 <div style="flex:1;min-width:250px;">
                                     <div class="field"><span class="label">Certificate No</span><span class="value">${certNo}</span></div>
                                     <div class="field"><span class="label">Issue Date</span><span class="value">${formattedIssueDate}</span></div>
-                                    <div class="field"><span class="label">Print Date</span><span class="value">${formattedPrintDate}</span></div>
-                                    <div class="field"><span class="label">Print Time</span><span class="value">${printTime}</span></div>
                                     <div class="field"><span class="label">Admission Date</span><span class="value">${formattedAdmissionDate}</span></div>
                                     <div class="field"><span class="label">Roll No</span><span class="value">${student.rollNo || 'N/A'}</span></div>
                                     <div class="field"><span class="label">Admission No</span><span class="value">${student.admissionNo}</span></div>
@@ -6131,7 +6208,7 @@
         }
 
         // ================================================================
-        // CHARACTER CERTIFICATE - With Student Search
+        // CHARACTER CERTIFICATE
         // ================================================================
 
         function renderCharacterCertificate() {
@@ -6317,7 +6394,7 @@
         }
 
         // ================================================================
-        // BIRTH CERTIFICATE - With Student Search
+        // BIRTH CERTIFICATE
         // ================================================================
 
         function renderBirthCertificate() {
@@ -6512,7 +6589,7 @@
         }
 
         // ================================================================
-        // ID CARDS - With Student Search
+        // ID CARDS
         // ================================================================
 
         function renderIDCards() {
@@ -6610,7 +6687,7 @@
         }
 
         // ================================================================
-        // ADMIT CARD - With Student Search
+        // ADMIT CARD
         // ================================================================
 
         function renderAdmitCard() {
@@ -6717,7 +6794,7 @@
         }
 
         // ================================================================
-        // EMPLOYEES - With Search
+        // EMPLOYEES
         // ================================================================
 
         function renderEmployees() {
@@ -7054,7 +7131,7 @@
         }
 
         // ================================================================
-        // PAY SLIP - Salary Detail Slip
+        // PAY SLIP
         // ================================================================
 
         function renderPaySlip() {
@@ -7370,7 +7447,7 @@
         }
 
         // ================================================================
-        // SALARY SUMMARY - All Employees (Month Wise)
+        // SALARY SUMMARY
         // ================================================================
 
         function renderSalarySummary() {
@@ -8085,7 +8162,7 @@
         }
 
         // ================================================================
-        // REPORTS - All Types
+        // REPORTS - With Receipt Range
         // ================================================================
 
         function renderReports() {
@@ -8109,6 +8186,7 @@
                                 <option value="registration">📄 Registration Charges Report</option>
                                 <option value="tuitionmonthly">💰 Tuition Fee Report (Monthly)</option>
                                 <option value="tuitionyearly">💰 Tuition Fee Report (Yearly)</option>
+                                <option value="receiptrange">📋 Receipt Range Report</option>
                             </select>
                             <label>Month:</label>
                             <select id="rptMonth" style="display:none;">${getMonthOptions(MONTHS[new Date().getMonth()])}</select>
@@ -8119,6 +8197,10 @@
                                 <option value="All">All Classes</option>
                                 ${CLASS_OPTIONS.map(c => `<option value="${c}">${c}</option>`).join('')}
                             </select>
+                            <label id="rptReceiptFromLabel" style="display:none;">From Receipt:</label>
+                            <input type="number" id="rptReceiptFrom" style="display:none;max-width:100px;" placeholder="From" min="1" max="100000" />
+                            <label id="rptReceiptToLabel" style="display:none;">To Receipt:</label>
+                            <input type="number" id="rptReceiptTo" style="display:none;max-width:100px;" placeholder="To" min="1" max="100000" />
                             <button class="btn btn-primary" onclick="generateReport()">📄 Generate</button>
                             <button class="btn btn-success" onclick="printReport()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportReportPDF()">📄 PDF</button>
@@ -8144,10 +8226,15 @@
             const showClass = ['monthlyfee', 'activity', 'books', 'admissionfee', 'academic', 'registration', 'tuitionmonthly',
                 'tuitionyearly', 'arrears'
             ].includes(type);
+            const showReceiptRange = type === 'receiptrange';
 
             document.getElementById('rptMonth').style.display = showMonth ? 'inline' : 'none';
             document.getElementById('rptYear').style.display = showYear ? 'inline' : 'none';
             document.getElementById('rptClass').style.display = showClass ? 'inline' : 'none';
+            document.getElementById('rptReceiptFrom').style.display = showReceiptRange ? 'inline' : 'none';
+            document.getElementById('rptReceiptTo').style.display = showReceiptRange ? 'inline' : 'none';
+            document.getElementById('rptReceiptFromLabel').style.display = showReceiptRange ? 'inline' : 'none';
+            document.getElementById('rptReceiptToLabel').style.display = showReceiptRange ? 'inline' : 'none';
         }
 
         function generateReport() {
@@ -8166,6 +8253,51 @@
             const deposits = AppData.feeDeposits;
             const filteredDeposits = className !== 'All' ? deposits.filter(d => d.className === className) : deposits;
 
+            // Receipt Range Report
+            if (type === 'receiptrange') {
+                const fromReceipt = parseInt(document.getElementById('rptReceiptFrom').value) || 0;
+                const toReceipt = parseInt(document.getElementById('rptReceiptTo').value) || 0;
+
+                if (fromReceipt === 0 || toReceipt === 0 || fromReceipt > toReceipt) {
+                    text += '⚠️ Please enter valid receipt number range (From <= To)\n';
+                    output.textContent = text;
+                    return;
+                }
+
+                const fromStr = formatReceiptNumber(fromReceipt);
+                const toStr = formatReceiptNumber(toReceipt);
+
+                const rangeDeposits = filteredDeposits.filter(d => {
+                    const num = parseInt(d.receiptNo);
+                    return num >= fromReceipt && num <= toReceipt;
+                });
+
+                const totalAmount = rangeDeposits.reduce((sum, d) => sum + d.amount, 0);
+                const cashTotal = rangeDeposits.filter(d => d.paymentMode === 'Cash').reduce((sum, d) => sum + d.amount, 0);
+                const bankTotal = rangeDeposits.filter(d => d.paymentMode === 'Bank Transfer' || d.paymentMode === 'Cheque' || d.paymentMode === 'Online').reduce((sum, d) => sum + d.amount, 0);
+                const otherTotal = rangeDeposits.filter(d => d.paymentMode !== 'Cash' && d.paymentMode !== 'Bank Transfer' && d.paymentMode !== 'Cheque' && d.paymentMode !== 'Online').reduce((sum, d) => sum + d.amount, 0);
+
+                text += `📋 Receipt Range Report\n`;
+                text += `  Receipt Numbers: ${fromStr} to ${toStr}\n`;
+                text += `  Total Deposits: ${rangeDeposits.length}\n`;
+                text += `  Total Amount: ${formatCurrency(totalAmount)}\n`;
+                text += `  💵 Cash: ${formatCurrency(cashTotal)}\n`;
+                text += `  🏦 Bank/Cheque/Online: ${formatCurrency(bankTotal)}\n`;
+                text += `  💳 Other: ${formatCurrency(otherTotal)}\n\n`;
+                text += `─────────────────────────────────────────────────\n\n`;
+
+                rangeDeposits.forEach((d, i) => {
+                    text += `${i+1}. Receipt: ${d.receiptNo} | Student: ${d.studentName} (${d.admissionNo})\n`;
+                    text += `   Amount: ${formatCurrency(d.amount)} | Mode: ${d.paymentMode}\n`;
+                    text += `   Date: ${d.depositDate} | Class: ${d.className || 'N/A'}\n`;
+                    text += `   Month: ${d.month} ${d.year}\n\n`;
+                });
+
+                output.textContent = text;
+                return;
+            }
+
+            // Other report types
             switch (type) {
                 case 'cash':
                     const cashDeposits = filteredDeposits.filter(d => d.paymentMode === 'Cash');
@@ -8483,7 +8615,7 @@
         }
 
         // ================================================================
-        // SETTINGS
+        // SETTINGS - With Password Protection
         // ================================================================
 
         function renderSettings() {
@@ -8515,14 +8647,21 @@
                         </div>
                         
                         <div class="form-row">
+                            <label>Settings Password</label>
+                            <input type="password" id="setPassword" value="${settings.settingsPassword || 'admin123'}" />
+                            <span style="font-size:11px;color:var(--text-muted);">Required to save settings</span>
+                        </div>
+                        
+                        <div class="form-row">
                             <label>Admin Password</label>
-                            <input type="password" id="setPassword" value="${settings.adminPassword || 'admin123'}" />
+                            <input type="password" id="setAdminPassword" value="${settings.adminPassword || 'admin123'}" />
+                            <span style="font-size:11px;color:var(--text-muted);">Used for fee edit verification</span>
                         </div>
                         
                         <div class="form-row logo-upload-area">
                             <label>Logo</label>
                             <div class="logo-preview" id="settingsLogoPreview">
-                                ${settings.logo ? `<img src="${settings.logo}" alt="Logo" />` : `<span class="no-logo">🏫</span>`}
+                                ${settings.logo ? `<img src="${settings.logo}" alt="Logo" />` : `<span class="no-logo"></span>`}
                             </div>
                             <input type="file" id="setLogo" accept="image/*" onchange="previewSettingsLogo(this)" />
                             <button class="btn btn-danger btn-sm" onclick="removeSettingsLogo()">🗑️ Remove</button>
@@ -8535,7 +8674,7 @@
                         </div>
                         
                         <div class="btn-group">
-                            <button class="btn btn-success" onclick="saveSettings()">💾 Save Settings</button>
+                            <button class="btn btn-success" onclick="saveSettingsWithPassword()">💾 Save Settings</button>
                             <button class="btn btn-secondary" onclick="resetSettings()">🔄 Reset Default</button>
                         </div>
                     </div>
@@ -8571,8 +8710,15 @@
         }
 
         function removeSettingsLogo() {
-            document.getElementById('settingsLogoPreview').innerHTML = `<span class="no-logo">🏫</span>`;
+            document.getElementById('settingsLogoPreview').innerHTML = `<span class="no-logo"></span>`;
             document.getElementById('setLogo').value = '';
+        }
+
+        function saveSettingsWithPassword() {
+            // Show settings password modal first
+            showSettingsPasswordModal(() => {
+                saveSettings();
+            });
         }
 
         function saveSettings() {
@@ -8599,7 +8745,8 @@
             settings.schoolAddress = document.getElementById('setAddress').value.trim() || 'NOWSHERA';
             settings.schoolPhone = document.getElementById('setPhone').value.trim() || '+92 300 0000000';
             settings.schoolEmail = document.getElementById('setEmail').value.trim() || 'info@educators.com';
-            settings.adminPassword = document.getElementById('setPassword').value.trim() || 'admin123';
+            settings.settingsPassword = document.getElementById('setPassword').value.trim() || 'admin123';
+            settings.adminPassword = document.getElementById('setAdminPassword').value.trim() || 'admin123';
             settings.logoSize = parseInt(document.getElementById('setLogoSize').value) || 60;
 
             AppData.schoolSettings = settings;
@@ -8617,7 +8764,8 @@
                 schoolEmail: 'info@educators.com',
                 logo: '',
                 logoSize: 60,
-                adminPassword: 'admin123'
+                adminPassword: 'admin123',
+                settingsPassword: 'admin123'
             };
             saveToStorage();
             updateTopBar();
