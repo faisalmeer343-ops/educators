@@ -1982,9 +1982,9 @@
     <div id="loginScreen">
         <div class="login-box">
             <div class="login-logo" id="loginLogo">
-                <span class="no-logo"></span>
+                <span class="no-logo">🏫</span>
             </div>
-            <h1>THE EDUCATORS</h1>
+            <h1>🏫 THE EDUCATORS</h1>
             <div class="subtitle">PABBI CAMPUS - NOWSHERA</div>
             <div class="tagline">School Management System</div>
 
@@ -2019,7 +2019,7 @@
             <div class="logo-area">
                 <div class="logo-box">
                     <div class="logo-img" id="topLogoImg">
-                        <span class="no-logo"></span>
+                        <span class="no-logo">🏫</span>
                     </div>
                     <div class="logo-text">
                         <div class="line1" id="topSchoolName">THE EDUCATORS PABBI</div>
@@ -2224,6 +2224,16 @@
             return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
         }
 
+        function getCurrentTime() {
+            const d = new Date();
+            let hours = d.getHours();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            return hours + ':' + minutes + ' ' + ampm;
+        }
+
         // ================================================================
         // INITIALIZATION
         // ================================================================
@@ -2263,7 +2273,7 @@
             if (settings.logo) {
                 logoContainer.innerHTML = `<img src="${settings.logo}" alt="Logo" />`;
             } else {
-                logoContainer.innerHTML = `<span class="no-logo"></span>`;
+                logoContainer.innerHTML = `<span class="no-logo">🏫</span>`;
             }
         }
 
@@ -2273,7 +2283,7 @@
 
         function loadFromStorage() {
             try {
-                const data = localStorage.getItem('educatorsDataV6');
+                const data = localStorage.getItem('educatorsDataV7');
                 if (data) {
                     AppData = JSON.parse(data);
                     if (!AppData.students) AppData.students = [];
@@ -2311,7 +2321,7 @@
 
         function saveToStorage() {
             try {
-                localStorage.setItem('educatorsDataV6', JSON.stringify(AppData));
+                localStorage.setItem('educatorsDataV7', JSON.stringify(AppData));
                 localStorage.setItem('educatorsLastBackup', new Date().toLocaleString());
             } catch (e) { console.warn('Error saving data:', e); }
         }
@@ -2327,7 +2337,7 @@
                 logoImg.innerHTML =
                     `<img src="${settings.logo}" alt="Logo" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;" />`;
             } else {
-                logoImg.innerHTML = `<span class="no-logo"></span>`;
+                logoImg.innerHTML = `<span class="no-logo">🏫</span>`;
             }
             updateLoginLogo();
 
@@ -2344,7 +2354,7 @@
             if (settings.logo) {
                 return `<img src="${settings.logo}" alt="Logo" style="width:${s}px;height:${s}px;border-radius:50%;object-fit:cover;" />`;
             }
-            return `<span class="no-logo" style="font-size:24px;"></span>`;
+            return `<span class="no-logo" style="font-size:24px;">🏫</span>`;
         }
 
         // ================================================================
@@ -2767,14 +2777,29 @@
             return YEARS.map(y => `<option value="${y}" ${y === selected ? 'selected' : ''}>${y}</option>`).join('');
         }
 
-        function formatReceiptNumber(num) {
-            return String(num).padStart(5, '0');
+        // ===== FIXED: Receipt Number Functions =====
+        function getNextReceiptNumber() {
+            // Get the highest receipt number used so far
+            let maxReceipt = 0;
+            AppData.feeDeposits.forEach(d => {
+                const num = parseInt(d.receiptNo);
+                if (num > maxReceipt) maxReceipt = num;
+            });
+            // Also check counter
+            if (AppData.receiptCounter > maxReceipt) maxReceipt = AppData.receiptCounter;
+            // Return next number
+            return maxReceipt + 1;
         }
 
-        function getNextReceiptNumber() {
-            AppData.receiptCounter = (AppData.receiptCounter || 0) + 1;
-            if (AppData.receiptCounter > 100000) AppData.receiptCounter = 1;
-            return formatReceiptNumber(AppData.receiptCounter);
+        function getCurrentReceiptNumberForDisplay() {
+            // Get the highest receipt number used so far
+            let maxReceipt = 0;
+            AppData.feeDeposits.forEach(d => {
+                const num = parseInt(d.receiptNo);
+                if (num > maxReceipt) maxReceipt = num;
+            });
+            if (AppData.receiptCounter > maxReceipt) maxReceipt = AppData.receiptCounter;
+            return maxReceipt + 1;
         }
 
         // ================================================================
@@ -3727,7 +3752,7 @@
             admissionPhotoData = null;
 
             const nextNum = AppData.students.length + 1;
-            document.getElementById('admAdmissionNo').value = 'ADM' + String(nextNum).padStart(4, '0');
+            document.getElementById('admAdmissionNo').value =  + String(nextNum).padStart(4, '0');
 
             showToast('🔄 Form cleared!', 'info');
         }
@@ -4118,7 +4143,7 @@
 
             let html = `
                     <div class="card">
-                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Fee Challan / Voucher <span class="badge"></span></div>
+                        <div class="card-title"><span class="prompt">&gt;&gt;&gt;</span> Fee Challan / Voucher <span class="badge">3 Copies per Page</span></div>
                         
                         <div class="fee-challan-grid">
                             <div class="full-width"><label>Select Student</label>
@@ -4293,7 +4318,8 @@
                 discountAmount: discountAmount,
                 total: total,
                 dueDate: dueDate,
-                generatedDate: getTodayDateFormatted()
+                generatedDate: getTodayDateFormatted(),
+                generatedTime: getCurrentTime()
             });
 
             AppData.transactions.push({
@@ -4303,6 +4329,7 @@
                 amount: total,
                 type: 'Challan Generated - ' + month + ' ' + year,
                 date: getTodayDateFormatted(),
+                time: getCurrentTime(),
                 dueDate: formattedDate,
                 month: month,
                 year: year
@@ -4437,7 +4464,7 @@
         }
 
         // ================================================================
-        // FEE DEPOSIT
+        // FEE DEPOSIT - With Auto/Manual Receipt Number (1 to infinity) - FIXED
         // ================================================================
 
         function renderFeeDeposit() {
@@ -4471,7 +4498,10 @@
                             <div><label>Year</label>
                                 <select id="fdYear">${getYearOptions(new Date().getFullYear())}</select>
                             </div>
-                            <div><label>Receipt No</label><input id="fdReceiptNo" style="font-weight:900;color:var(--accent-gold);" placeholder="Enter Receipt Number" value="${getNextReceiptNumber()}" /></div>
+                            <div><label>Receipt No</label>
+                                <input type="number" id="fdReceiptNo" style="font-weight:900;color:var(--accent-gold);" placeholder="Enter receipt number or leave empty for auto" value="${getCurrentReceiptNumberForDisplay()}" min="1" />
+                                <span style="font-size:10px;color:var(--text-muted);">Leave empty for auto-generated</span>
+                            </div>
                             <div class="full-width">
                                 <div class="btn-group">
                                     <button class="btn btn-success" onclick="saveFeeDeposit()">💾 Save Deposit</button>
@@ -4482,7 +4512,7 @@
                         
                         <div class="table-wrap" style="margin-top:10px;">
                             <table>
-                                <thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt</th><th>Actions</th></tr></thead>
+                                <thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Class</th><th>Amount</th><th>Mode</th><th>Month</th><th>Receipt</th><th>Actions</th></tr></thead>
                                 <tbody id="fdTableBody"></tbody>
                             </table>
                         </div>
@@ -4490,6 +4520,9 @@
                 `;
 
             container.innerHTML = html;
+
+            // Set initial auto-generated receipt number
+            document.getElementById('fdReceiptNo').value = getCurrentReceiptNumberForDisplay();
 
             const containerDiv = document.getElementById('fdStudentContainer');
             let searchHtml = `
@@ -4558,24 +4591,43 @@
                 return;
             }
 
-            const receiptNo = document.getElementById('fdReceiptNo').value.trim();
-            if (!receiptNo) {
-                showToast('⚠️ Please enter a Receipt Number!', 'error');
-                return;
+            // Get receipt number - use manual if provided, otherwise auto
+            let receiptNoInput = document.getElementById('fdReceiptNo').value.trim();
+            let receiptNo;
+
+            if (!receiptNoInput) {
+                // Auto-generate if empty - use current max + 1
+                receiptNo = getNextReceiptNumber();
+            } else {
+                // Parse manual number
+                receiptNo = parseInt(receiptNoInput);
+                if (isNaN(receiptNo) || receiptNo <= 0) {
+                    showToast('⚠️ Please enter a valid receipt number (positive number)!', 'error');
+                    return;
+                }
             }
 
-            if (!editingDepositId) {
-                const exists = AppData.feeDeposits.find(d => d.receiptNo === receiptNo);
-                if (exists) {
-                    showToast('⚠️ Receipt Number already exists! Please use a unique number.', 'error');
+            // Check if receipt number already exists
+            const existingDeposit = AppData.feeDeposits.find(d => d.receiptNo == receiptNo);
+            if (existingDeposit && !editingDepositId) {
+                showToast('⚠️ Receipt number ' + receiptNo + ' already exists! Please use a different number.', 'error');
+                return;
+            }
+            // Check for duplicate during edit
+            if (editingDepositId) {
+                const duplicate = AppData.feeDeposits.find(d => d.receiptNo == receiptNo && d.id !== editingDepositId);
+                if (duplicate) {
+                    showToast('⚠️ Receipt number ' + receiptNo + ' already exists! Please use a different number.', 'error');
                     return;
                 }
-            } else {
-                const exists = AppData.feeDeposits.find(d => d.receiptNo === receiptNo && d.id !== editingDepositId);
-                if (exists) {
-                    showToast('⚠️ Receipt Number already exists! Please use a unique number.', 'error');
-                    return;
-                }
+            }
+
+            const currentTime = getCurrentTime();
+            const currentDate = getTodayDateFormatted();
+
+            // Update counter to track highest used receipt number
+            if (receiptNo > AppData.receiptCounter) {
+                AppData.receiptCounter = receiptNo;
             }
 
             const depositData = {
@@ -4589,18 +4641,21 @@
                 month: document.getElementById('fdMonth').value,
                 year: document.getElementById('fdYear').value,
                 receiptNo: receiptNo,
-                depositDate: getTodayDateFormatted()
+                depositDate: currentDate,
+                depositTime: currentTime
             };
 
             if (editingDepositId) {
                 const idx = AppData.feeDeposits.findIndex(d => d.id === editingDepositId);
                 if (idx !== -1) {
                     AppData.feeDeposits[idx] = { ...AppData.feeDeposits[idx], ...depositData };
-                    const txIdx = AppData.transactions.findIndex(t => t.receiptNo === receiptNo);
+                    const txIdx = AppData.transactions.findIndex(t => t.receiptNo == receiptNo);
                     if (txIdx !== -1) {
                         AppData.transactions[txIdx].amount = amount;
                         AppData.transactions[txIdx].type = 'Fee Deposit - ' + depositData.month + ' ' + depositData.year +
                             ' (' + depositData.paymentMode + ')';
+                        AppData.transactions[txIdx].date = currentDate;
+                        AppData.transactions[txIdx].time = currentTime;
                     }
                     showToast(`✅ Fee deposit updated: ${formatCurrency(amount)} for ${student.name}`, 'success');
                 }
@@ -4618,7 +4673,8 @@
                     admissionNo: student.admissionNo,
                     amount: amount,
                     type: 'Fee Deposit - ' + deposit.month + ' ' + deposit.year + ' (' + deposit.paymentMode + ')',
-                    date: getTodayDateFormatted(),
+                    date: currentDate,
+                    time: currentTime,
                     method: deposit.paymentMode,
                     receiptNo: receiptNo
                 });
@@ -4627,9 +4683,19 @@
 
             saveToStorage();
             loadFeeDeposits();
-            clearFeeDeposit();
 
-            document.getElementById('fdReceiptNo').value = getNextReceiptNumber();
+            // Clear and set next receipt number - FIXED: don't increment unnecessarily
+            document.getElementById('fdStudent').value = '';
+            document.getElementById('fdStudent_search').value = '';
+            document.getElementById('fdAdmissionNo').value = '';
+            document.getElementById('fdName').value = '';
+            document.getElementById('fdClass').value = '';
+            document.getElementById('fdAmount').value = '0';
+            document.getElementById('fdPaymentDate').value = getTodayDateInput();
+            // Set next receipt number based on highest used
+            document.getElementById('fdReceiptNo').value = getCurrentReceiptNumberForDisplay();
+            editingDepositId = null;
+            showToast('🔄 Cleared! Next receipt number: ' + document.getElementById('fdReceiptNo').value, 'info');
         }
 
         function loadFeeDeposits() {
@@ -4638,13 +4704,14 @@
 
             if (deposits.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="8" style="padding:14px;color:var(--text-muted);text-align:center;">No deposits yet</td></tr>`;
+                    `<tr><td colspan="9" style="padding:14px;color:var(--text-muted);text-align:center;">No deposits yet</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = deposits.slice().reverse().map(d => `
                     <tr>
                         <td>${d.depositDate || 'N/A'}</td>
+                        <td>${d.depositTime || 'N/A'}</td>
                         <td>${d.studentName}</td>
                         <td>${d.className || 'N/A'}</td>
                         <td style="color:var(--accent-green);font-weight:900;">${formatCurrency(d.amount)}</td>
@@ -4712,8 +4779,8 @@
             document.getElementById('fdClass').value = '';
             document.getElementById('fdAmount').value = '0';
             document.getElementById('fdPaymentDate').value = getTodayDateInput();
-            document.getElementById('fdReceiptNo').value = getNextReceiptNumber();
-            showToast('🔄 Cleared!', 'info');
+            document.getElementById('fdReceiptNo').value = getCurrentReceiptNumberForDisplay();
+            showToast('🔄 Cleared! Next receipt number: ' + document.getElementById('fdReceiptNo').value, 'info');
         }
 
         function printFeeDeposit(id) {
@@ -4754,6 +4821,7 @@
                         <div style="font-size:11px;line-height:1.6;">
                             <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Receipt No</span><span>${deposit.receiptNo}</span></div>
                             <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Date</span><span>${deposit.depositDate}</span></div>
+                            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Time</span><span>${deposit.depositTime || 'N/A'}</span></div>
                             <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Student</span><span>${deposit.studentName}</span></div>
                             <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Admission No</span><span>${deposit.admissionNo}</span></div>
                             <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed #e2e8f0;"><span style="font-weight:900;color:#131921;">Class</span><span>${deposit.className || 'N/A'}</span></div>
@@ -4785,7 +4853,7 @@
         }
 
         // ================================================================
-        // TRANSACTIONS
+        // TRANSACTIONS - With Date and Time
         // ================================================================
 
         function renderTransactions() {
@@ -4834,7 +4902,7 @@
                         
                         <div id="txTableWrap" class="table-wrap">
                             <table>
-                                <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
+                                <thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
                                 <tbody id="txTableBody"></tbody>
                             </table>
                         </div>
@@ -4936,13 +5004,14 @@
 
             if (filtered.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="6" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found for this period</td></tr>`;
+                    `<tr><td colspan="7" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found for this period</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = filtered.slice().reverse().map(t => `
                     <tr>
                         <td>${t.date || 'N/A'}</td>
+                        <td>${t.time || 'N/A'}</td>
                         <td>${t.studentName || 'N/A'}</td>
                         <td>${t.admissionNo || 'N/A'}</td>
                         <td>${t.type || 'N/A'}</td>
@@ -4975,13 +5044,14 @@
 
             if (filtered.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="6" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found</td></tr>`;
+                    `<tr><td colspan="7" style="padding:14px;color:var(--text-muted);text-align:center;">No transactions found</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = filtered.slice().reverse().map(t => `
                     <tr>
                         <td>${t.date || 'N/A'}</td>
+                        <td>${t.time || 'N/A'}</td>
                         <td>${t.studentName || 'N/A'}</td>
                         <td>${t.admissionNo || 'N/A'}</td>
                         <td>${t.type || 'N/A'}</td>
@@ -5022,7 +5092,7 @@
                     <h1>📊 Transactions Report</h1>
                     <div class="summary">${summary}</div>
                     <table>
-                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <script>
@@ -5069,7 +5139,7 @@
                     <h1>📊 Transactions Report</h1>
                     <div class="summary">${summary}</div>
                     <table>
-                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <p style="margin-top:20px;color:#565959;">Generated on: ${getTodayWithMonthName()}</p>
@@ -5099,11 +5169,12 @@
                 if (cells.length > 0) {
                     data.push({
                         'Date': cells[0]?.textContent || 'N/A',
-                        'Student': cells[1]?.textContent || 'N/A',
-                        'Admission No': cells[2]?.textContent || 'N/A',
-                        'Type': cells[3]?.textContent || 'N/A',
-                        'Amount': cells[4]?.textContent || '0',
-                        'Receipt': cells[5]?.textContent || 'N/A'
+                        'Time': cells[1]?.textContent || 'N/A',
+                        'Student': cells[2]?.textContent || 'N/A',
+                        'Admission No': cells[3]?.textContent || 'N/A',
+                        'Type': cells[4]?.textContent || 'N/A',
+                        'Amount': cells[5]?.textContent || '0',
+                        'Receipt': cells[6]?.textContent || 'N/A'
                     });
                 }
             });
@@ -5125,7 +5196,7 @@
             const htmlContent = `
                     <div class="summary">${summary}</div>
                     <table>
-                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Admission No</th><th>Type</th><th>Amount</th><th>Receipt</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <p style="margin-top:15px;color:#565959;">Generated on: ${getTodayWithMonthName()}</p>
@@ -5298,6 +5369,7 @@
                     total: total,
                     dueDate: dueDate,
                     generatedDate: getTodayDateFormatted(),
+                    generatedTime: getCurrentTime(),
                     bulk: true
                 });
 
@@ -5308,6 +5380,7 @@
                     amount: total,
                     type: 'Bulk Challan - ' + month + ' ' + year,
                     date: getTodayDateFormatted(),
+                    time: getCurrentTime(),
                     dueDate: formattedDate,
                     month: month,
                     year: year
@@ -5669,7 +5742,8 @@
                 obtainedMarks: obtainedMarks,
                 percentage: percentage,
                 grade: grade,
-                date: getTodayDateFormatted()
+                date: getTodayDateFormatted(),
+                time: getCurrentTime()
             };
 
             AppData.marksheets.push(marksheet);
@@ -5685,7 +5759,8 @@
                 percentage: percentage,
                 grade: grade,
                 status: percentage >= 33 ? 'Pass' : 'Fail',
-                date: getTodayDateFormatted()
+                date: getTodayDateFormatted(),
+                time: getCurrentTime()
             });
 
             saveToStorage();
@@ -5912,18 +5987,19 @@
                         </div>
                         <div id="resultsTableWrap" class="table-wrap">
                             <table>
-                                <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Class</th><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
+                                <thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Admission No</th><th>Class</th><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
                                 <tbody id="resultsTableBody">
                             `;
 
             if (results.length === 0) {
                 html +=
-                    `<tr><td colspan="10" style="padding:14px;color:var(--text-muted);text-align:center;">No results saved</td></tr>`;
+                    `<tr><td colspan="11" style="padding:14px;color:var(--text-muted);text-align:center;">No results saved</td></tr>`;
             } else {
                 results.slice().reverse().forEach(r => {
                     const statusClass = r.status === 'Pass' ? 'badge-paid' : 'badge-pending';
                     html += `<tr>
                             <td>${r.date || 'N/A'}</td>
+                            <td>${r.time || 'N/A'}</td>
                             <td>${r.studentName}</td>
                             <td>${r.admissionNo || 'N/A'}</td>
                             <td>${r.className || 'N/A'}</td>
@@ -5969,7 +6045,7 @@
                     <h1>📊 Results Report</h1>
                     <p>Generated on: ${getTodayWithMonthName()}</p>
                     <table>
-                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Class</th><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Admission No</th><th>Class</th><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <script>
@@ -5998,15 +6074,16 @@
                 if (cells.length > 0) {
                     data.push({
                         'Date': cells[0]?.textContent || 'N/A',
-                        'Student': cells[1]?.textContent || 'N/A',
-                        'Admission No': cells[2]?.textContent || 'N/A',
-                        'Class': cells[3]?.textContent || 'N/A',
-                        'Exam': cells[4]?.textContent || 'N/A',
-                        'Total Marks': cells[5]?.textContent || 0,
-                        'Obtained Marks': cells[6]?.textContent || 0,
-                        'Percentage': cells[7]?.textContent || '0%',
-                        'Grade': cells[8]?.textContent || 'N/A',
-                        'Status': cells[9]?.textContent || 'N/A'
+                        'Time': cells[1]?.textContent || 'N/A',
+                        'Student': cells[2]?.textContent || 'N/A',
+                        'Admission No': cells[3]?.textContent || 'N/A',
+                        'Class': cells[4]?.textContent || 'N/A',
+                        'Exam': cells[5]?.textContent || 'N/A',
+                        'Total Marks': cells[6]?.textContent || 0,
+                        'Obtained Marks': cells[7]?.textContent || 0,
+                        'Percentage': cells[8]?.textContent || '0%',
+                        'Grade': cells[9]?.textContent || 'N/A',
+                        'Status': cells[10]?.textContent || 'N/A'
                     });
                 }
             });
@@ -6025,7 +6102,7 @@
             const settings = AppData.schoolSettings || {};
             const htmlContent = `
                     <table>
-                        <thead><tr><th>Date</th><th>Student</th><th>Admission No</th><th>Class</th><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Admission No</th><th>Class</th><th>Exam</th><th>Total</th><th>Obtained</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <p style="margin-top:15px;color:#565959;">Generated on: ${getTodayWithMonthName()}</p>
@@ -6129,7 +6206,8 @@
                 studentId: studentId,
                 studentName: student.name,
                 certNo: certNo,
-                date: getTodayDateFormatted()
+                date: getTodayDateFormatted(),
+                time: getCurrentTime()
             });
             saveToStorage();
 
@@ -6317,7 +6395,8 @@
                 type: 'Character',
                 studentId: studentId,
                 studentName: student.name,
-                date: getTodayDateFormatted()
+                date: getTodayDateFormatted(),
+                time: getCurrentTime()
             });
             saveToStorage();
 
@@ -6517,7 +6596,8 @@
                 type: 'Birth',
                 studentId: studentId,
                 studentName: student.name,
-                date: getTodayDateFormatted()
+                date: getTodayDateFormatted(),
+                time: getCurrentTime()
             });
             saveToStorage();
 
@@ -7327,6 +7407,7 @@
                         
                         <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:6px;border-top:2px solid #131921;flex-wrap:wrap;gap:6px;font-size:10px;color:#565959;">
                             <div>📅 Date: ${getTodayDateFormatted()}</div>
+                            <div>🕐 Time: ${getCurrentTime()}</div>
                             <div>💳 Payment Mode: ${paymentMode}</div>
                         </div>
                         
@@ -7917,7 +7998,7 @@
                         
                         <div id="expTableWrap" class="table-wrap" style="margin-top:10px;">
                             <table>
-                                <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
+                                <thead><tr><th>Date</th><th>Time</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
                                 <tbody id="expTableBody"></tbody>
                             </table>
                         </div>
@@ -7990,8 +8071,14 @@
 
             if (items.length === 0) { showToast('⚠️ Add at least one item!', 'error'); return; }
 
-            AppData.expenditures.push({ id: 'EXP' + String(AppData.expenditures.length + 1).padStart(4, '0'),
-                date: date, items: items, grandTotal: grandTotal, createdAt: new Date().toISOString() });
+            AppData.expenditures.push({ 
+                id: 'EXP' + String(AppData.expenditures.length + 1).padStart(4, '0'),
+                date: date,
+                time: getCurrentTime(),
+                items: items,
+                grandTotal: grandTotal,
+                createdAt: new Date().toISOString()
+            });
             saveToStorage();
             loadExpenditures();
             clearExpenditure();
@@ -8004,7 +8091,7 @@
 
             if (expenditures.length === 0) {
                 tbody.innerHTML =
-                    `<tr><td colspan="5" style="padding:14px;color:var(--text-muted);text-align:center;">No expenditures</td></tr>`;
+                    `<tr><td colspan="6" style="padding:14px;color:var(--text-muted);text-align:center;">No expenditures</td></tr>`;
                 return;
             }
 
@@ -8013,6 +8100,7 @@
                 exp.items.forEach((item, i) => {
                     html += `<tr>
                             <td>${i === 0 ? exp.date : ''}</td>
+                            <td>${i === 0 ? (exp.time || 'N/A') : ''}</td>
                             <td>${item.item}</td>
                             <td>${item.qty}</td>
                             <td>${formatCurrency(item.rate)}</td>
@@ -8020,7 +8108,7 @@
                         </tr>`;
                 });
                 html += `<tr style="font-weight:900;background:var(--bg-primary);">
-                        <td colspan="4" style="text-align:right;">Total for ${exp.date}:</td>
+                        <td colspan="5" style="text-align:right;">Total for ${exp.date}:</td>
                         <td style="color:var(--accent-red);">${formatCurrency(exp.grandTotal)}</td>
                     </tr>`;
             });
@@ -8062,7 +8150,7 @@
                     <h1>📊 Expenditure Report</h1>
                     <p>Generated on: ${getTodayWithMonthName()}</p>
                     <table>
-                        <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Time</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <script>
@@ -8104,7 +8192,7 @@
                     <h1>📊 Expenditure Report</h1>
                     <p>Generated on: ${getTodayWithMonthName()}</p>
                     <table>
-                        <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Time</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <script>
@@ -8133,10 +8221,11 @@
                 if (cells.length > 0) {
                     data.push({
                         'Date': cells[0]?.textContent || 'N/A',
-                        'Item': cells[1]?.textContent || 'N/A',
-                        'Qty': cells[2]?.textContent || 'N/A',
-                        'Rate': cells[3]?.textContent || 'N/A',
-                        'Total': cells[4]?.textContent || 'N/A'
+                        'Time': cells[1]?.textContent || 'N/A',
+                        'Item': cells[2]?.textContent || 'N/A',
+                        'Qty': cells[3]?.textContent || 'N/A',
+                        'Rate': cells[4]?.textContent || 'N/A',
+                        'Total': cells[5]?.textContent || 'N/A'
                     });
                 }
             });
@@ -8152,7 +8241,7 @@
             const settings = AppData.schoolSettings || {};
             const htmlContent = `
                     <table>
-                        <thead><tr><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
+                        <thead><tr><th>Date</th><th>Time</th><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
                         <tbody>${content}</tbody>
                     </table>
                     <p style="margin-top:15px;color:#565959;">Generated on: ${getTodayWithMonthName()}</p>
@@ -8198,9 +8287,9 @@
                                 ${CLASS_OPTIONS.map(c => `<option value="${c}">${c}</option>`).join('')}
                             </select>
                             <label id="rptReceiptFromLabel" style="display:none;">From Receipt:</label>
-                            <input type="number" id="rptReceiptFrom" style="display:none;max-width:100px;" placeholder="From" min="1" max="100000" />
+                            <input type="number" id="rptReceiptFrom" style="display:none;max-width:100px;" placeholder="From" min="1" />
                             <label id="rptReceiptToLabel" style="display:none;">To Receipt:</label>
-                            <input type="number" id="rptReceiptTo" style="display:none;max-width:100px;" placeholder="To" min="1" max="100000" />
+                            <input type="number" id="rptReceiptTo" style="display:none;max-width:100px;" placeholder="To" min="1" />
                             <button class="btn btn-primary" onclick="generateReport()">📄 Generate</button>
                             <button class="btn btn-success" onclick="printReport()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportReportPDF()">📄 PDF</button>
@@ -8264,9 +8353,6 @@
                     return;
                 }
 
-                const fromStr = formatReceiptNumber(fromReceipt);
-                const toStr = formatReceiptNumber(toReceipt);
-
                 const rangeDeposits = filteredDeposits.filter(d => {
                     const num = parseInt(d.receiptNo);
                     return num >= fromReceipt && num <= toReceipt;
@@ -8278,7 +8364,7 @@
                 const otherTotal = rangeDeposits.filter(d => d.paymentMode !== 'Cash' && d.paymentMode !== 'Bank Transfer' && d.paymentMode !== 'Cheque' && d.paymentMode !== 'Online').reduce((sum, d) => sum + d.amount, 0);
 
                 text += `📋 Receipt Range Report\n`;
-                text += `  Receipt Numbers: ${fromStr} to ${toStr}\n`;
+                text += `  Receipt Numbers: ${fromReceipt} to ${toReceipt}\n`;
                 text += `  Total Deposits: ${rangeDeposits.length}\n`;
                 text += `  Total Amount: ${formatCurrency(totalAmount)}\n`;
                 text += `  💵 Cash: ${formatCurrency(cashTotal)}\n`;
@@ -8289,7 +8375,8 @@
                 rangeDeposits.forEach((d, i) => {
                     text += `${i+1}. Receipt: ${d.receiptNo} | Student: ${d.studentName} (${d.admissionNo})\n`;
                     text += `   Amount: ${formatCurrency(d.amount)} | Mode: ${d.paymentMode}\n`;
-                    text += `   Date: ${d.depositDate} | Class: ${d.className || 'N/A'}\n`;
+                    text += `   Date: ${d.depositDate} | Time: ${d.depositTime || 'N/A'}\n`;
+                    text += `   Class: ${d.className || 'N/A'}\n`;
                     text += `   Month: ${d.month} ${d.year}\n\n`;
                 });
 
@@ -8661,7 +8748,7 @@
                         <div class="form-row logo-upload-area">
                             <label>Logo</label>
                             <div class="logo-preview" id="settingsLogoPreview">
-                                ${settings.logo ? `<img src="${settings.logo}" alt="Logo" />` : `<span class="no-logo"></span>`}
+                                ${settings.logo ? `<img src="${settings.logo}" alt="Logo" />` : `<span class="no-logo">🏫</span>`}
                             </div>
                             <input type="file" id="setLogo" accept="image/*" onchange="previewSettingsLogo(this)" />
                             <button class="btn btn-danger btn-sm" onclick="removeSettingsLogo()">🗑️ Remove</button>
@@ -8710,12 +8797,11 @@
         }
 
         function removeSettingsLogo() {
-            document.getElementById('settingsLogoPreview').innerHTML = `<span class="no-logo"></span>`;
+            document.getElementById('settingsLogoPreview').innerHTML = `<span class="no-logo">🏫</span>`;
             document.getElementById('setLogo').value = '';
         }
 
         function saveSettingsWithPassword() {
-            // Show settings password modal first
             showSettingsPasswordModal(() => {
                 saveSettings();
             });
