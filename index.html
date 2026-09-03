@@ -1974,6 +1974,67 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #e68a00;
         }
+
+        /* ===== BULK SALARY SLIP PRINT ===== */
+        .bulk-salary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            page-break-after: avoid;
+        }
+        .bulk-salary-grid .payslip-wrapper {
+            max-width: 100%;
+            margin: 0;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        @media print {
+            .bulk-salary-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 10px !important;
+            }
+            .bulk-salary-grid .payslip-wrapper {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                border: 2px solid #131921 !important;
+            }
+        }
+
+        /* ===== FEE SUMMARY REPORT TABLE ===== */
+        .fee-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+        .fee-summary-table th {
+            background: #131921;
+            color: #fff;
+            padding: 6px 8px;
+            border: 1px solid #232f3e;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 900;
+        }
+        .fee-summary-table td {
+            padding: 5px 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .fee-summary-table .total-row {
+            background: #ebf4ff;
+            font-weight: 900;
+        }
+        .fee-summary-table .sub-total {
+            background: #f7fafc;
+            font-weight: 600;
+        }
+        .fee-summary-table .receipt-list {
+            font-size: 9px;
+            color: #565959;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -2408,23 +2469,35 @@
             document.getElementById('passwordModal').classList.remove('show');
             pendingPasswordAction = null;
         }
+function verifyPassword() {
+    const entered = document.getElementById('passwordInput').value.trim();
+    const adminPassword = (AppData.schoolSettings && AppData.schoolSettings.adminPassword)
+        ? AppData.schoolSettings.adminPassword
+        : 'admin123';
 
-        function verifyPassword() {
-            const entered = document.getElementById('passwordInput').value.trim();
-            const adminPassword = AppData.schoolSettings.adminPassword || 'admin123';
+    if (entered === adminPassword) {
 
-            if (entered === adminPassword) {
-                closePasswordModal();
-                if (pendingPasswordAction) {
-                    pendingPasswordAction();
-                    pendingPasswordAction = null;
-                }
-            } else {
-                document.getElementById('passwordError').style.display = 'block';
-                document.getElementById('passwordInput').value = '';
-                document.getElementById('passwordInput').focus();
-            }
+        // Save the action BEFORE closing modal
+        const action = pendingPasswordAction;
+
+        // Close modal
+        document.getElementById('passwordModal').classList.remove('show');
+
+        // Clear pending action
+        pendingPasswordAction = null;
+
+        // Execute requested action
+        if (typeof action === 'function') {
+            action();
         }
+
+    } else {
+        document.getElementById('passwordError').style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+    }
+}
+
 
         // ===== SETTINGS PASSWORD FUNCTIONS =====
         function showSettingsPasswordModal(action) {
@@ -2779,20 +2852,16 @@
 
         // ===== FIXED: Receipt Number Functions =====
         function getNextReceiptNumber() {
-            // Get the highest receipt number used so far
             let maxReceipt = 0;
             AppData.feeDeposits.forEach(d => {
                 const num = parseInt(d.receiptNo);
                 if (num > maxReceipt) maxReceipt = num;
             });
-            // Also check counter
             if (AppData.receiptCounter > maxReceipt) maxReceipt = AppData.receiptCounter;
-            // Return next number
             return maxReceipt + 1;
         }
 
         function getCurrentReceiptNumberForDisplay() {
-            // Get the highest receipt number used so far
             let maxReceipt = 0;
             AppData.feeDeposits.forEach(d => {
                 const num = parseInt(d.receiptNo);
@@ -4591,15 +4660,12 @@
                 return;
             }
 
-            // Get receipt number - use manual if provided, otherwise auto
             let receiptNoInput = document.getElementById('fdReceiptNo').value.trim();
             let receiptNo;
 
             if (!receiptNoInput) {
-                // Auto-generate if empty - use current max + 1
                 receiptNo = getNextReceiptNumber();
             } else {
-                // Parse manual number
                 receiptNo = parseInt(receiptNoInput);
                 if (isNaN(receiptNo) || receiptNo <= 0) {
                     showToast('⚠️ Please enter a valid receipt number (positive number)!', 'error');
@@ -4607,13 +4673,11 @@
                 }
             }
 
-            // Check if receipt number already exists
             const existingDeposit = AppData.feeDeposits.find(d => d.receiptNo == receiptNo);
             if (existingDeposit && !editingDepositId) {
                 showToast('⚠️ Receipt number ' + receiptNo + ' already exists! Please use a different number.', 'error');
                 return;
             }
-            // Check for duplicate during edit
             if (editingDepositId) {
                 const duplicate = AppData.feeDeposits.find(d => d.receiptNo == receiptNo && d.id !== editingDepositId);
                 if (duplicate) {
@@ -4625,7 +4689,6 @@
             const currentTime = getCurrentTime();
             const currentDate = getTodayDateFormatted();
 
-            // Update counter to track highest used receipt number
             if (receiptNo > AppData.receiptCounter) {
                 AppData.receiptCounter = receiptNo;
             }
@@ -4684,7 +4747,6 @@
             saveToStorage();
             loadFeeDeposits();
 
-            // Clear and set next receipt number - FIXED: don't increment unnecessarily
             document.getElementById('fdStudent').value = '';
             document.getElementById('fdStudent_search').value = '';
             document.getElementById('fdAdmissionNo').value = '';
@@ -4692,7 +4754,6 @@
             document.getElementById('fdClass').value = '';
             document.getElementById('fdAmount').value = '0';
             document.getElementById('fdPaymentDate').value = getTodayDateInput();
-            // Set next receipt number based on highest used
             document.getElementById('fdReceiptNo').value = getCurrentReceiptNumberForDisplay();
             editingDepositId = null;
             showToast('🔄 Cleared! Next receipt number: ' + document.getElementById('fdReceiptNo').value, 'info');
@@ -7237,6 +7298,7 @@
                             <button class="btn btn-info" onclick="exportPaySlipPDF()">📄 PDF</button>
                             <button class="btn btn-warning" onclick="exportPaySlipExcel()">📊 Excel</button>
                             <button class="btn btn-secondary" onclick="exportPaySlipWord()">📄 Word</button>
+                            <button class="btn btn-primary" onclick="bulkPrintPaySlips()">📋 Bulk Print (4 per page)</button>
                         </div>
                         
                         <div class="employee-form-grid">
@@ -7525,6 +7587,147 @@
             const settings = AppData.schoolSettings || {};
             const htmlContent = content;
             exportToWord(htmlContent, 'Salary_Slip_' + getTodayDateFormatted(), settings.schoolName);
+        }
+
+        // ================================================================
+        // BULK PRINT PAY SLIPS (4 per A4 page)
+        // ================================================================
+
+        function bulkPrintPaySlips() {
+            const employees = AppData.employees;
+            if (employees.length === 0) {
+                showToast('⚠️ No employees to print!', 'error');
+                return;
+            }
+
+            const settings = AppData.schoolSettings || {};
+            const logoHtml = getLogoHTML(40);
+            const month = document.getElementById('psMonth').value;
+            const year = document.getElementById('psYear').value;
+
+            let allSlips = '';
+            let count = 0;
+
+            employees.forEach(emp => {
+                const basic = emp.salary || 0;
+                const attendance = emp.allowances?.attendance || 0;
+                const spoken = emp.allowances?.spoken || 0;
+                const productivity = emp.allowances?.productivity || 0;
+                const stayBack = emp.allowances?.stayBack || 0;
+                const security = emp.allowances?.security || 0;
+                const advanced = emp.allowances?.advanced || 0;
+                const absentee = emp.allowances?.absentee || 0;
+
+                const totalCredit = basic + attendance + spoken + productivity + stayBack;
+                const totalDebit = security + advanced + absentee;
+                const netSalary = totalCredit - totalDebit;
+
+                const employeePhoto = emp.photo ?
+                    `<img src="${emp.photo}" alt="Photo" style="width:100%;height:100%;object-fit:cover;" />` :
+                    `<span class="no-photo" style="font-size:28px;">👤</span>`;
+
+                allSlips += `
+                        <div class="payslip-wrapper" style="page-break-inside:avoid;break-inside:avoid;max-width:100%;margin:0;border:2px solid #131921;">
+                            <div class="ps-header" style="padding:4px 8px;">
+                                <div class="ps-logo" style="width:40px;height:40px;">${logoHtml}</div>
+                                <div class="ps-title">
+                                    <h1 style="font-size:12px;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</h1>
+                                    <div class="subtitle" style="font-size:8px;">${settings.schoolAddress || 'NOWSHERA'}</div>
+                                </div>
+                            </div>
+                            <div style="text-align:center;font-size:10px;font-weight:900;color:#131921;">Salary Slip - ${month} ${year}</div>
+                            <div class="ps-employee" style="padding:4px 8px;gap:8px;">
+                                <div class="ps-photo" style="width:40px;height:40px;">${employeePhoto}</div>
+                                <div class="ps-details" style="font-size:9px;">
+                                    <div class="row" style="padding:1px 0;"><span class="label">${emp.empId}</span><span class="value">${emp.name}</span></div>
+                                    <div class="row" style="padding:1px 0;"><span class="label">${emp.designation || 'N/A'}</span><span class="value">${emp.department || 'N/A'}</span></div>
+                                </div>
+                            </div>
+                            <table class="ps-table" style="font-size:8px;">
+                                <thead><tr><th style="font-size:7px;">Particulars</th><th style="font-size:7px;">Amount</th></tr></thead>
+                                <tbody>
+                                    <tr class="credit-row"><td>Basic</td><td>${formatCurrency(basic)}</td></tr>
+                                    <tr class="credit-row"><td>Attendance</td><td>${formatCurrency(attendance)}</td></tr>
+                                    <tr class="credit-row"><td>Spoken</td><td>${formatCurrency(spoken)}</td></tr>
+                                    <tr class="credit-row"><td>Productivity</td><td>${formatCurrency(productivity)}</td></tr>
+                                    <tr class="credit-row"><td>Stay Back</td><td>${formatCurrency(stayBack)}</td></tr>
+                                    <tr style="font-weight:900;background:#e8f5e9;font-size:8px;"><td>Total Credit</td><td>${formatCurrency(totalCredit)}</td></tr>
+                                    <tr class="debit-row"><td>Security</td><td>${formatCurrency(security)}</td></tr>
+                                    <tr class="debit-row"><td>Advanced</td><td>${formatCurrency(advanced)}</td></tr>
+                                    <tr class="debit-row"><td>Absentee</td><td>${formatCurrency(absentee)}</td></tr>
+                                    <tr style="font-weight:900;background:#fee2e2;font-size:8px;"><td>Total Debit</td><td>${formatCurrency(totalDebit)}</td></tr>
+                                    <tr class="total-row" style="font-size:10px;"><td><strong>NET</strong></td><td style="color:#131921;font-weight:900;">${formatCurrency(netSalary)}</td></tr>
+                                </tbody>
+                            </table>
+                            <div class="ps-footer" style="font-size:7px;padding-top:3px;margin-top:3px;">${settings.schoolName || 'THE EDUCATORS'} — Success with Wisdom</div>
+                        </div>
+                    `;
+                count++;
+            });
+
+            if (count === 0) {
+                showToast('⚠️ No employees to print!', 'error');
+                return;
+            }
+
+            // Open in new window for printing
+            const win = window.open('', '_blank');
+            win.document.write(`
+                    <html><head><title>Bulk Salary Slips - ${getTodayDateFormatted()}</title>
+                    <style>
+                        body { font-family: Arial, Helvetica, sans-serif; padding: 8px; background: #fff; margin: 0; }
+                        ${document.querySelector('style').textContent}
+                        .bulk-salary-grid { 
+                            display: grid !important; 
+                            grid-template-columns: 1fr 1fr !important; 
+                            gap: 6px !important; 
+                        }
+                        .payslip-wrapper { 
+                            page-break-inside: avoid !important; 
+                            break-inside: avoid !important; 
+                            border: 2px solid #131921 !important;
+                            max-width: 100% !important;
+                            margin: 0 !important;
+                            padding: 8px !important;
+                            font-size: 8pt !important;
+                        }
+                        .payslip-wrapper .ps-header { padding: 2px 4px !important; margin-bottom: 2px !important; }
+                        .payslip-wrapper .ps-logo { width: 30px !important; height: 30px !important; }
+                        .payslip-wrapper .ps-title h1 { font-size: 10pt !important; }
+                        .payslip-wrapper .ps-title .subtitle { font-size: 7pt !important; }
+                        .payslip-wrapper .ps-employee { padding: 2px 4px !important; gap: 4px !important; }
+                        .payslip-wrapper .ps-photo { width: 30px !important; height: 30px !important; }
+                        .payslip-wrapper .ps-details { font-size: 7pt !important; }
+                        .payslip-wrapper .ps-details .row { padding: 1px 0 !important; }
+                        .payslip-wrapper .ps-table { font-size: 6pt !important; }
+                        .payslip-wrapper .ps-table th { font-size: 6pt !important; padding: 2px 3px !important; }
+                        .payslip-wrapper .ps-table td { font-size: 6pt !important; padding: 2px 3px !important; }
+                        .payslip-wrapper .ps-net { font-size: 10pt !important; padding: 3px 8px !important; }
+                        .payslip-wrapper .ps-footer { font-size: 6pt !important; padding-top: 2px !important; margin-top: 2px !important; }
+                        .ps-badge { display: none !important; }
+                        .ps-net { display: none !important; }
+                        @media print {
+                            body { padding: 4px !important; background: #ffffff !important; }
+                            .bulk-salary-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 4px !important; }
+                            .payslip-wrapper { page-break-inside: avoid !important; break-inside: avoid !important; border: 2px solid #131921 !important; }
+                            .payslip-wrapper .ps-table td, .payslip-wrapper .ps-table th { border: 1px solid #ddd !important; }
+                        }
+                    </style>
+                    </head><body>
+                    <div class="bulk-salary-grid">
+                        ${allSlips}
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() { window.close(); }, 1000);
+                            }, 500);
+                        };
+                    <\/script>
+                    </body></html>
+                `);
+            win.document.close();
         }
 
         // ================================================================
@@ -8251,7 +8454,7 @@
         }
 
         // ================================================================
-        // REPORTS - With Receipt Range
+        // REPORTS - With Fee Summary, Receipt Range, Password Protection
         // ================================================================
 
         function renderReports() {
@@ -8276,7 +8479,12 @@
                                 <option value="tuitionmonthly">💰 Tuition Fee Report (Monthly)</option>
                                 <option value="tuitionyearly">💰 Tuition Fee Report (Yearly)</option>
                                 <option value="receiptrange">📋 Receipt Range Report</option>
+                                <option value="feesummary">📊 Fee Summary Report (Complete)</option>
                             </select>
+                            <label id="rptFromDateLabel" style="display:none;">From Date:</label>
+                            <input type="date" id="rptFromDate" style="display:none;" value="${getTodayDateInput()}" />
+                            <label id="rptToDateLabel" style="display:none;">To Date:</label>
+                            <input type="date" id="rptToDate" style="display:none;" value="${getTodayDateInput()}" />
                             <label>Month:</label>
                             <select id="rptMonth" style="display:none;">${getMonthOptions(MONTHS[new Date().getMonth()])}</select>
                             <label>Year:</label>
@@ -8290,7 +8498,7 @@
                             <input type="number" id="rptReceiptFrom" style="display:none;max-width:100px;" placeholder="From" min="1" />
                             <label id="rptReceiptToLabel" style="display:none;">To Receipt:</label>
                             <input type="number" id="rptReceiptTo" style="display:none;max-width:100px;" placeholder="To" min="1" />
-                            <button class="btn btn-primary" onclick="generateReport()">📄 Generate</button>
+                            <button class="btn btn-primary" onclick="generateReportWithPassword()">📄 Generate</button>
                             <button class="btn btn-success" onclick="printReport()">🖨️ Print</button>
                             <button class="btn btn-info" onclick="exportReportPDF()">📄 PDF</button>
                             <button class="btn btn-warning" onclick="exportReportExcel()">📊 Excel</button>
@@ -8302,6 +8510,13 @@
                 `;
             container.innerHTML = html;
             toggleReportFields();
+        }
+
+        // Password protected report generation
+        function generateReportWithPassword() {
+            showPasswordModal(() => {
+                generateReport();
+            });
         }
 
         function toggleReportFields() {
@@ -8316,6 +8531,7 @@
                 'tuitionyearly', 'arrears'
             ].includes(type);
             const showReceiptRange = type === 'receiptrange';
+            const showDateRange = type === 'feesummary';
 
             document.getElementById('rptMonth').style.display = showMonth ? 'inline' : 'none';
             document.getElementById('rptYear').style.display = showYear ? 'inline' : 'none';
@@ -8324,6 +8540,10 @@
             document.getElementById('rptReceiptTo').style.display = showReceiptRange ? 'inline' : 'none';
             document.getElementById('rptReceiptFromLabel').style.display = showReceiptRange ? 'inline' : 'none';
             document.getElementById('rptReceiptToLabel').style.display = showReceiptRange ? 'inline' : 'none';
+            document.getElementById('rptFromDate').style.display = showDateRange ? 'inline' : 'none';
+            document.getElementById('rptToDate').style.display = showDateRange ? 'inline' : 'none';
+            document.getElementById('rptFromDateLabel').style.display = showDateRange ? 'inline' : 'none';
+            document.getElementById('rptToDateLabel').style.display = showDateRange ? 'inline' : 'none';
         }
 
         function generateReport() {
@@ -8384,7 +8604,121 @@
                 return;
             }
 
-            // Other report types
+            // Fee Summary Report (Complete)
+            if (type === 'feesummary') {
+                const fromDate = document.getElementById('rptFromDate').value || getTodayDateInput();
+                const toDate = document.getElementById('rptToDate').value || getTodayDateInput();
+
+                const fromDateObj = new Date(fromDate);
+                const toDateObj = new Date(toDate);
+                toDateObj.setHours(23, 59, 59, 999);
+
+                let summaryDeposits = AppData.feeDeposits.filter(d => {
+                    if (!d.depositDate) return false;
+                    const parts = d.depositDate.split('/');
+                    if (parts.length !== 3) return false;
+                    const dObj = new Date(parts[2], parts[1] - 1, parts[0]);
+                    return dObj >= fromDateObj && dObj <= toDateObj;
+                });
+
+                if (className !== 'All') {
+                    summaryDeposits = summaryDeposits.filter(d => d.className === className);
+                }
+
+                if (summaryDeposits.length === 0) {
+                    text += `📊 Fee Summary Report\n`;
+                    text += `  Date Range: ${formatDate(fromDate)} to ${formatDate(toDate)}\n`;
+                    text += `  No fee deposits found in this date range.\n`;
+                    output.textContent = text;
+                    return;
+                }
+
+                // Calculate totals for each category
+                let totalMonthlyFee = 0;
+                let totalPreviousArears = 0;
+                let totalActivityCharges = 0;
+                let totalBooksCharges = 0;
+                let totalFamilyDiscount = 0;
+                let totalAdmissionFee = 0;
+                let totalAcademicFee = 0;
+                let totalRegistrationFee = 0;
+                let totalTuitionFee = 0;
+                let grandTotal = 0;
+                let receiptNumbers = [];
+
+                // For each deposit, find the corresponding challan
+                summaryDeposits.forEach(dep => {
+                    receiptNumbers.push(dep.receiptNo);
+                    const challan = AppData.feeChallans.find(c => 
+                        c.studentId === dep.studentId && 
+                        c.month === dep.month && 
+                        c.year == dep.year
+                    );
+                    if (challan) {
+                        totalMonthlyFee += challan.monthlyFee || 0;
+                        totalPreviousArears += challan.previousArears || 0;
+                        totalActivityCharges += challan.activityCharges || 0;
+                        totalBooksCharges += challan.booksCharges || 0;
+                        totalFamilyDiscount += challan.discountAmount || 0;
+                        // For student-level fees
+                        const student = getStudent(dep.studentId);
+                        if (student) {
+                            totalAdmissionFee += student.admissionFee || 0;
+                            totalAcademicFee += student.academicFee || 0;
+                            totalRegistrationFee += student.registrationFee || 0;
+                            totalTuitionFee += student.tuitionFee || 0;
+                        }
+                        grandTotal += challan.total || 0;
+                    }
+                });
+
+                // Also include deposits without challans
+                summaryDeposits.forEach(dep => {
+                    const hasChallan = AppData.feeChallans.some(c => 
+                        c.studentId === dep.studentId && 
+                        c.month === dep.month && 
+                        c.year == dep.year
+                    );
+                    if (!hasChallan) {
+                        grandTotal += dep.amount || 0;
+                    }
+                });
+
+                text += `📊 FEE SUMMARY REPORT (Complete)\n`;
+                text += `  Date Range: ${formatDate(fromDate)} to ${formatDate(toDate)}\n`;
+                if (className !== 'All') text += `  Class: ${className}\n`;
+                text += `  Total Transactions: ${summaryDeposits.length}\n`;
+                text += `  Receipt Numbers Included: ${receiptNumbers.join(', ')}\n\n`;
+                text += `─────────────────────────────────────────────────\n`;
+                text += `  📆 Monthly Fee Total        : ${formatCurrency(totalMonthlyFee)}\n`;
+                text += `  ⚠️ Previous Arears Total    : ${formatCurrency(totalPreviousArears)}\n`;
+                text += `  📊 Activity Charges Total   : ${formatCurrency(totalActivityCharges)}\n`;
+                text += `  📚 Books Charges Total      : ${formatCurrency(totalBooksCharges)}\n`;
+                text += `  🏷️ Family Discount Total    : ${formatCurrency(totalFamilyDiscount)}\n`;
+                text += `  📝 Admission Fee Total      : ${formatCurrency(totalAdmissionFee)}\n`;
+                text += `  📋 Academic Fee Total       : ${formatCurrency(totalAcademicFee)}\n`;
+                text += `  📄 Registration Fee Total   : ${formatCurrency(totalRegistrationFee)}\n`;
+                text += `  💰 Tuition Fee Total        : ${formatCurrency(totalTuitionFee)}\n`;
+                text += `─────────────────────────────────────────────────\n`;
+                text += `  💰 GRAND TOTAL              : ${formatCurrency(grandTotal)}\n`;
+                text += `─────────────────────────────────────────────────\n\n`;
+
+                // Detailed entries with date and time
+                text += `📋 DETAILED ENTRIES:\n`;
+                text += `─────────────────────────────────────────────────\n`;
+                summaryDeposits.forEach((d, i) => {
+                    text += `${i+1}. Receipt: ${d.receiptNo} | Student: ${d.studentName} (${d.admissionNo})\n`;
+                    text += `   Amount: ${formatCurrency(d.amount)} | Mode: ${d.paymentMode}\n`;
+                    text += `   Date: ${d.depositDate} | Time: ${d.depositTime || 'N/A'}\n`;
+                    text += `   Class: ${d.className || 'N/A'} | Month: ${d.month} ${d.year}\n`;
+                    text += `   ───────────────────────────\n`;
+                });
+
+                output.textContent = text;
+                return;
+            }
+
+            // Other report types (existing code)
             switch (type) {
                 case 'cash':
                     const cashDeposits = filteredDeposits.filter(d => d.paymentMode === 'Cash');
