@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>THE EDUCATORS - School Management System</title>
+    <title>XYZ DEMO SCHOOL- School Management System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
     </script>
     <style>
@@ -2083,13 +2083,13 @@
                         <span class="no-logo">🏫</span>
                     </div>
                     <div class="logo-text">
-                        <div class="line1" id="topSchoolName">THE EDUCATORS PABBI</div>
+                        <div class="line1" id="topSchoolName">XYZ DEMO SCHOOLPABBI</div>
                         <div class="line2" id="topSchoolAddress">NOWSHERA</div>
                         <div class="line3">Success with Wisdom</div>
                     </div>
                 </div>
                 <div class="title">
-                    <span class="py">&gt;</span> THE EDUCATORS <span class="py">_</span>
+                    <span class="py">&gt;</span> XYZ DEMO SCHOOL<span class="py">_</span>
                     <small>Complete School Management System</small>
                 </div>
             </div>
@@ -2169,7 +2169,7 @@
 
     <script>
         // ================================================================
-        // THE EDUCATORS - COMPLETE JAVASCRIPT
+        // XYZ DEMO SCHOOL- COMPLETE JAVASCRIPT
         // ================================================================
 
         // ===== USER ROLES =====
@@ -2203,7 +2203,7 @@
             familyGroups: [],
             receiptCounter: 0,
             schoolSettings: {
-                schoolName: 'THE EDUCATORS PABBI CAMPUS',
+                schoolName: 'XYZ DEMO SCHOOLPABBI CAMPUS',
                 schoolAddress: 'NOWSHERA',
                 schoolPhone: '+92 300 0000000',
                 schoolEmail: 'info@educators.com',
@@ -2359,7 +2359,7 @@
                     if (!AppData.familyGroups) AppData.familyGroups = [];
                     if (!AppData.schoolSettings) {
                         AppData.schoolSettings = {
-                            schoolName: 'THE EDUCATORS PABBI CAMPUS',
+                            schoolName: 'XYZ DEMO SCHOOLPABBI CAMPUS',
                             schoolAddress: 'NOWSHERA',
                             schoolPhone: '+92 300 0000000',
                             schoolEmail: 'info@educators.com',
@@ -2389,7 +2389,7 @@
 
         function updateTopBar() {
             const settings = AppData.schoolSettings || {};
-            document.getElementById('topSchoolName').textContent = settings.schoolName || 'THE EDUCATORS PABBI';
+            document.getElementById('topSchoolName').textContent = settings.schoolName || 'XYZ DEMO SCHOOLPABBI';
             document.getElementById('topSchoolAddress').textContent = settings.schoolAddress || 'NOWSHERA';
 
             const logoImg = document.getElementById('topLogoImg');
@@ -2963,7 +2963,7 @@ function verifyPassword() {
             }
 
             const settings = AppData.schoolSettings || {};
-            const school = schoolName || settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const school = schoolName || settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
 
             const wsData = [
                 [`School: ${school}`],
@@ -2992,7 +2992,7 @@ function verifyPassword() {
             }
 
             const settings = AppData.schoolSettings || {};
-            const school = schoolName || settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const school = schoolName || settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const address = settings.schoolAddress || '';
 
             const html = `
@@ -3502,7 +3502,7 @@ function verifyPassword() {
             if (!student) { showToast('⚠️ Student not found!', 'error'); return; }
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const logoHtml = getLogoHTML(60);
             const studentPhoto = student.photo ?
                 `<img src="${student.photo}" style="width:100px;height:110px;object-fit:cover;border-radius:6px;border:3px solid #131921;" />` :
@@ -3928,7 +3928,7 @@ function verifyPassword() {
             }
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const data = {};
             document.querySelectorAll('#admissionForm input, #admissionForm select, #admissionForm textarea').forEach(el => {
                 if (el.id) {
@@ -4414,7 +4414,7 @@ function verifyPassword() {
                         <div class="voucher-box">
                             <div class="v-header">
                                 <div class="v-logo">${logoHtml}</div>
-                                <div class="v-school">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                                <div class="v-school">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                                 <div class="v-sub">${settings.schoolAddress || 'NOWSHERA'}</div>
                             </div>
                             <div style="text-align:center;">
@@ -4501,7 +4501,7 @@ function verifyPassword() {
             }
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
 
             const win = window.open('', '_blank');
             win.document.write(`
@@ -4875,7 +4875,7 @@ function verifyPassword() {
                     <div style="background:#fff;border:2px solid #131921;border-radius:8px;padding:16px 20px;max-width:400px;margin:10px auto;font-family:Arial,Helvetica,sans-serif;">
                         <div style="text-align:center;border-bottom:2px solid #131921;padding-bottom:8px;margin-bottom:8px;">
                             <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
-                            <div style="font-size:16px;font-weight:900;color:#131921;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                            <div style="font-size:16px;font-weight:900;color:#131921;">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                             <div style="font-size:11px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'}</div>
                         </div>
                         <div style="text-align:center;background:#131921;color:#ff9900;padding:4px;border-radius:4px;font-weight:900;font-size:14px;letter-spacing:2px;margin-bottom:8px;">FEE DEPOSIT SLIP</div>
@@ -5148,7 +5148,7 @@ function verifyPassword() {
                         .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
                     </style>
                     </head><body>
-                    <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                    <div class="school-header">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
                     <h1>📊 Transactions Report</h1>
                     <div class="summary">${summary}</div>
@@ -5195,7 +5195,7 @@ function verifyPassword() {
                         .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
                     </style>
                     </head><body>
-                    <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                    <div class="school-header">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
                     <h1>📊 Transactions Report</h1>
                     <div class="summary">${summary}</div>
@@ -5453,7 +5453,7 @@ function verifyPassword() {
                             <div class="voucher-box" style="page-break-inside:avoid;">
                                 <div class="v-header">
                                     <div class="v-logo">${logoHtml}</div>
-                                    <div class="v-school">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                                    <div class="v-school">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                                     <div class="v-sub">${settings.schoolAddress || 'NOWSHERA'}</div>
                                 </div>
                                 <div style="text-align:center;">
@@ -5508,7 +5508,7 @@ function verifyPassword() {
             }
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
 
             const win = window.open('', '_blank');
             win.document.write(`
@@ -5551,7 +5551,7 @@ function verifyPassword() {
             }
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
 
             const win = window.open('', '_blank');
             win.document.write(`
@@ -5883,7 +5883,7 @@ function verifyPassword() {
                     <div class="certificate-wrapper" id="marksheetPrintArea">
                         <div class="cert-header">
                             <div class="cert-logo">${logoHtml}</div>
-                            <div class="school-name">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                            <div class="school-name">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                             <div class="school-sub">${settings.schoolAddress || 'NOWSHERA'}</div>
                             <div class="motto">✨ Success with Wisdom ✨</div>
                         </div>
@@ -5937,7 +5937,7 @@ function verifyPassword() {
             }
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
 
             const win = window.open('', '_blank');
             win.document.write(`
@@ -6101,7 +6101,7 @@ function verifyPassword() {
                         .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
                     </style>
                     </head><body>
-                    <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                    <div class="school-header">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
                     <h1>📊 Results Report</h1>
                     <p>Generated on: ${getTodayWithMonthName()}</p>
@@ -6276,7 +6276,7 @@ function verifyPassword() {
                     <div class="certificate-wrapper" id="lcCertArea">
                         <div class="cert-header">
                             <div class="cert-logo">${logoHtml}</div>
-                            <div class="school-name">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                            <div class="school-name">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                             <div class="school-sub">${settings.schoolAddress || 'NOWSHERA'}</div>
                             <div class="motto">✨ Success with Wisdom ✨</div>
                         </div>
@@ -6330,7 +6330,7 @@ function verifyPassword() {
             const content = document.getElementById('lcDisplay').innerHTML;
             if (!content || content.includes('Select a student')) { showToast('⚠️ Generate certificate first!', 'error'); return; }
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const win = window.open('', '_blank');
             win.document.write(
                 `<html><head><title>Leaving Certificate PDF</title><style>body{font-family:Arial;padding:20px;font-size:11pt}${document.querySelector('style').textContent}.btn,.form-row,.no-print{display:none!important}.school-header{text-align:center;font-family:'Times New Roman',Times,serif;font-size:14pt;font-weight:900;color:#131921;margin-bottom:5px}.school-subheader{text-align:center;font-size:11pt;color:#565959;margin-bottom:15px}</style></head><body><div class="school-header">${schoolName}</div><div class="school-subheader">${settings.schoolAddress || ''}</div>${content}<script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close()},1000)},500)}<\/script></body></html>`
@@ -6465,7 +6465,7 @@ function verifyPassword() {
                     <div class="certificate-wrapper" id="ccCertArea">
                         <div class="cert-header">
                             <div class="cert-logo">${logoHtml}</div>
-                            <div class="school-name">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                            <div class="school-name">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                             <div class="school-sub">${settings.schoolAddress || 'NOWSHERA'}</div>
                             <div class="motto">✨ Success with Wisdom ✨</div>
                         </div>
@@ -6517,7 +6517,7 @@ function verifyPassword() {
             const content = document.getElementById('ccDisplay').innerHTML;
             if (!content || content.includes('Select a student')) { showToast('⚠️ Generate certificate first!', 'error'); return; }
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const win = window.open('', '_blank');
             win.document.write(
                 `<html><head><title>Character Certificate PDF</title><style>body{font-family:Arial;padding:20px;font-size:11pt}${document.querySelector('style').textContent}.btn,.form-row,.no-print{display:none!important}.school-header{text-align:center;font-family:'Times New Roman',Times,serif;font-size:14pt;font-weight:900;color:#131921;margin-bottom:5px}.school-subheader{text-align:center;font-size:11pt;color:#565959;margin-bottom:15px}</style></head><body><div class="school-header">${schoolName}</div><div class="school-subheader">${settings.schoolAddress || ''}</div>${content}<script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close()},1000)},500)}<\/script></body></html>`
@@ -6666,7 +6666,7 @@ function verifyPassword() {
                     <div class="certificate-wrapper" id="bcCertArea">
                         <div class="cert-header">
                             <div class="cert-logo">${logoHtml}</div>
-                            <div class="school-name">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                            <div class="school-name">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                             <div class="school-sub">${settings.schoolAddress || 'NOWSHERA'}</div>
                             <div class="motto">✨ Success with Wisdom ✨</div>
                         </div>
@@ -6713,7 +6713,7 @@ function verifyPassword() {
             const content = document.getElementById('bcDisplay').innerHTML;
             if (!content || content.includes('Select a student')) { showToast('⚠️ Generate certificate first!', 'error'); return; }
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const win = window.open('', '_blank');
             win.document.write(
                 `<html><head><title>Birth Certificate PDF</title><style>body{font-family:Arial;padding:20px;font-size:11pt}${document.querySelector('style').textContent}.btn,.form-row,.no-print{display:none!important}.school-header{text-align:center;font-family:'Times New Roman',Times,serif;font-size:14pt;font-weight:900;color:#131921;margin-bottom:5px}.school-subheader{text-align:center;font-size:11pt;color:#565959;margin-bottom:15px}</style></head><body><div class="school-header">${schoolName}</div><div class="school-subheader">${settings.schoolAddress || ''}</div>${content}<script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close()},1000)},500)}<\/script></body></html>`
@@ -6789,7 +6789,7 @@ function verifyPassword() {
             display.innerHTML = `
                     <div style="background:#fff;border:3px solid #131921;border-radius:12px;padding:16px 20px;max-width:350px;margin:10px auto;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
                         <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
-                        <div style="font-size:16px;font-weight:900;color:#131921;line-height:1.2;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                        <div style="font-size:16px;font-weight:900;color:#131921;line-height:1.2;">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                         <div style="font-size:11px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'}</div>
                         <div style="font-size:10px;color:#ff9900;margin-bottom:4px;">✨ Success with Wisdom ✨</div>
                         <div style="width:70px;height:80px;border:3px solid #131921;border-radius:6px;overflow:hidden;margin:6px auto;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${studentPhoto}</div>
@@ -6819,7 +6819,7 @@ function verifyPassword() {
             const content = document.getElementById('idDisplay').innerHTML;
             if (!content || content.includes('Select a student')) { showToast('⚠️ Generate ID card first!', 'error'); return; }
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const win = window.open('', '_blank');
             win.document.write(
                 `<html><head><title>ID Card PDF</title><style>body{font-family:Arial;padding:20px;font-size:11pt;display:flex;justify-content:center;align-items:center;min-height:100vh}${document.querySelector('style').textContent}.btn,.form-row,.no-print{display:none!important}.school-header{text-align:center;font-family:'Times New Roman',Times,serif;font-size:14pt;font-weight:900;color:#131921;margin-bottom:5px}.school-subheader{text-align:center;font-size:11pt;color:#565959;margin-bottom:15px}</style></head><body><div class="school-header">${schoolName}</div><div class="school-subheader">${settings.schoolAddress || ''}</div>${content}<script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close()},1000)},500)}<\/script></body></html>`
@@ -6896,7 +6896,7 @@ function verifyPassword() {
             display.innerHTML = `
                     <div style="background:#fff;border:3px solid #131921;border-radius:12px;padding:16px 20px;max-width:350px;margin:10px auto;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
                         <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
-                        <div style="font-size:16px;font-weight:900;color:#131921;line-height:1.2;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                        <div style="font-size:16px;font-weight:900;color:#131921;line-height:1.2;">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                         <div style="font-size:11px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'}</div>
                         <div style="display:inline-block;background:#131921;color:#ff9900;padding:2px 16px;border-radius:4px;font-size:14px;font-weight:900;letter-spacing:2px;margin:6px 0;">ADMIT CARD</div>
                         <div style="width:70px;height:80px;border:3px solid #131921;border-radius:6px;overflow:hidden;margin:6px auto;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${studentPhoto}</div>
@@ -6926,7 +6926,7 @@ function verifyPassword() {
             const content = document.getElementById('admitDisplay').innerHTML;
             if (!content || content.includes('Select a student')) { showToast('⚠️ Generate admit card first!', 'error'); return; }
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const win = window.open('', '_blank');
             win.document.write(
                 `<html><head><title>Admit Card PDF</title><style>body{font-family:Arial;padding:20px;font-size:11pt;display:flex;justify-content:center;align-items:center;min-height:100vh}${document.querySelector('style').textContent}.btn,.form-row,.no-print{display:none!important}.school-header{text-align:center;font-family:'Times New Roman',Times,serif;font-size:14pt;font-weight:900;color:#131921;margin-bottom:5px}.school-subheader{text-align:center;font-size:11pt;color:#565959;margin-bottom:15px}</style></head><body><div class="school-header">${schoolName}</div><div class="school-subheader">${settings.schoolAddress || ''}</div>${content}<script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close()},1000)},500)}<\/script></body></html>`
@@ -7163,7 +7163,7 @@ function verifyPassword() {
             const content = `
                     <div class="emp-id-card">
                         <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
-                        <div style="font-size:16px;font-weight:900;color:#131921;line-height:1.2;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                        <div style="font-size:16px;font-weight:900;color:#131921;line-height:1.2;">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                         <div style="font-size:11px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'}</div>
                         <div style="display:inline-block;background:#131921;color:#ff9900;padding:2px 16px;border-radius:4px;font-size:12px;font-weight:900;letter-spacing:2px;margin:6px 0;">STAFF ID</div>
                         <div class="emp-photo">${empPhoto}</div>
@@ -7232,7 +7232,7 @@ function verifyPassword() {
             display.innerHTML = `
                     <div class="emp-id-card">
                         <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
-                        <div style="font-size:16px;font-weight:900;color:#131921;line-height:1.2;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                        <div style="font-size:16px;font-weight:900;color:#131921;line-height:1.2;">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                         <div style="font-size:11px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'}</div>
                         <div style="display:inline-block;background:#131921;color:#ff9900;padding:2px 16px;border-radius:4px;font-size:12px;font-weight:900;letter-spacing:2px;margin:6px 0;">STAFF ID</div>
                         <div class="emp-photo">${empPhoto}</div>
@@ -7263,7 +7263,7 @@ function verifyPassword() {
             const content = document.getElementById('empIdCardDisplay').innerHTML;
             if (!content || content.includes('Select an employee')) { showToast('⚠️ Generate ID card first!', 'error'); return; }
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const win = window.open('', '_blank');
             win.document.write(
                 `<html><head><title>Employee ID Card PDF</title><style>body{font-family:Arial;padding:20px;font-size:11pt;display:flex;justify-content:center;align-items:center;min-height:100vh}${document.querySelector('style').textContent}.btn,.form-row,.no-print{display:none!important}.school-header{text-align:center;font-family:'Times New Roman',Times,serif;font-size:14pt;font-weight:900;color:#131921;margin-bottom:5px}.school-subheader{text-align:center;font-size:11pt;color:#565959;margin-bottom:15px}</style></head><body><div class="school-header">${schoolName}</div><div class="school-subheader">${settings.schoolAddress || ''}</div>${content}<script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close()},1000)},500)}<\/script></body></html>`
@@ -7417,7 +7417,7 @@ function verifyPassword() {
                         <div class="ps-header">
                             <div class="ps-logo">${logoHtml}</div>
                             <div class="ps-title">
-                                <h1>${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</h1>
+                                <h1>${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</h1>
                                 <div class="subtitle">${settings.schoolAddress || 'NOWSHERA'}</div>
                             </div>
                         </div>
@@ -7473,7 +7473,7 @@ function verifyPassword() {
                             <div>💳 Payment Mode: ${paymentMode}</div>
                         </div>
                         
-                        <div class="ps-footer">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'} — Success with Wisdom</div>
+                        <div class="ps-footer">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'} — Success with Wisdom</div>
                     </div>
                 `;
         }
@@ -7510,7 +7510,7 @@ function verifyPassword() {
             if (!content || content.includes('Select employee')) { showToast('⚠️ Generate pay slip first!', 'error'); return; }
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
 
             const win = window.open('', '_blank');
             win.document.write(`
@@ -7631,7 +7631,7 @@ function verifyPassword() {
                             <div class="ps-header" style="padding:4px 8px;">
                                 <div class="ps-logo" style="width:40px;height:40px;">${logoHtml}</div>
                                 <div class="ps-title">
-                                    <h1 style="font-size:12px;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</h1>
+                                    <h1 style="font-size:12px;">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</h1>
                                     <div class="subtitle" style="font-size:8px;">${settings.schoolAddress || 'NOWSHERA'}</div>
                                 </div>
                             </div>
@@ -7866,7 +7866,7 @@ function verifyPassword() {
                         <div style="display:flex;align-items:center;gap:15px;padding:8px 12px;background:#f7fafc;border-radius:6px;margin-bottom:12px;border:1px solid #e2e8f0;">
                             <div style="width:50px;height:50px;border-radius:50%;border:2px solid #ff9900;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f7fafc;">${logoHtml}</div>
                             <div>
-                                <div style="font-size:18px;font-weight:900;color:#131921;">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                                <div style="font-size:18px;font-weight:900;color:#131921;">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                                 <div style="font-size:12px;color:#565959;">${settings.schoolAddress || 'NOWSHERA'} — Salary Summary Report</div>
                             </div>
                         </div>
@@ -7911,7 +7911,7 @@ function verifyPassword() {
                         </div>
                         
                         <div style="text-align:center;font-size:10px;color:#565959;margin-top:10px;border-top:1px solid #ddd;padding-top:6px;">
-                            ${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'} — Success with Wisdom
+                            ${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'} — Success with Wisdom
                         </div>
                     </div>
                 `;
@@ -8058,7 +8058,7 @@ function verifyPassword() {
             });
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
 
             const wsData = [
                 [`School: ${schoolName}`],
@@ -8112,7 +8112,7 @@ function verifyPassword() {
             }
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             const address = settings.schoolAddress || '';
 
             const html = `
@@ -8348,7 +8348,7 @@ function verifyPassword() {
                         .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
                     </style>
                     </head><body>
-                    <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                    <div class="school-header">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
                     <h1>📊 Expenditure Report</h1>
                     <p>Generated on: ${getTodayWithMonthName()}</p>
@@ -8374,7 +8374,7 @@ function verifyPassword() {
             if (!content || content.includes('No expenditures')) { showToast('⚠️ No data to export!', 'error'); return; }
 
             const settings = AppData.schoolSettings || {};
-            const schoolName = settings.schoolName || 'THE EDUCATORS PABBI CAMPUS';
+            const schoolName = settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS';
 
             const win = window.open('', '_blank');
             win.document.write(`
@@ -8943,7 +8943,7 @@ function verifyPassword() {
                         .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
                     </style>
                     </head><body>
-                    <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                    <div class="school-header">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
                     ${content}</body></html>
                 `);
@@ -8966,7 +8966,7 @@ function verifyPassword() {
                         .school-subheader { text-align: center; font-size: 11pt; color: #565959; margin-bottom: 15px; }
                     </style>
                     </head><body>
-                    <div class="school-header">${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}</div>
+                    <div class="school-header">${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}</div>
                     <div class="school-subheader">${settings.schoolAddress || ''}</div>
                     ${content}</body></html>
                 `);
@@ -9049,7 +9049,7 @@ function verifyPassword() {
                         
                         <div class="form-row">
                             <label>School Name</label>
-                            <input id="setSchoolName" value="${settings.schoolName || 'THE EDUCATORS PABBI CAMPUS'}" style="flex:2;" />
+                            <input id="setSchoolName" value="${settings.schoolName || 'XYZ DEMO SCHOOLPABBI CAMPUS'}" style="flex:2;" />
                         </div>
                         
                         <div class="form-row">
@@ -9161,7 +9161,7 @@ function verifyPassword() {
         }
 
         function applySettings(settings) {
-            settings.schoolName = document.getElementById('setSchoolName').value.trim() || 'THE EDUCATORS PABBI CAMPUS';
+            settings.schoolName = document.getElementById('setSchoolName').value.trim() || 'XYZ DEMO SCHOOLPABBI CAMPUS';
             settings.schoolAddress = document.getElementById('setAddress').value.trim() || 'NOWSHERA';
             settings.schoolPhone = document.getElementById('setPhone').value.trim() || '+92 300 0000000';
             settings.schoolEmail = document.getElementById('setEmail').value.trim() || 'info@educators.com';
@@ -9178,7 +9178,7 @@ function verifyPassword() {
         function resetSettings() {
             if (!confirm('Reset to default settings?')) return;
             AppData.schoolSettings = {
-                schoolName: 'THE EDUCATORS PABBI CAMPUS',
+                schoolName: 'XYZ DEMO SCHOOLPABBI CAMPUS',
                 schoolAddress: 'NOWSHERA',
                 schoolPhone: '+92 300 0000000',
                 schoolEmail: 'info@educators.com',
